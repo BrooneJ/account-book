@@ -1,8 +1,8 @@
-import { FastifyPluginAsync } from 'fastify'
 import UserService from '../../../services/UserService'
 import { loginSchema, registerSchema } from './schema'
+import { FastifyPluginAsyncWithZod } from '../../../lib/types'
 
-const authRoute: FastifyPluginAsync = async (fastify) => {
+const authRoute: FastifyPluginAsyncWithZod = async (fastify) => {
   const userService = UserService.getInstance()
 
   fastify.post('/login', { schema: loginSchema }, async (request, reply) => {
