@@ -9,12 +9,26 @@ import {
   validatorCompiler,
   ZodTypeProvider,
 } from 'fastify-type-provider-zod'
+import AppError from './lib/AppError'
 
 const server = Fastify({ logger: true }).withTypeProvider<ZodTypeProvider>()
 server.setValidatorCompiler(validatorCompiler)
 server.setSerializerCompiler(serializerCompiler)
 server.register(fastifySwagger, swaggerConfig)
 server.register(fastifySwaggerUi, swaggerUiConfig)
+
+server.setErrorHandler((error, request, reply) => {
+  reply.statusCode = error.statusCode ?? 500
+  if (error instanceof AppError) {
+    return {
+      name: error.name,
+      message: error.message,
+      statusCode: error.statusCode,
+    }
+  }
+  console.log({ name: error.name })
+  return error
+})
 
 server.register(routes)
 server.listen({ port: 4000 })

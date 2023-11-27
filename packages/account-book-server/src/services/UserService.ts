@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt'
 import db from '../lib/db'
+import AppError from '../lib/AppError'
 
 const SALT_ROUNDS = 10
 
@@ -26,7 +27,7 @@ class UserService {
     })
 
     if (exists) {
-      throw new Error('User already exists')
+      throw new AppError('UserExistsError')
     }
 
     const hash = await bcrypt.hash(password, SALT_ROUNDS)

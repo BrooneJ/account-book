@@ -13,7 +13,7 @@ const authRoute: FastifyPluginAsyncWithZod = async (fastify) => {
 
   fastify.post(
     '/register',
-    // { schema: registerSchema },
+    { schema: registerSchema },
     async (request: FastifyRequest<{ Body: AuthBodyType }>, reply) => {
       return userService.register(request.body)
     },
