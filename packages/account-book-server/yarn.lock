@@ -410,6 +410,13 @@ fastify-plugin@^4.0.0:
   resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-4.5.1.tgz#44dc6a3cc2cce0988bc09e13f160120bbd91dbee"
   integrity sha512-stRHYGeuqpEZTL1Ef0Ovr2ltazUT9g844X5z/zEBFLG8RYlpDiOCIG+ATvYEp+/zmc7sN29mcIMp8gvYplYPIQ==
 
+fastify-type-provider-zod@^1.1.9:
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/fastify-type-provider-zod/-/fastify-type-provider-zod-1.1.9.tgz#fcbb089e20cb91b9798ca8080a52217df191ab7f"
+  integrity sha512-Ztnu1ZWJEKJouZvdTyfgjuVqS+A4JLoCbWBvFqFhfnrg6YQvEvW+5cJvP98kNbuV5gjfpWmHSOTi3BpkidJPQg==
+  dependencies:
+    zod-to-json-schema "^3.17.1"
+
 fastify@^4.24.3:
   version "4.24.3"
   resolved "https://registry.yarnpkg.com/fastify/-/fastify-4.24.3.tgz#bf97a3f5158ff7f78af949d483cac4e6115fb651"
@@ -661,6 +668,11 @@ pino@^8.16.0:
     sonic-boom "^3.7.0"
     thread-stream "^2.0.0"
 
+prettier@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.1.0.tgz#c6d16474a5f764ea1a4a373c593b779697744d5e"
+  integrity sha512-TQLvXjq5IAibjh8EpBIkNKxO749UEWABoiIZehEPiY4GNpVdhaFKqSTu+QrlU6D2dPAfubRmtJTi4K4YkQ5eXw==
+
 process-warning@^2.0.0, process-warning@^2.2.0:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/process-warning/-/process-warning-2.3.1.tgz#0caf992272c439f45dd416e1407ee25a3d4c778a"
@@ -878,3 +890,13 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+
+zod-to-json-schema@^3.17.1:
+  version "3.22.0"
+  resolved "https://registry.yarnpkg.com/zod-to-json-schema/-/zod-to-json-schema-3.22.0.tgz#b3d8553d64032300742b7a0b37ae416345bacef5"
+  integrity sha512-XQr8EwxPMzJGhoR+d/nRFWdi15VaZ+R5Uhssm+Xx5yS30xCpuutfKRm4rerE0SK9j2dWB5Z3FvDD0w8WMVGzkA==
+
+zod@^3.22.4:
+  version "3.22.4"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.22.4.tgz#f31c3a9386f61b1f228af56faa9255e845cf3fff"
+  integrity sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==

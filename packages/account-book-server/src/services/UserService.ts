@@ -1,7 +1,7 @@
 class UserService {
   private static instance: UserService
   public static getInstance() {
-    if(!UserService.instance) {
+    if (!UserService.instance) {
       UserService.instance = new UserService()
     }
     return UserService.instance
