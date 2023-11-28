@@ -7,16 +7,19 @@ import { AuthBodyType } from './types'
 const authRoute: FastifyPluginAsyncWithZod = async (fastify) => {
   const userService = UserService.getInstance()
 
-  fastify.post('/login', async (request, reply) => {
-    return userService.login()
-  })
+  fastify.post(
+    '/login',
+    { schema: loginSchema },
+    async (request: FastifyRequest<{ Body: AuthBodyType }>, reply) => {
+      return userService.login(request.body)
+    },
+  )
 
   fastify.post(
     '/register',
     { schema: registerSchema },
     async (request: FastifyRequest<{ Body: AuthBodyType }>, reply) => {
-      const authResult = await userService.register(request.body)
-      return authResult
+      return userService.register(request.body)
     },
   )
 }
