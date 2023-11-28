@@ -48,5 +48,8 @@ export const loginSchema = routeSchema({
   body: AuthBody,
   response: {
     200: AuthResult,
+    401: {
+      ...appErrorSchema,
+    },
   },
 })
