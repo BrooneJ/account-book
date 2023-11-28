@@ -33,6 +33,6 @@ export default class AppError extends Error {
 
 export const appErrorSchema = z.object({
   name: z.string(),
-  statusCode: z.number(),
   message: z.string(),
+  statusCode: z.number(),
 })

@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import db from '../lib/db'
 import AppError from '../lib/AppError'
+import { generateToken } from '../lib/tokens'
 
 const SALT_ROUNDS = 10
 
@@ -17,6 +18,21 @@ class UserService {
       UserService.instance = new UserService()
     }
     return UserService.instance
+  }
+
+  async generateToken(userId: string, username: string) {
+    const accessToken = await generateToken({
+      type: 'access_token',
+      userId,
+      tokenId: 1,
+      username,
+    })
+    const refreshToken = await generateToken({
+      type: 'refresh_token',
+      tokenId: 1,
+      rotationCounter: 1,
+    })
+    return { accessToken, refreshToken }
   }
 
   async register({ email, password, username }: AuthParams) {
@@ -38,8 +54,12 @@ class UserService {
         passwordHash: hash,
       },
     })
+    const tokens = await this.generateToken(user.id, username)
 
-    return user
+    return {
+      tokens,
+      user,
+    }
   }
 
   login() {

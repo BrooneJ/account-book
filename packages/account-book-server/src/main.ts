@@ -10,6 +10,7 @@ import {
   ZodTypeProvider,
 } from 'fastify-type-provider-zod'
 import AppError from './lib/AppError'
+import 'dotenv/config'
 
 const server = Fastify({ logger: true }).withTypeProvider<ZodTypeProvider>()
 server.setValidatorCompiler(validatorCompiler)

@@ -21,11 +21,15 @@ const TokensSchema = z.object({
   refreshToken: z.string(),
 })
 
-const AuthResult = z.object({
-  // tokens: TokensSchema,
+const UserSchema = z.object({
   id: z.string(),
   username: z.string(),
   email: z.string(),
+})
+
+const AuthResult = z.object({
+  tokens: TokensSchema,
+  user: UserSchema,
 })
 
 export const registerSchema = routeSchema({
