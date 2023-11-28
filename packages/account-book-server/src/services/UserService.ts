@@ -21,17 +21,21 @@ class UserService {
   }
 
   async generateToken(userId: string, username: string) {
-    const accessToken = await generateToken({
-      type: 'access_token',
-      userId,
-      tokenId: 1,
-      username,
-    })
-    const refreshToken = await generateToken({
-      type: 'refresh_token',
-      tokenId: 1,
-      rotationCounter: 1,
-    })
+    // refactor above code with Promise.all
+    const [accessToken, refreshToken] = await Promise.all([
+      generateToken({
+        type: 'access_token',
+        userId,
+        tokenId: 1,
+        username,
+      }),
+      generateToken({
+        type: 'refresh_token',
+        tokenId: 1,
+        rotationCounter: 1,
+      }),
+    ])
+
     return { accessToken, refreshToken }
   }
 
