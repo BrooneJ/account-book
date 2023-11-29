@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { routeSchema } from '../../../lib/routeSchema'
-import { appErrorSchema } from '../../../lib/AppError'
+import { appErrorResponseSchema } from '../../../lib/AppError'
+import { zodToJsonSchema } from 'zod-to-json-schema'
 
 export const AuthBody = z.object({
   username: z.string(),
@@ -15,6 +16,7 @@ export const AuthBody = z.object({
     invalid_type_error: 'Password must be a string',
   }),
 })
+const AuthBodySchema = zodToJsonSchema(AuthBody)
 
 const TokensSchema = z.object({
   accessToken: z.string(),
@@ -31,25 +33,36 @@ const AuthResult = z.object({
   tokens: TokensSchema,
   user: UserSchema,
 })
+const AuthResultSchema = zodToJsonSchema(AuthResult)
 
 export const registerSchema = routeSchema({
   tags: ['auth'],
-  body: AuthBody,
+  body: AuthBodySchema,
   response: {
-    200: AuthResult,
+    200: AuthResultSchema,
     409: {
-      ...appErrorSchema,
+      ...appErrorResponseSchema,
+      example: {
+        name: 'UserExistsError',
+        message: 'User already exists',
+        statusCode: 409,
+      },
     },
   },
 })
 
 export const loginSchema = routeSchema({
   tags: ['auth'],
-  body: AuthBody,
+  body: AuthBodySchema,
   response: {
-    200: AuthResult,
+    200: AuthResultSchema,
     401: {
-      ...appErrorSchema,
+      ...appErrorResponseSchema,
+      example: {
+        name: 'AuthenticationError',
+        message: 'Authentication failed',
+        statusCode: 401,
+      },
     },
   },
 })
