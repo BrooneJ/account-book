@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import { zodToJsonSchema } from 'zod-to-json-schema'
 
 type ErrorName = 'UserExistsError' | 'AuthenticationError' | 'UnknownError'
 type ErrorInfo = {
@@ -32,10 +31,8 @@ export default class AppError extends Error {
   }
 }
 
-const appErrorResponse = z.object({
+export const appErrorSchema = z.object({
   name: z.string(),
   message: z.string(),
   statusCode: z.number(),
 })
-
-export const appErrorResponseSchema = zodToJsonSchema(appErrorResponse)
