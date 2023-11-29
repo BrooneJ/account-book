@@ -10,5 +10,5 @@ export const swaggerConfig: SwaggerOptions = {
     },
     servers: [],
   },
-  transform: jsonSchemaTransform,
+  // transform: jsonSchemaTransform,
 }
