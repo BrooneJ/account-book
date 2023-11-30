@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { routeSchema } from '../../../lib/routeSchema'
 import { appErrorSchema } from '../../../lib/AppError'
+import { UserSchema } from '../../../schema/userSchema'
 
 export const AuthBody = z.object({
   username: z.string(),
@@ -21,12 +22,6 @@ const TokensSchema = z.object({
   refreshToken: z.string(),
 })
 
-const UserSchema = z.object({
-  id: z.string(),
-  username: z.string(),
-  email: z.string(),
-})
-
 const AuthResult = z.object({
   tokens: TokensSchema,
   user: UserSchema,
@@ -37,9 +32,7 @@ export const registerSchema = routeSchema({
   body: AuthBody,
   response: {
     200: AuthResult,
-    409: {
-      ...appErrorSchema,
-    },
+    409: appErrorSchema,
   },
 })
 
@@ -48,8 +41,6 @@ export const loginSchema = routeSchema({
   body: AuthBody,
   response: {
     200: AuthResult,
-    401: {
-      ...appErrorSchema,
-    },
+    401: appErrorSchema,
   },
 })
