@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 import db from '../lib/db'
-import AppError from '../lib/AppError'
+import AppError, { isAppError } from '../lib/AppError'
 import { generateToken } from '../lib/tokens'
 import { User } from '@prisma/client'
 
@@ -84,6 +84,9 @@ class UserService {
         throw new AppError('AuthenticationError')
       }
     } catch (error) {
+      if (isAppError(error)) {
+        throw error
+      }
       throw new AppError('UnknownError')
     }
 

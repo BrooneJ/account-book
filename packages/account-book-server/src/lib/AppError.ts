@@ -31,6 +31,10 @@ export default class AppError extends Error {
   }
 }
 
+export function isAppError(error: unknown): error is AppError {
+  return error instanceof AppError
+}
+
 export const appErrorSchema = z.object({
   name: z.string(),
   message: z.string(),
