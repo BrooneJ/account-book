@@ -1,5 +1,5 @@
 import { SwaggerOptions } from '@fastify/swagger'
-import { jsonSchemaTransform } from 'fastify-type-provider-zod'
+import { jsonSchemaTransform } from 'fastify-type-provider-zod-extended'
 
 export const swaggerConfig: SwaggerOptions = {
   openapi: {

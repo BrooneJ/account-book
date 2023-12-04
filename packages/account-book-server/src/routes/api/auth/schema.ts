@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { routeSchema } from '../../../lib/routeSchema'
-import { appErrorSchema } from '../../../lib/AppError'
+import { createAppErrorSchema } from '../../../lib/AppError'
 import { UserSchema } from '../../../schema/userSchema'
+import { FastifySchema } from 'fastify'
 
 export const AuthBody = z.object({
   username: z.string(),
@@ -27,20 +28,28 @@ const AuthResult = z.object({
   user: UserSchema,
 })
 
-export const registerSchema = routeSchema({
+export const registerSchema: FastifySchema = routeSchema({
   tags: ['auth'],
   body: AuthBody,
   response: {
     200: AuthResult,
-    409: appErrorSchema,
+    409: createAppErrorSchema({
+      name: 'UserExistsError',
+      message: 'User already exists',
+      statusCode: 409,
+    }),
   },
 })
 
-export const loginSchema = routeSchema({
+export const loginSchema: FastifySchema = routeSchema({
   tags: ['auth'],
   body: AuthBody,
   response: {
     200: AuthResult,
-    401: appErrorSchema,
+    401: createAppErrorSchema({
+      name: 'AuthenticationError',
+      message: 'Authentication failed',
+      statusCode: 401,
+    }),
   },
 })

@@ -1,6 +1,10 @@
 import { z } from 'zod'
 
-type ErrorName = 'UserExistsError' | 'AuthenticationError' | 'UnknownError'
+type ErrorName =
+  | 'UserExistsError'
+  | 'AuthenticationError'
+  | 'UnknownError'
+  | 'UnauthorizedError'
 type ErrorInfo = {
   statusCode: number
   message: string
@@ -18,6 +22,10 @@ const statusCodeMap: Record<ErrorName, ErrorInfo> = {
   UnknownError: {
     statusCode: 500,
     message: 'Unknown error',
+  },
+  UnauthorizedError: {
+    statusCode: 401,
+    message: 'Unauthorized',
   },
 }
 
@@ -40,3 +48,10 @@ export const appErrorSchema = z.object({
   message: z.string(),
   statusCode: z.number(),
 })
+
+export function createAppErrorSchema<T>(example: T) {
+  return {
+    ...appErrorSchema,
+    example,
+  }
+}

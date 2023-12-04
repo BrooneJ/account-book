@@ -8,7 +8,7 @@ import {
   serializerCompiler,
   validatorCompiler,
   ZodTypeProvider,
-} from 'fastify-type-provider-zod'
+} from 'fastify-type-provider-zod-extended'
 import AppError from './lib/AppError'
 import 'dotenv/config'
 
