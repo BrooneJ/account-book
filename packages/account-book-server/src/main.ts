@@ -11,6 +11,7 @@ import {
 } from 'fastify-type-provider-zod-extended'
 import AppError from './lib/AppError'
 import 'dotenv/config'
+import { authPlugin } from './plugins/authPlugin'
 
 const server = Fastify({ logger: true }).withTypeProvider<ZodTypeProvider>()
 server.setValidatorCompiler(validatorCompiler)
@@ -31,5 +32,6 @@ server.setErrorHandler((error, request, reply) => {
   return error
 })
 
+server.register(authPlugin)
 server.register(routes)
 server.listen({ port: 4000 })
