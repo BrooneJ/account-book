@@ -631,6 +631,11 @@ fastify-plugin@^4.0.0:
   resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-4.5.1.tgz#44dc6a3cc2cce0988bc09e13f160120bbd91dbee"
   integrity sha512-stRHYGeuqpEZTL1Ef0Ovr2ltazUT9g844X5z/zEBFLG8RYlpDiOCIG+ATvYEp+/zmc7sN29mcIMp8gvYplYPIQ==
 
+"fastify-type-provider-zod-extended@file:../../../fastify-type-provider-zod":
+  version "1.1.9"
+  dependencies:
+    zod-to-json-schema "^3.17.1"
+
 fastify-type-provider-zod@^1.1.9:
   version "1.1.9"
   resolved "https://registry.yarnpkg.com/fastify-type-provider-zod/-/fastify-type-provider-zod-1.1.9.tgz#fcbb089e20cb91b9798ca8080a52217df191ab7f"
