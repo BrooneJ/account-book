@@ -22,13 +22,14 @@ class UserService {
   }
 
   async generateToken(user: User) {
-    const { id: userId, username } = user
+    const { id: userId, username, email } = user
     const [accessToken, refreshToken] = await Promise.all([
       generateToken({
         type: 'access_token',
         userId,
         tokenId: 1,
         username,
+        email,
       }),
       generateToken({
         type: 'refresh_token',

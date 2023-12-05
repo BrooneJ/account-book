@@ -44,6 +44,7 @@ export interface AccessTokenPayload {
   userId: string
   tokenId: number
   username: string
+  email: string
 }
 
 export interface RefreshTokenPayload {
