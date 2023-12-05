@@ -26,6 +26,7 @@ server.setErrorHandler((error, request, reply) => {
       name: error.name,
       message: error.message,
       statusCode: error.statusCode,
+      payload: error.payload,
     }
   }
   console.log({ name: error.name })

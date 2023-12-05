@@ -6,20 +6,25 @@ import jwt from 'jsonwebtoken'
 const { JsonWebTokenError } = jwt
 const authPluginAsync: FastifyPluginAsync = async (fastify) => {
   fastify.decorateRequest('user', null)
+  fastify.decorateRequest('isExpiredToken', false)
   fastify.addHook('preHandler', async (request, reply) => {
-    console.log('request.cookies: ', request.headers.authorization)
     const { authorization } = request.headers
     if (!authorization || !authorization.includes('Bearer ')) {
       return
     }
     const token = authorization.split('Bearer ')[1]
     try {
-      const decoded = validateToken<AccessTokenPayload>(token)
-      console.log('decoded: ', decoded)
+      const decoded = await validateToken<AccessTokenPayload>(token)
+      request.user = {
+        id: decoded.userId,
+        username: decoded.username,
+        email: decoded.email,
+      }
     } catch (error) {
       if (error instanceof JsonWebTokenError) {
         if (error.name === 'TokenExpiredError') {
-          // @todo: handle token expired error
+          request.isExpiredToken = true
+          return
         }
       }
       throw error
@@ -38,5 +43,6 @@ declare module 'fastify' {
       username: string
       email: string
     } | null
+    isExpiredToken: boolean
   }
 }
