@@ -12,14 +12,6 @@ type ErrorInfo = {
   message: string
 }
 
-interface ErrorPayloads {
-  UserExistsError: undefined
-  AuthenticationError: undefined
-  UnknownError: undefined
-  UnauthorizedError: undefined
-  TokenExpiredError: undefined
-}
-
 const statusCodeMap: Record<ErrorName, ErrorInfo> = {
   UserExistsError: {
     statusCode: 409,
