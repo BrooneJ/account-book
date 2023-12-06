@@ -74,7 +74,7 @@ class UserService {
         email,
       },
     })
-    console.log('user: ', user)
+
     if (!user) {
       throw new AppError('AuthenticationError')
     }

@@ -12,12 +12,14 @@ import {
 import AppError from './lib/AppError'
 import 'dotenv/config'
 import { authPlugin } from './plugins/authPlugin'
+import fastifyCookie from '@fastify/cookie'
 
 const server = Fastify({ logger: true }).withTypeProvider<ZodTypeProvider>()
 server.setValidatorCompiler(validatorCompiler)
 server.setSerializerCompiler(serializerCompiler)
 server.register(fastifySwagger, swaggerConfig)
 server.register(fastifySwaggerUi, swaggerUiConfig)
+server.register(fastifyCookie)
 
 server.setErrorHandler((error, request, reply) => {
   reply.statusCode = error.statusCode ?? 500

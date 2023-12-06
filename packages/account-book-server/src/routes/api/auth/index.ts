@@ -11,7 +11,18 @@ const authRoute: FastifyPluginAsyncWithZod = async (fastify) => {
     '/login',
     { schema: loginSchema },
     async (request: FastifyRequest<{ Body: AuthBodyType }>, reply) => {
-      return userService.login(request.body)
+      const authResult = await userService.login(request.body)
+      reply.setCookie('access_token', authResult.tokens.accessToken, {
+        httpOnly: true,
+        path: '/',
+        expires: new Date(Date.now() + 1000 * 60 * 60),
+      })
+      reply.setCookie('refresh_token', authResult.tokens.refreshToken, {
+        httpOnly: true,
+        path: '/',
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      })
+      return authResult
     },
   )
 
