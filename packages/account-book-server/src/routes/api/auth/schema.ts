@@ -62,3 +62,9 @@ export const loginSchema = routeSchema({
     ]),
   },
 })
+
+export const refreshTokenSchema = z.object({
+  body: z.object({
+    refreshToken: z.string(),
+  }),
+})

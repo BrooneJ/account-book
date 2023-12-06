@@ -6,6 +6,8 @@ type ErrorName =
   | 'UnknownError'
   | 'UnauthorizedError'
   | 'TokenExpiredError'
+  | 'BadRequestError'
+  | 'RefreshTokenError'
 
 type ErrorInfo = {
   statusCode: number
@@ -32,6 +34,14 @@ const statusCodeMap: Record<ErrorName, ErrorInfo> = {
   TokenExpiredError: {
     statusCode: 401,
     message: 'Token expired',
+  },
+  BadRequestError: {
+    statusCode: 400,
+    message: 'Bad request',
+  },
+  RefreshTokenError: {
+    statusCode: 401,
+    message: 'Refresh token error',
   },
 }
 

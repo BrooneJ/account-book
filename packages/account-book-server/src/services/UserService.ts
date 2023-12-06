@@ -1,7 +1,11 @@
 import bcrypt from 'bcrypt'
 import db from '../lib/db'
 import AppError, { isAppError } from '../lib/AppError'
-import { generateToken } from '../lib/tokens'
+import {
+  generateToken,
+  RefreshTokenPayload,
+  validateToken,
+} from '../lib/tokens'
 import { User } from '@prisma/client'
 
 const SALT_ROUNDS = 10
@@ -21,24 +25,55 @@ class UserService {
     return UserService.instance
   }
 
-  async generateToken(user: User) {
+  async createTokenId(userId: string) {
+    const token = await db.token.create({
+      data: {
+        userId,
+      },
+    })
+    return token.id
+  }
+
+  async generateToken(user: User, existingTokenId?: string) {
     const { id: userId, username, email } = user
+    const tokenId = existingTokenId ?? (await this.createTokenId(userId))
+
     const [accessToken, refreshToken] = await Promise.all([
       generateToken({
         type: 'access_token',
         userId,
-        tokenId: 1,
+        tokenId,
         username,
         email,
       }),
       generateToken({
         type: 'refresh_token',
-        tokenId: 1,
+        tokenId,
         rotationCounter: 1,
       }),
     ])
 
     return { accessToken, refreshToken }
+  }
+
+  async refreshTokens(token: string) {
+    try {
+      const { tokenId } = await validateToken<RefreshTokenPayload>(token)
+      const tokenItem = await db.token.findUnique({
+        where: {
+          id: tokenId,
+        },
+        include: {
+          user: true,
+        },
+      })
+      if (!tokenItem) {
+        throw new Error('Token not found')
+      }
+      return this.generateToken(tokenItem.user, tokenId)
+    } catch (error) {
+      throw new AppError('RefreshTokenError')
+    }
   }
 
   async register({ email, password, username }: AuthParams) {

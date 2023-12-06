@@ -42,14 +42,14 @@ export function validateToken<T>(token: string) {
 export interface AccessTokenPayload {
   type: 'access_token'
   userId: string
-  tokenId: number
+  tokenId: string
   username: string
   email: string
 }
 
 export interface RefreshTokenPayload {
   type: 'refresh_token'
-  tokenId: number
+  tokenId: string
   rotationCounter: number
 }
 
