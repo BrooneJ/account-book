@@ -28,7 +28,7 @@ const AuthResult = z.object({
   user: UserSchema,
 })
 
-export const registerSchema: FastifySchema = routeSchema({
+export const registerSchema = routeSchema({
   tags: ['auth'],
   body: AuthBody,
   response: {
@@ -41,7 +41,7 @@ export const registerSchema: FastifySchema = routeSchema({
   },
 })
 
-export const loginSchema: FastifySchema = routeSchema({
+export const loginSchema = routeSchema({
   tags: ['auth'],
   body: AuthBody,
   response: {
