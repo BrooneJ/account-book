@@ -1,10 +1,11 @@
-import { z, ZodObject, ZodRawShape } from 'zod'
+import { z } from 'zod'
 
 type ErrorName =
   | 'UserExistsError'
   | 'AuthenticationError'
   | 'UnknownError'
   | 'UnauthorizedError'
+  | 'TokenExpiredError'
 
 type ErrorInfo = {
   statusCode: number
@@ -15,9 +16,8 @@ interface ErrorPayloads {
   UserExistsError: undefined
   AuthenticationError: undefined
   UnknownError: undefined
-  UnauthorizedError: {
-    isExpiredToken: boolean
-  }
+  UnauthorizedError: undefined
+  TokenExpiredError: undefined
 }
 
 const statusCodeMap: Record<ErrorName, ErrorInfo> = {
@@ -37,15 +37,16 @@ const statusCodeMap: Record<ErrorName, ErrorInfo> = {
     statusCode: 401,
     message: 'Unauthorized',
   },
+  TokenExpiredError: {
+    statusCode: 401,
+    message: 'Token expired',
+  },
 }
 
 export default class AppError extends Error {
   public statusCode: number
 
-  constructor(
-    public name: ErrorName,
-    public payload?: ErrorPayloads[ErrorName],
-  ) {
+  constructor(public name: ErrorName) {
     const info = statusCodeMap[name]
     super(info.message)
     this.statusCode = info.statusCode
@@ -62,15 +63,16 @@ export const appErrorSchema = z.object({
   statusCode: z.number(),
 })
 
-export function createAppErrorSchema<T, S extends ZodRawShape>(
-  example: T,
-  payloadSchema?: ZodObject<S>,
-) {
+export function createAppErrorSchema<T>(example: T) {
   return {
-    ...z.object({
-      ...appErrorSchema.shape,
-      ...(payloadSchema ? { payload: payloadSchema } : {}),
-    }),
+    ...appErrorSchema,
     example,
+  }
+}
+
+export function createAppErrorSchemas<T>(examples: T[]) {
+  return {
+    ...appErrorSchema,
+    examples,
   }
 }

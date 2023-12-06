@@ -1,8 +1,10 @@
 import { z } from 'zod'
 import { routeSchema } from '../../../lib/routeSchema'
-import { createAppErrorSchema } from '../../../lib/AppError'
+import {
+  createAppErrorSchema,
+  createAppErrorSchemas,
+} from '../../../lib/AppError'
 import { UserSchema } from '../../../schema/userSchema'
-import { FastifySchema } from 'fastify'
 
 export const AuthBody = z.object({
   username: z.string(),
@@ -46,10 +48,17 @@ export const loginSchema = routeSchema({
   body: AuthBody,
   response: {
     200: AuthResult,
-    401: createAppErrorSchema({
-      name: 'AuthenticationError',
-      message: 'Authentication failed',
-      statusCode: 401,
-    }),
+    401: createAppErrorSchemas([
+      {
+        name: 'AuthenticationError',
+        message: 'Authentication failed',
+        statusCode: 401,
+      },
+      {
+        name: 'TokenExpiredError',
+        message: 'Token expired',
+        statusCode: 401,
+      },
+    ]),
   },
 })
