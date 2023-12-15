@@ -18,10 +18,11 @@ export function Button({
   return (
     <button
       {...rest}
-      className={clsx("w-[148px] h-[50px] rounded text-white font-bold", {
+      className={clsx("h-[50px] rounded-xl text-white font-bold", {
         "bg-primary": mode === "login",
         "bg-secondary": mode === "register",
-        "w-full": layoutMode === "fullWidth",
+        "w-full text-xl": layoutMode === "fullWidth",
+        "w-[148px]": layoutMode !== "fullWidth",
       })}
     >
       {children}
