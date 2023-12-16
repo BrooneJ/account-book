@@ -27,10 +27,8 @@ export default function Login() {
   } = useForm<Schema>({
     resolver: zodResolver(schema),
   });
-  console.log(watch());
 
   const onSubmit = handleSubmit(async (data: Schema) => {
-    console.log(data);
     await actions(data);
   });
 
