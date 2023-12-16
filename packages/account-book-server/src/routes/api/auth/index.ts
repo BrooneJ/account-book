@@ -22,7 +22,9 @@ const authRoute: FastifyPluginAsyncWithZod = async (fastify) => {
     '/register',
     { schema: registerSchema },
     async (request: FastifyRequest<{ Body: AuthBodyType }>, reply) => {
-      return userService.register(request.body)
+      const authResult = await userService.register(request.body)
+      setTokenCookie(reply, authResult.tokens)
+      return authResult
     },
   )
 
