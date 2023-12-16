@@ -7,7 +7,7 @@ import {
 import { UserSchema } from '../../../schema/userSchema'
 
 export const AuthBody = z.object({
-  username: z.string(),
+  username: z.optional(z.string()),
   email: z
     .string({
       required_error: 'Email is required',
