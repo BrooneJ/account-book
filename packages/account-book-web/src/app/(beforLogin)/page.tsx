@@ -33,12 +33,12 @@ export default function Page() {
       </div>
       <div className="flex justify-around pt-[30px] w-full">
         <Link href="/login">
-          <Button mode="login" layoutMode="inline">
+          <Button mode="login" layoutMode="inline" disabled={false}>
             ログイン
           </Button>
         </Link>
         <Link href="/register">
-          <Button mode="register" layoutMode="inline">
+          <Button mode="register" layoutMode="inline" disabled={false}>
             登録
           </Button>
         </Link>

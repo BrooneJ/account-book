@@ -66,7 +66,9 @@ export default function Login() {
             <Input {...register("email")} placeholder="メールアドレス" />
             <div className="h-2">
               {errors.email?.message && (
-                <p className="text-sm text-caution">{errors.email?.message}</p>
+                <p className="text-sm text-caution">
+                  正しいメールアドレスを入力してください。
+                </p>
               )}
             </div>
           </div>
@@ -79,7 +81,7 @@ export default function Login() {
             <div className="h-2">
               {errors.password?.message && (
                 <p className="text-sm text-caution">
-                  {errors.password?.message}
+                  パスワードは4文字以上20文字以下で入力してください。
                 </p>
               )}
             </div>
