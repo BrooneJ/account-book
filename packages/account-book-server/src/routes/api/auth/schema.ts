@@ -6,8 +6,8 @@ import {
 } from '../../../lib/AppError'
 import { UserSchema } from '../../../schema/userSchema'
 
-export const AuthBody = z.object({
-  username: z.optional(z.string()),
+export const RegisterAuthBody = z.object({
+  username: z.string(),
   email: z
     .string({
       required_error: 'Email is required',
@@ -19,6 +19,8 @@ export const AuthBody = z.object({
     invalid_type_error: 'Password must be a string',
   }),
 })
+
+export const LoginBody = RegisterAuthBody.omit({ username: true })
 
 const TokensSchema = z.object({
   accessToken: z.string(),
@@ -32,7 +34,7 @@ const AuthResult = z.object({
 
 export const registerSchema = routeSchema({
   tags: ['auth'],
-  body: AuthBody,
+  body: RegisterAuthBody,
   response: {
     200: AuthResult,
     409: createAppErrorSchema({
@@ -45,7 +47,7 @@ export const registerSchema = routeSchema({
 
 export const loginSchema = routeSchema({
   tags: ['auth'],
-  body: AuthBody,
+  body: LoginBody,
   response: {
     200: AuthResult,
     401: createAppErrorSchemas([

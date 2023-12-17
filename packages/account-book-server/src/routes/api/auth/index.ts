@@ -2,7 +2,7 @@ import UserService from '../../../services/UserService'
 import { loginSchema, refreshTokenSchema, registerSchema } from './schema'
 import { FastifyPluginAsyncWithZod } from '../../../lib/types'
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { AuthBodyType } from './types'
+import { RegisterBodyType, LoginBodyType } from './types'
 import AppError from '../../../lib/AppError'
 
 const authRoute: FastifyPluginAsyncWithZod = async (fastify) => {
@@ -11,7 +11,7 @@ const authRoute: FastifyPluginAsyncWithZod = async (fastify) => {
   fastify.post(
     '/login',
     { schema: loginSchema },
-    async (request: FastifyRequest<{ Body: AuthBodyType }>, reply) => {
+    async (request: FastifyRequest<{ Body: LoginBodyType }>, reply) => {
       const authResult = await userService.login(request.body)
       setTokenCookie(reply, authResult.tokens)
       return authResult
@@ -21,7 +21,7 @@ const authRoute: FastifyPluginAsyncWithZod = async (fastify) => {
   fastify.post(
     '/register',
     { schema: registerSchema },
-    async (request: FastifyRequest<{ Body: AuthBodyType }>, reply) => {
+    async (request: FastifyRequest<{ Body: RegisterBodyType }>, reply) => {
       const authResult = await userService.register(request.body)
       setTokenCookie(reply, authResult.tokens)
       return authResult

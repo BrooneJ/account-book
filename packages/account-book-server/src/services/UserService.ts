@@ -10,11 +10,13 @@ import { User } from '@prisma/client'
 
 const SALT_ROUNDS = 10
 
-interface AuthParams {
+type RegisterParams = {
   email: string
   password: string
   username: string
 }
+
+type LoginParams = Omit<RegisterParams, 'username'>
 
 class UserService {
   private static instance: UserService
@@ -76,7 +78,7 @@ class UserService {
     }
   }
 
-  async register({ email, password, username }: AuthParams) {
+  async register({ email, password, username }: RegisterParams) {
     const exists = await db.user.findUnique({
       where: {
         email,
@@ -103,7 +105,7 @@ class UserService {
     }
   }
 
-  async login({ email, password, username }: AuthParams) {
+  async login({ email, password }: LoginParams) {
     const user = await db.user.findUnique({
       where: {
         email,

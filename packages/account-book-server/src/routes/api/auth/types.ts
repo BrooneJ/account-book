@@ -1,4 +1,5 @@
-import { AuthBody } from './schema'
+import { LoginBody, RegisterAuthBody } from './schema'
 import { z } from 'zod'
 
-export type AuthBodyType = z.infer<typeof AuthBody>
+export type RegisterBodyType = z.infer<typeof RegisterAuthBody>
+export type LoginBodyType = z.infer<typeof LoginBody>
