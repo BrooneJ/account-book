@@ -24,7 +24,7 @@ export async function actions(data: FormData) {
     createCookieHeaders(validatedResult.data.tokens);
     return { user: validatedResult.data.user };
   } else {
-    console.log("errors: ", validatedResult.error);
+    return { error: result };
   }
 }
 

@@ -1,7 +1,7 @@
 "use client";
 import Header from "@/app/ui/Header/Header";
 import HeaderBackButton from "@/app/ui/Header/HeaderBackButton";
-import { useGoBack } from "@/hooks/useGoBack";
+import { useGoBack } from "@/app/hooks/useGoBack";
 import { Input } from "@/app/ui/loginRegister/Input";
 import { Button } from "@/app/ui/loginRegister/Button";
 import Link from "next/link";
@@ -9,6 +9,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { actions } from "@/app/actions";
+import { useTransition } from "react";
+import { extractError } from "@/app/lib/error";
 
 const schema = z.object({
   email: z.string().email(),
@@ -18,37 +20,78 @@ const schema = z.object({
 export type Schema = z.infer<typeof schema>;
 
 export default function Login() {
+  const [isPending, startTransition] = useTransition();
   const onClick = useGoBack();
   const {
     register,
     handleSubmit,
-    watch,
+    setError,
     formState: { errors },
   } = useForm<Schema>({
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = handleSubmit(async (data: Schema) => {
-    await actions(data);
+  const onSubmit = handleSubmit((data: Schema) => {
+    startTransition(async () => {
+      try {
+        const result = await actions(data);
+        if (result.error) {
+          const error = extractError(result.error);
+          if (error.statusCode > 400) {
+            setError("root.serverError", {
+              type: error.name,
+            });
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    });
   });
 
   return (
-    <>
+    <div className="h-full flex flex-col">
       <Header headerLeft={<HeaderBackButton onClick={onClick} />} />
       <div className="text-2xl pl-1 pt-10 font-semibold">
         <span className="font-extrabold text-4xl">ログイン</span>して
         <br />
         サービスを楽しみましょう！
       </div>
-      <form onSubmit={onSubmit}>
-        <div className="pt-[50px] h-40 flex flex-col justify-between">
-          <Input {...register("email")} placeholder="メールアドレス" />
-          {errors.email?.message && <p>{errors.email?.message}</p>}
-          <Input {...register("password")} placeholder="パスワード" />
-          {errors.password?.message && <p>{errors.password?.message}</p>}
+      <form
+        className="flex flex-col flex-grow justify-between"
+        onSubmit={onSubmit}
+      >
+        <div className="pt-[50px] h-44 flex flex-col justify-between">
+          <div>
+            <Input {...register("email")} placeholder="メールアドレス" />
+            <div className="h-2">
+              {errors.email?.message && (
+                <p className="text-sm text-caution">{errors.email?.message}</p>
+              )}
+            </div>
+          </div>
+          <div>
+            <Input
+              type="password"
+              {...register("password")}
+              placeholder="パスワード"
+            />
+            <div className="h-2">
+              {errors.password?.message && (
+                <p className="text-sm text-caution">
+                  {errors.password?.message}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
-        <div className="pt-56 flex flex-col items-center">
-          <Button type="submit" layoutMode="fullWidth">
+        <div className="flex flex-col items-center">
+          {errors.root?.serverError?.type === "AuthenticationError" && (
+            <p className="text-caution pb-1">
+              ユーザー情報が一致していません。
+            </p>
+          )}
+          <Button type="submit" layoutMode="fullWidth" disabled={isPending}>
             ログイン
           </Button>
           <span className="text-[19px] pt-2">
@@ -59,6 +102,6 @@ export default function Login() {
           </span>
         </div>
       </form>
-    </>
+    </div>
   );
 }

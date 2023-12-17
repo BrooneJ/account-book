@@ -20,6 +20,7 @@ const config: Config = {
       secondary: "#FEF300",
       point: "#81A003",
       sub: "#FBF1B2",
+      caution: "#EF5D5D",
     },
   },
   plugins: [],
