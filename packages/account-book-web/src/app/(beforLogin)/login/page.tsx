@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { actions } from "@/app/actions";
+import { actions } from "@/app/(beforLogin)/_lib/actions";
 import { useTransition } from "react";
 import { extractError } from "@/app/lib/error";
 

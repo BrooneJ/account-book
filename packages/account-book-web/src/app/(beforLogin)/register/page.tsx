@@ -10,7 +10,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTransition } from "react";
 import { extractError } from "@/app/lib/error";
-import { actions } from "@/app/actions";
+import { actions } from "@/app/(beforLogin)/_lib/actions";
 
 const schema = z.object({
   username: z.string().min(4).max(20),
