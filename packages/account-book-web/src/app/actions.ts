@@ -2,14 +2,15 @@
 
 import { z } from "zod";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 type FormData = {
   email: string;
   password: string;
 };
 
-export async function actions(data: FormData) {
-  const response = await fetch("http://localhost:4000/api/auth/login", {
+export async function actions(endpoint: string, data: FormData) {
+  const response = await fetch(`http://localhost:4000/api/auth/${endpoint}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -22,7 +23,7 @@ export async function actions(data: FormData) {
 
   if (validatedResult.success) {
     createCookieHeaders(validatedResult.data.tokens);
-    return { user: validatedResult.data.user };
+    return redirect("/home");
   } else {
     return { error: result };
   }

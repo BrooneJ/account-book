@@ -34,7 +34,7 @@ export default function Login() {
   const onSubmit = handleSubmit((data: Schema) => {
     startTransition(async () => {
       try {
-        const result = await actions(data);
+        const result = await actions("login", data);
         if (result.error) {
           const error = extractError(result.error);
           if (error.statusCode > 400) {
