@@ -10,8 +10,7 @@ const authPluginAsync: FastifyPluginAsync = async (fastify) => {
   fastify.addHook('preHandler', async (request, reply) => {
     const token =
       request.headers.authorization?.split('Bearer ')[1] ??
-      request.cookies.access_token
-
+      request.cookies.accessToken
     if (!token) return
 
     try {

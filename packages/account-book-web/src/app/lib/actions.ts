@@ -16,6 +16,7 @@ export async function actions(endpoint: string, data: FormData) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
+    cache: "no-cache",
     credentials: "include",
   });
   const result = await response.json();

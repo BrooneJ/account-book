@@ -1,11 +1,15 @@
-import { cookies } from "next/headers";
+import { getMyAccount } from "@/app/lib/getMyAccount";
+import { redirect } from "next/navigation";
 
-export default function AfterLoginLayout({
+export default async function AfterLoginLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = cookies();
-  console.log("cookie: ", cookieStore.get("accessToken"));
+  const me = await getMyAccount();
+  if (me.statusCode) {
+    return redirect("/login");
+  }
+
   return <div className="px-5 pb-[20px] h-full">{children}</div>;
 }
