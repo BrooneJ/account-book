@@ -21,6 +21,7 @@ const config: Config = {
       point: "#81A003",
       sub: "#FBF1B2",
       caution: "#EF5D5D",
+      background: "#f6f6f4",
     },
   },
   plugins: [],
