@@ -2,8 +2,8 @@
 
 import { useProtectedRoute } from "@/app/hooks/useProtectedRoute";
 
-export default function Page() {
+export default function writeAccountBookPage() {
   const hasPermission = useProtectedRoute();
   if (!hasPermission) return null;
-  return <div>home</div>;
+  return <div>writeAccountBook</div>;
 }

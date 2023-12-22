@@ -1,5 +1,6 @@
 import { getMyAccount } from "@/app/lib/getMyAccount";
 import { redirect } from "next/navigation";
+import { UserProvider } from "@/app/contexts/UserContext";
 
 export default async function AfterLoginLayout({
   children,
@@ -11,5 +12,9 @@ export default async function AfterLoginLayout({
     return redirect("/login");
   }
 
-  return <div className="px-5 pb-[20px] h-full">{children}</div>;
+  return (
+    <div className="px-5 pb-[20px] h-full">
+      <UserProvider user={me}>{children}</UserProvider>
+    </div>
+  );
 }
