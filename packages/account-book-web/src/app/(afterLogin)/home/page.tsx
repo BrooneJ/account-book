@@ -1,9 +1,8 @@
 "use client";
 
-import { useProtectedRoute } from "@/app/hooks/useProtectedRoute";
+import { useUser } from "@/app/contexts/UserContext";
 
 export default function Page() {
-  const hasPermission = useProtectedRoute();
-  if (!hasPermission) return null;
+  const user = useUser();
   return <div>home</div>;
 }
