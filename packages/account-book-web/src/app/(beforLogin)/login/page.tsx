@@ -1,5 +1,5 @@
 "use client";
-import Header from "@/app/ui/Header/Header";
+import Header from "@/app/ui/Header";
 import HeaderBackButton from "@/app/ui/Header/HeaderBackButton";
 import { useGoBack } from "@/app/hooks/useGoBack";
 import { Input } from "@/app/ui/loginRegister/Input";
