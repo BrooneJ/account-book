@@ -20,6 +20,7 @@ model User {
   createdAt    DateTime      @default(now())
   token        Token[]
   userAccount  UserAccount[]
+  transactions Transaction[]
 }
 
 model Token {
@@ -33,7 +34,6 @@ model Token {
 model Account {
   id           String        @id @default(uuid())
   name         String
-  accountType  String // 예: "CASH", "BANK_ACCOUNT", "CREDIT_CARD"
   balance      Float
   createdAt    DateTime      @default(now())
   transactions Transaction[]
@@ -51,14 +51,17 @@ model UserAccount {
 }
 
 model Transaction {
-  id         String   @id @default(uuid())
-  accountId  String
-  amount     Int
-  type       String
-  createdAt  DateTime @default(now())
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId String
-  Account    Account? @relation(fields: [accountId], references: [id])
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  accountId   String
+  amount      Int
+  type        String
+  description String?
+  createdAt   DateTime  @default(now())
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  Account     Account   @relation(fields: [accountId], references: [id])
 }
 
 model Category {
