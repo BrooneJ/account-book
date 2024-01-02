@@ -24,7 +24,7 @@ class AccountBookService {
         account: true,
       },
     })
-    console.log('accountBooks: ', accountBooks)
+
     return accountBooks
   }
 
@@ -55,10 +55,30 @@ class AccountBookService {
         },
       },
     })
-    console.log('accountBook: ', accountBook)
+
     if (!accountBook) {
       throw new Error('Account book not found')
     }
+    return accountBook
+  }
+
+  async createAccountBook(name: string, userId: string) {
+    const accountBook = await db.account.create({
+      data: {
+        name,
+        balance: 0,
+        userAccounts: {
+          create: {
+            userId,
+          },
+        },
+      },
+      include: {
+        userAccounts: true,
+        transactions: true,
+      },
+    })
+
     return accountBook
   }
 }
