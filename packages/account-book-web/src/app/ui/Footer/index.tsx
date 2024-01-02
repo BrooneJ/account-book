@@ -60,7 +60,7 @@ const iconMap = {
 
 function Footer() {
   const segment = useSelectedLayoutSegment();
-  console.log(segment);
+
   return (
     <footer className="fixed bottom-0 left-0 w-full h-16 bg-background border-t border-gray-1 flex justify-around items-center">
       <Link href="/home">

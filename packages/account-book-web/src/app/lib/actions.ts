@@ -39,10 +39,22 @@ function createCookieHeaders(setCookieHeader: ResponseType["tokens"]) {
     throw new Error("No cookies");
   }
   Object.entries(setCookieHeader).forEach(([key, value]) => {
-    cookies().set(key, value, {
-      httpOnly: true,
-      path: "/",
-    });
+    if (key === "accessToken") {
+      cookies().set("access_token", value, {
+        httpOnly: true,
+        path: "/",
+        expires: new Date(Date.now() + 1000 * 60 * 60),
+      });
+      return;
+    }
+    if (key === "refreshToken") {
+      cookies().set("refresh_token", value, {
+        httpOnly: true,
+        path: "/",
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      });
+      return;
+    }
   });
 }
 
