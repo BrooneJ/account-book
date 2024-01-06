@@ -1,8 +1,24 @@
-"use client";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
+import { getAccount } from "@/app/lib/getAccount";
+import { getMyAccount } from "@/app/lib/getMyAccount";
 
-import { useUser } from "@/app/contexts/UserContext";
+export default async function Page() {
+  const me = await getMyAccount();
 
-export default function Page() {
-  const user = useUser();
-  return <div>home</div>;
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ["account", me?.id],
+    queryFn: () => getAccount(me?.id!),
+  });
+  const dehydratedState = dehydrate(queryClient);
+
+  return (
+    <div>
+      <HydrationBoundary state={dehydratedState}>home</HydrationBoundary>
+    </div>
+  );
 }
