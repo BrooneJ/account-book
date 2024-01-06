@@ -22,6 +22,7 @@ const config: Config = {
       sub: "#FBF1B2",
       caution: "#EF5D5D",
       background: "#f6f6f4",
+      white: "#ffffff",
     },
   },
   plugins: [],

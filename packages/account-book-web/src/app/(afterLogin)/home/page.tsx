@@ -5,6 +5,7 @@ import {
 } from "@tanstack/react-query";
 import { getAccount } from "@/app/lib/getAccount";
 import { getMyAccount } from "@/app/lib/getMyAccount";
+import HomeComponent from "@/app/ui/Home/HomeComponent";
 
 export default async function Page() {
   const me = await getMyAccount();
@@ -18,7 +19,9 @@ export default async function Page() {
 
   return (
     <div>
-      <HydrationBoundary state={dehydratedState}>home</HydrationBoundary>
+      <HydrationBoundary state={dehydratedState}>
+        <HomeComponent />
+      </HydrationBoundary>
     </div>
   );
 }

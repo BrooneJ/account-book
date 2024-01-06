@@ -21,7 +21,7 @@ export function Button({
     <button
       {...rest}
       className={clsx(
-        "h-[50px] rounded-xl text-white font-bold flex justify-center items-center",
+        "h-[50px] rounded-xl font-bold flex justify-center items-center",
         {
           "bg-primary": mode === "login",
           "bg-secondary": mode === "register",
