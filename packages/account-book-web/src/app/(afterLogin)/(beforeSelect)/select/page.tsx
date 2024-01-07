@@ -18,10 +18,8 @@ export default async function Page() {
   const dehydratedState = dehydrate(queryClient);
 
   return (
-    <div>
-      <HydrationBoundary state={dehydratedState}>
-        <HomeComponent />
-      </HydrationBoundary>
-    </div>
+    <HydrationBoundary state={dehydratedState}>
+      <HomeComponent />
+    </HydrationBoundary>
   );
 }

@@ -13,5 +13,5 @@ export default function HomeComponent() {
   });
   console.log("component data: ", data);
 
-  return data.length > 0 ? <AccountSelect /> : <NoneAccountHome />;
+  return data.length > 0 ? <AccountSelect data={data} /> : <NoneAccountHome />;
 }
