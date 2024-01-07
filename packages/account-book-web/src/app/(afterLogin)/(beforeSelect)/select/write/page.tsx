@@ -1,15 +1,15 @@
 "use client";
 
+import { z } from "zod";
+import { useTransition } from "react";
+import { useGoBack } from "@/app/hooks/useGoBack";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createAccount } from "@/app/lib/createAccount";
 import Header from "@/app/ui/Header";
 import HeaderBackButton from "@/app/ui/Header/HeaderBackButton";
-import { useGoBack } from "@/app/hooks/useGoBack";
 import { Input } from "@/app/ui/loginRegister/Input";
-import { useForm } from "react-hook-form";
 import { Button } from "@/app/ui/loginRegister/Button";
-import { useTransition } from "react";
-import { z } from "zod";
-import { createAccount } from "@/app/lib/createAccount";
-import { zodResolver } from "@hookform/resolvers/zod";
 
 const schema = z.object({
   type: z.string(),
@@ -39,7 +39,7 @@ export default function Page() {
 
   return (
     <form className="h-full" onSubmit={onSubmit}>
-      <div className="flex flex-col justify-between h-full pb-14">
+      <div className="flex flex-col justify-between h-full">
         <div>
           <Header headerLeft={<HeaderBackButton onClick={onClick} />} />
           <span>管理人数</span>

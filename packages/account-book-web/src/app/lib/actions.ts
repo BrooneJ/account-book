@@ -24,7 +24,7 @@ export async function actions(endpoint: string, data: FormData) {
 
   if (validatedResult.success) {
     createCookieHeaders(validatedResult.data.tokens);
-    return redirect("/home");
+    return redirect("/select");
   } else {
     return { error: result };
   }

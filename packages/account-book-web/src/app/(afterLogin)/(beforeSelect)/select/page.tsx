@@ -1,10 +1,10 @@
+import { getMyAccount } from "@/app/lib/getMyAccount";
 import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
 import { getAccount } from "@/app/lib/getAccount";
-import { getMyAccount } from "@/app/lib/getMyAccount";
 import HomeComponent from "@/app/ui/Home/HomeComponent";
 
 export default async function Page() {

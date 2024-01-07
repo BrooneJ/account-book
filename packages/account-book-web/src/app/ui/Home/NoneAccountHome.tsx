@@ -18,7 +18,7 @@ export default function NoneAccountHome() {
           <br />
           <span className="text-2xl font-bold">家計簿</span>の追加が必要です！
         </span>
-        <Link href="/home/write">
+        <Link href="/select/write">
           <div className="flex items-center justify-center rounded-3xl bg-primary w-[150px] h-12 text-white shadow">
             <Image src="/images/plus.svg" alt="plus" width={20} height={20} />
             <span className="text-xl pl-[18px]">追加</span>
