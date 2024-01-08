@@ -25,7 +25,7 @@ export default function AccountSelect({ data }: { data: AccountData[] }) {
               key={item.account.id}
               onClick={() => setAccount(item.account.id)}
             >
-              <Link href="/home">{item.account.name}</Link>
+              <Link href={`/${item.account.id}`}>{item.account.name}</Link>
             </div>
           );
         })}
