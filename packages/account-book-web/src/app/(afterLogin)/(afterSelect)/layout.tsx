@@ -4,8 +4,10 @@ import Footer from "@/app/ui/Footer";
 
 export default async function AfterLoginLayout({
   children,
+  modal,
 }: {
   children: React.ReactNode;
+  modal: React.ReactNode;
 }) {
   const me = await getMyAccount();
   if (me.statusCode) {
@@ -15,6 +17,7 @@ export default async function AfterLoginLayout({
   return (
     <>
       {children}
+      {modal}
       <Footer />
     </>
   );

@@ -93,7 +93,7 @@ function Footer() {
           </span>
         </div>
       </Link>
-      <Link href={`/${segment}/writeAccountBook`}>
+      <Link href={`/${segment}/writeTransaction`}>
         <div className="flex flex-col items-center">{iconMap.plusCircle}</div>
       </Link>
       <Link href={`/${segment}/calendar`}>
