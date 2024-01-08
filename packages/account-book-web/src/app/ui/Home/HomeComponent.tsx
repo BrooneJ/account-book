@@ -11,7 +11,6 @@ export default function HomeComponent() {
     queryKey: ["account", user?.id],
     queryFn: () => getAccount(user?.id!),
   });
-  console.log("component data: ", data);
 
   return data.length > 0 ? <AccountSelect data={data} /> : <NoneAccountHome />;
 }
