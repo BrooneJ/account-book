@@ -68,6 +68,7 @@ model Category {
   id              String        @id @default(uuid())
   accountId       String
   name            String
+  type            String
   defaultCategory Boolean       @default(false)
   account         Account       @relation(fields: [accountId], references: [id])
   transactions    Transaction[]
