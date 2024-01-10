@@ -1,12 +1,41 @@
 "use client";
 import Image from "next/image";
 import { useGoBack } from "@/app/hooks/useGoBack";
-import { useState } from "react";
+import { FormEvent, useState, useTransition } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getCategory } from "@/app/lib/getCategory";
+import { Button } from "@/app/ui/loginRegister/Button";
+import { useForm } from "react-hook-form";
+import { createCategory } from "@/app/lib/createCategory";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 type IncomeType = "income" | "expense";
+const schema = z.object({
+  name: z.string(),
+});
+export type Schema = z.infer<typeof schema>;
 
-export default function Page() {
+const oldData = z.object({
+  income: z.array(z.string()),
+  expense: z.array(z.string()),
+});
+
+type OldData = z.infer<typeof oldData>;
+
+export default function Page({ params }: { params: { accountId: string } }) {
   const goBack = useGoBack();
+  const accountId = params.accountId;
+
+  const { register, handleSubmit } = useForm<Schema>({
+    resolver: zodResolver(schema),
+  });
+
+  const { data } = useQuery({
+    queryKey: ["categories", accountId],
+    queryFn: () => getCategory(accountId),
+  });
+
   const [isCamera, setIsCamera] = useState(false);
   const [isIncome, setIsIncome] = useState<IncomeType>("income");
 
@@ -14,9 +43,47 @@ export default function Page() {
     new Date().toISOString().split("T")[0],
   );
 
+  const [selectCategory, setSelectCategory] = useState(false);
+
   const handleDateChange = (e: any) => {
     setSelectedDate(e.target.value);
   };
+
+  const [isPending, startTransition] = useTransition();
+
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (e: FormEvent) => {
+      e.preventDefault();
+
+      const categoryData = {
+        name: e.target.name.value,
+        type: isIncome,
+      };
+      //
+      try {
+        const result = await createCategory(categoryData, accountId);
+        return result;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    onSuccess: (response) => {
+      queryClient.setQueryData(
+        ["categories", accountId],
+        (oldData: OldData) => {
+          return {
+            ...oldData,
+            [response.type]: [...oldData[isIncome], response.name],
+          };
+        },
+      );
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
 
   return (
     <div className="absolute h-screen w-full bg-black bg-opacity-40 top-0 left-0 z-10">
@@ -88,7 +155,68 @@ export default function Page() {
             onChange={handleDateChange}
           />
         </div>
+        <div className="mt-3 flex items-center justify-between">
+          <span className="text-2xl">カテゴリ</span>
+          <div onClick={() => setSelectCategory(true)}>未登録</div>
+        </div>
       </div>
+      {selectCategory ? (
+        <div className="absolute h-90vh bottom-0 p-5 bg-background w-full rounded-t-xl flex flex-col">
+          <span className="text-2xl font-bold">カテゴリー</span>
+          <form onSubmit={mutation.mutate}>
+            <div className="mt-6 relative flex items-center">
+              <input
+                name="name"
+                className="py-3 px-5 rounded-3xl border border-gray-1 w-full"
+                placeholder="新しい項目を作成"
+              />
+              <button className="bg-primary p-2 rounded-3xl absolute right-2">
+                <Image
+                  src="/images/plus.svg"
+                  alt="plus"
+                  width={20}
+                  height={20}
+                />
+              </button>
+            </div>
+          </form>
+          <span className="block text-right py-2 mr-2">編集</span>
+          <div className="h-2/3">
+            {isIncome === "income" ? (
+              <div className="flex flex-wrap">
+                {data?.income.map((category: string) => (
+                  <div
+                    tabIndex={0}
+                    className="border border-2 border-gray-1 text-gray-1 rounded-lg p-2 m-1 focus:border-primary focus:border-2 focus:text-point"
+                    key={category}
+                  >
+                    {category}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-wrap">
+                {data?.expense.map((category: string) => (
+                  <div
+                    tabIndex={0}
+                    className="border border-2 border-gray-1 text-gray-1 rounded-lg p-2 m-1 focus:border-primary focus:border-2 focus:text-point"
+                    key={category}
+                  >
+                    {category}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <Button
+            layoutMode="fullWidth"
+            disabled={false}
+            onClick={() => setSelectCategory(false)}
+          >
+            選択
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }
