@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useGoBack } from "@/app/hooks/useGoBack";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCategory } from "@/app/lib/getCategory";
 import { Button } from "@/app/ui/loginRegister/Button";
@@ -36,6 +36,8 @@ export default function Page({ params }: { params: { accountId: string } }) {
 
   const [selectCategory, setSelectCategory] = useState(false);
 
+  const [errorMessages, setErrorMessages] = useState("");
+
   const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedDate(e.target.value);
   };
@@ -53,15 +55,12 @@ export default function Page({ params }: { params: { accountId: string } }) {
         name: name.value,
         type: isIncome,
       };
-      //
-      try {
-        const result = await createCategory(categoryData, accountId);
-        return result;
-      } catch (error) {
-        console.log(error);
-      }
+
+      const result = await createCategory(categoryData, accountId);
+      return result;
     },
     onSuccess: (response) => {
+      setErrorMessages("");
       queryClient.setQueryData(
         ["categories", accountId],
         (oldData: OldData) => {
@@ -73,7 +72,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
       );
     },
     onError: (error) => {
-      console.log(error);
+      setErrorMessages(error.toString());
     },
   });
 
@@ -172,8 +171,13 @@ export default function Page({ params }: { params: { accountId: string } }) {
               </button>
             </div>
           </form>
-          <span className="block text-right py-2 mr-2">編集</span>
-          <div className="h-2/3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-caution ml-2">
+              {errorMessages ? errorMessages.split(":")[1] : ""}
+            </span>
+            <span className="block text-right py-2 mr-2">編集</span>
+          </div>
+          <div className="h-2/3 overflow-scroll">
             {isIncome === "income" ? (
               <div className="flex flex-wrap">
                 {data?.income.map((category: string) => (

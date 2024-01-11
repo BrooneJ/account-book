@@ -35,6 +35,17 @@ class CategoryService {
   }
 
   async createCategory(accountId: string, type: string, name: string) {
+    const existingCategory = await db.category.findFirst({
+      where: {
+        accountId,
+        type,
+        name,
+      },
+    })
+    if (existingCategory) {
+      throw new Error('入力したカテゴリーが既に存在します。')
+    }
+
     const category = await db.category.create({
       data: {
         accountId,
