@@ -1,20 +1,15 @@
 "use client";
+
 import Image from "next/image";
 import { useGoBack } from "@/app/hooks/useGoBack";
-import { FormEvent, useState, useTransition } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCategory } from "@/app/lib/getCategory";
 import { Button } from "@/app/ui/loginRegister/Button";
-import { useForm } from "react-hook-form";
 import { createCategory } from "@/app/lib/createCategory";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 type IncomeType = "income" | "expense";
-const schema = z.object({
-  name: z.string(),
-});
-export type Schema = z.infer<typeof schema>;
 
 const oldData = z.object({
   income: z.array(z.string()),
@@ -26,10 +21,6 @@ type OldData = z.infer<typeof oldData>;
 export default function Page({ params }: { params: { accountId: string } }) {
   const goBack = useGoBack();
   const accountId = params.accountId;
-
-  const { register, handleSubmit } = useForm<Schema>({
-    resolver: zodResolver(schema),
-  });
 
   const { data } = useQuery({
     queryKey: ["categories", accountId],
@@ -45,20 +36,21 @@ export default function Page({ params }: { params: { accountId: string } }) {
 
   const [selectCategory, setSelectCategory] = useState(false);
 
-  const handleDateChange = (e: any) => {
+  const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedDate(e.target.value);
   };
-
-  const [isPending, startTransition] = useTransition();
 
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: async (e: FormEvent) => {
+    mutationFn: async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
+      const form = e.target as HTMLFormElement;
+      const name = form.elements.namedItem("name") as HTMLInputElement;
+
       const categoryData = {
-        name: e.target.name.value,
+        name: name.value,
         type: isIncome,
       };
       //
