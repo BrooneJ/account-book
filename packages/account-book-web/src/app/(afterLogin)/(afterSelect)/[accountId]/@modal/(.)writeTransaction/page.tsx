@@ -72,7 +72,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
       );
     },
     onError: (error) => {
-      setErrorMessages(error.toString());
+      setErrorMessages("カテゴリーが既に登録されています。");
     },
   });
 
@@ -172,9 +172,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
             </div>
           </form>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-caution ml-2">
-              {errorMessages ? errorMessages.split(":")[1] : ""}
-            </span>
+            <span className="text-sm text-caution ml-2">{errorMessages}</span>
             <span className="block text-right py-2 mr-2">編集</span>
           </div>
           <div className="h-2/3 overflow-scroll">

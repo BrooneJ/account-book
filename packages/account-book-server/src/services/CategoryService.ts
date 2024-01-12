@@ -1,4 +1,5 @@
 import db from '../lib/db'
+import AppError from '../lib/AppError'
 
 type CategoryObject = {
   income: string[]
@@ -43,7 +44,7 @@ class CategoryService {
       },
     })
     if (existingCategory) {
-      throw new Error('入力したカテゴリーが既に存在します。')
+      throw new AppError('CategoryExistsError')
     }
 
     const category = await db.category.create({

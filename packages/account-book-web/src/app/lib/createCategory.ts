@@ -22,7 +22,7 @@ export async function createCategory(data: FormData, accountId: string) {
     },
   );
   const result = await response.json();
-  if (result.statusCode === 500) {
+  if (result.statusCode === 409) {
     throw new Error(result.message);
   }
   return result;

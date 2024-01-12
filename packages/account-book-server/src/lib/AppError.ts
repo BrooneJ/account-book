@@ -8,6 +8,7 @@ type ErrorName =
   | 'TokenExpiredError'
   | 'BadRequestError'
   | 'RefreshTokenError'
+  | 'CategoryExistsError'
 
 type ErrorInfo = {
   statusCode: number
@@ -42,6 +43,10 @@ const statusCodeMap: Record<ErrorName, ErrorInfo> = {
   RefreshTokenError: {
     statusCode: 401,
     message: 'Refresh token error',
+  },
+  CategoryExistsError: {
+    statusCode: 409,
+    message: 'Category already exists',
   },
 }
 
