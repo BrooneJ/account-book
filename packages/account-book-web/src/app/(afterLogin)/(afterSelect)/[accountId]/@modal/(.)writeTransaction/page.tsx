@@ -197,7 +197,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
       </div>
       {selectCategory ? (
         <div className="absolute h-90vh bottom-0 p-5 bg-background w-full rounded-t-xl flex flex-col">
-          <span className="text-2xl font-bold">収入源</span>
+          <span className="text-2xl font-bold">カテゴリー</span>
           <form onSubmit={mutationCategory.mutate}>
             <div className="mt-6 relative flex items-center">
               <input
