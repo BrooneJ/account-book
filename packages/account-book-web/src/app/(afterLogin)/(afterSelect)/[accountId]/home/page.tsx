@@ -13,7 +13,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
   });
 
   return (
-    <div className="mt-5">
+    <div className="pt-5">
       <div className="flex items-center">
         <span className="text-2xl">{data?.name}</span>
         <Link href="/select">
