@@ -56,6 +56,19 @@ class CategoryService {
     })
     return category
   }
+
+  async deleteCategory(accountId: string, type: string, name: string[]) {
+    const deleteResult = await db.category.deleteMany({
+      where: {
+        accountId,
+        type,
+        name: {
+          in: name,
+        },
+      },
+    })
+    return deleteResult
+  }
 }
 
 export default CategoryService

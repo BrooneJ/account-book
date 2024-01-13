@@ -26,3 +26,14 @@ export const createCategorySchema = routeSchema({
     name: z.string(),
   }),
 })
+
+export const deleteCategorySchema = routeSchema({
+  tags: ['category'],
+  params: z.object({
+    accountId: z.string(),
+  }),
+  body: z.object({
+    type: z.string(),
+    name: z.array(z.string()),
+  }),
+})

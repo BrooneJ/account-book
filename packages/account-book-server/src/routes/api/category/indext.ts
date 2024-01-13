@@ -1,7 +1,11 @@
 import { FastifyPluginAsyncWithZod } from '../../../lib/types'
 import securedPlugin from '../../../plugins/securedPlugin'
 import CategoryService from '../../../services/CategoryService'
-import { createCategorySchema, getCategoriesSchema } from './schema'
+import {
+  createCategorySchema,
+  deleteCategorySchema,
+  getCategoriesSchema,
+} from './schema'
 
 const categoryRouter: FastifyPluginAsyncWithZod = async (fastify) => {
   fastify.register(securedPlugin)
@@ -23,6 +27,16 @@ const categoryRouter: FastifyPluginAsyncWithZod = async (fastify) => {
       const { accountId } = request.params
       const { type, name } = request.body
       return categoryService.createCategory(accountId, type, name)
+    },
+  )
+
+  fastify.delete(
+    '/:accountId',
+    { schema: deleteCategorySchema },
+    async (request, reply) => {
+      const { accountId } = request.params
+      const { type, name } = request.body
+      return categoryService.deleteCategory(accountId, type, name)
     },
   )
 }
