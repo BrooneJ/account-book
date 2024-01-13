@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useGoBack } from "@/app/hooks/useGoBack";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCategory } from "@/app/lib/getCategory";
 import { Button } from "@/app/ui/loginRegister/Button";
@@ -38,6 +38,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
 
   const [errorMessages, setErrorMessages] = useState("");
 
+  const [inputValue, setInputValue] = useState("");
   const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedDate(e.target.value);
   };
@@ -47,6 +48,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
   const mutation = useMutation({
     mutationFn: async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+      setInputValue("");
 
       const form = e.target as HTMLFormElement;
       const name = form.elements.namedItem("name") as HTMLInputElement;
@@ -157,6 +159,8 @@ export default function Page({ params }: { params: { accountId: string } }) {
           <form onSubmit={mutation.mutate}>
             <div className="mt-6 relative flex items-center">
               <input
+                onChange={(e) => setInputValue(e.target.value)}
+                value={inputValue}
                 name="name"
                 className="py-3 px-5 rounded-3xl border border-gray-1 w-full"
                 placeholder="新しい項目を作成"
