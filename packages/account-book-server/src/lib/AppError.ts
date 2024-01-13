@@ -9,6 +9,7 @@ type ErrorName =
   | 'BadRequestError'
   | 'RefreshTokenError'
   | 'CategoryExistsError'
+  | 'SourceExistsError'
 
 type ErrorInfo = {
   statusCode: number
@@ -47,6 +48,10 @@ const statusCodeMap: Record<ErrorName, ErrorInfo> = {
   CategoryExistsError: {
     statusCode: 409,
     message: 'Category already exists',
+  },
+  SourceExistsError: {
+    statusCode: 409,
+    message: 'Source already exists',
   },
 }
 

@@ -32,13 +32,14 @@ model Token {
 }
 
 model Account {
-  id           String        @id @default(uuid())
-  name         String
-  balance      Float
-  createdAt    DateTime      @default(now())
-  transactions Transaction[]
-  userAccounts UserAccount[]
-  Category     Category[]
+  id              String            @id @default(uuid())
+  name            String
+  balance         Float
+  createdAt       DateTime          @default(now())
+  transactions    Transaction[]
+  userAccounts    UserAccount[]
+  category        Category[]
+  financialSource FinancialSource[]
 }
 
 model UserAccount {
@@ -51,17 +52,19 @@ model UserAccount {
 }
 
 model Transaction {
-  id          String    @id @default(uuid())
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
-  accountId   String
-  amount      Int
-  type        String
-  description String?
-  createdAt   DateTime  @default(now())
-  category    Category? @relation(fields: [categoryId], references: [id])
-  categoryId  String
-  Account     Account   @relation(fields: [accountId], references: [id])
+  id                String          @id @default(uuid())
+  userId            String
+  user              User            @relation(fields: [userId], references: [id])
+  accountId         String
+  amount            Int
+  type              String
+  description       String?
+  createdAt         DateTime        @default(now())
+  category          Category        @relation(fields: [categoryId], references: [id])
+  categoryId        String
+  Account           Account         @relation(fields: [accountId], references: [id])
+  financialSource   FinancialSource @relation(fields: [financialSourceId], references: [id])
+  financialSourceId String
 }
 
 model Category {
@@ -72,4 +75,13 @@ model Category {
   defaultCategory Boolean       @default(false)
   account         Account       @relation(fields: [accountId], references: [id])
   transactions    Transaction[]
+}
+
+model FinancialSource {
+  id           String        @id @default(uuid())
+  accountId    String
+  account      Account       @relation(fields: [accountId], references: [id])
+  name         String
+  type         String
+  transactions Transaction[]
 }
