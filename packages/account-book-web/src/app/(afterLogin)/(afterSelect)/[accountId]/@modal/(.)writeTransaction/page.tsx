@@ -5,10 +5,10 @@ import { useGoBack } from "@/app/hooks/useGoBack";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCategory } from "@/app/lib/getCategory";
-import { Button } from "@/app/ui/loginRegister/Button";
 import { createCategory } from "@/app/lib/createCategory";
 import { z } from "zod";
 import { createSource, getSource } from "@/app/lib/financialSource";
+import TransactionCommon from "@/app/ui/Modal/Common/TransactionCommom";
 
 type IncomeType = "income" | "expense";
 
@@ -45,8 +45,8 @@ export default function Page({ params }: { params: { accountId: string } }) {
 
   const [errorMessages, setErrorMessages] = useState("");
 
-  const [categoryValue, setCategoryValue] = useState("");
-  const [sourceValue, setSourceValue] = useState("");
+  const [inputValue, setInputValue] = useState("");
+
   const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedDate(e.target.value);
   };
@@ -56,7 +56,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
   const mutationCategory = useMutation({
     mutationFn: async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      setCategoryValue("");
+      setInputValue("");
 
       const form = e.target as HTMLFormElement;
       const name = form.elements.namedItem("name") as HTMLInputElement;
@@ -89,7 +89,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
   const mutationSource = useMutation({
     mutationFn: async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      setSourceValue("");
+      setInputValue("");
 
       const form = e.target as HTMLFormElement;
       const name = form.elements.namedItem("name") as HTMLInputElement;
@@ -196,129 +196,39 @@ export default function Page({ params }: { params: { accountId: string } }) {
         </div>
       </div>
       {selectCategory ? (
-        <div className="absolute h-90vh bottom-0 p-5 bg-background w-full rounded-t-xl flex flex-col">
-          <span className="text-2xl font-bold">カテゴリー</span>
-          <form onSubmit={mutationCategory.mutate}>
-            <div className="mt-6 relative flex items-center">
-              <input
-                onChange={(e) => setCategoryValue(e.target.value)}
-                value={categoryValue}
-                name="name"
-                className="py-3 px-5 rounded-3xl border border-gray-1 w-full"
-                placeholder="新しい項目を作成"
-              />
-              <button className="bg-primary p-2 rounded-3xl absolute right-2">
-                <Image
-                  src="/images/plus.svg"
-                  alt="plus"
-                  width={20}
-                  height={20}
-                />
-              </button>
-            </div>
-          </form>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-caution ml-2">{errorMessages}</span>
-            <span className="block text-right py-2 mr-2">編集</span>
-          </div>
-          <div className="h-2/3 overflow-scroll">
-            {isIncome === "income" ? (
-              <div className="flex flex-wrap">
-                {categoryData?.income.map((category: string) => (
-                  <div
-                    tabIndex={0}
-                    className="border border-2 border-gray-1 text-gray-1 rounded-lg p-2 m-1 focus:border-primary focus:border-2 focus:text-point"
-                    key={category}
-                  >
-                    {category}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-wrap">
-                {categoryData?.expense.map((category: string) => (
-                  <div
-                    tabIndex={0}
-                    className="border border-2 border-gray-1 text-gray-1 rounded-lg p-2 m-1 focus:border-primary focus:border-2 focus:text-point"
-                    key={category}
-                  >
-                    {category}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <Button
-            layoutMode="fullWidth"
-            disabled={false}
-            onClick={() => setSelectCategory(false)}
-          >
-            選択
-          </Button>
-        </div>
+        <TransactionCommon
+          title="カテゴリー"
+          mutation={mutationCategory.mutate}
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          errorMessages={errorMessages}
+          data={
+            isIncome === "income" ? categoryData?.income : categoryData?.expense
+          }
+          onClose={() => {
+            setSelectCategory(false);
+            setErrorMessages("");
+          }}
+          isIncome={isIncome}
+        />
       ) : null}
 
       {selectSource ? (
-        <div className="absolute h-90vh bottom-0 p-5 bg-background w-full rounded-t-xl flex flex-col">
-          <span className="text-2xl font-bold">収入源</span>
-          <form onSubmit={mutationSource.mutate}>
-            <div className="mt-6 relative flex items-center">
-              <input
-                onChange={(e) => setSourceValue(e.target.value)}
-                value={sourceValue}
-                name="name"
-                className="py-3 px-5 rounded-3xl border border-gray-1 w-full"
-                placeholder="新しい項目を作成"
-              />
-              <button className="bg-primary p-2 rounded-3xl absolute right-2">
-                <Image
-                  src="/images/plus.svg"
-                  alt="plus"
-                  width={20}
-                  height={20}
-                />
-              </button>
-            </div>
-          </form>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-caution ml-2">{errorMessages}</span>
-            <span className="block text-right py-2 mr-2">編集</span>
-          </div>
-          <div className="h-2/3 overflow-scroll">
-            {isIncome === "income" ? (
-              <div className="flex flex-wrap">
-                {sourceData?.income.map((source: string) => (
-                  <div
-                    tabIndex={0}
-                    className="border border-2 border-gray-1 text-gray-1 rounded-lg p-2 m-1 focus:border-primary focus:border-2 focus:text-point"
-                    key={source}
-                  >
-                    {source}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-wrap">
-                {sourceData?.expense.map((source: string) => (
-                  <div
-                    tabIndex={0}
-                    className="border border-2 border-gray-1 text-gray-1 rounded-lg p-2 m-1 focus:border-primary focus:border-2 focus:text-point"
-                    key={source}
-                  >
-                    {source}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <Button
-            layoutMode="fullWidth"
-            disabled={false}
-            onClick={() => setSelectSource(false)}
-          >
-            選択
-          </Button>
-        </div>
+        <TransactionCommon
+          title="収入源"
+          mutation={mutationSource.mutate}
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          errorMessages={errorMessages}
+          data={
+            isIncome === "income" ? sourceData?.income : sourceData?.expense
+          }
+          onClose={() => {
+            setSelectSource(false);
+            setErrorMessages("");
+          }}
+          isIncome={isIncome}
+        />
       ) : null}
     </div>
   );
