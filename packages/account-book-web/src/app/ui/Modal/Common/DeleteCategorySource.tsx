@@ -1,36 +1,34 @@
 import { Button } from "@/app/ui/loginRegister/Button";
 import { UseMutateFunction } from "@tanstack/react-query";
-import { Dispatch, SetStateAction, useTransition } from "react";
+import { useTransition } from "react";
 import Image from "next/image";
+import { StateType } from "@/app/(afterLogin)/(afterSelect)/[accountId]/@modal/(.)writeTransaction/page";
 
 type Props = {
   title: string;
   mutation: UseMutateFunction<void, Error, void, unknown>;
   data: string[];
-  setDelete: (value: boolean) => void;
-  setSelected: Dispatch<SetStateAction<string[]>>;
+  updateState: (newState: Partial<StateType>) => void; // 상태 업데이트 함수
   selected: string[];
   isIncome: string;
+  setDelete: (value: boolean) => void;
 };
 
 const DeleteCategorySource = ({
   title,
   mutation,
   data,
-  setDelete,
   selected,
-  setSelected,
+  updateState,
+  setDelete,
 }: Props) => {
   const [isPending, startTransition] = useTransition();
   const toggleItemSelection = (item: string) => {
-    setSelected((prev) => {
-      const isAlreadySelected = prev.includes(item);
-      if (isAlreadySelected) {
-        return prev.filter((i) => i !== item);
-      } else {
-        return [...prev, item];
-      }
-    });
+    if (selected.includes(item)) {
+      updateState({ selected: selected.filter((i) => i !== item) });
+    } else {
+      updateState({ selected: [...selected, item] });
+    }
   };
 
   const handleDelete = () => {
@@ -40,8 +38,6 @@ const DeleteCategorySource = ({
     });
   };
 
-  console.log(selected);
-
   return (
     <div className="absolute h-90vh bottom-0 p-5 bg-background w-full rounded-t-xl flex flex-col">
       <div className="flex justify-between pb-2">
@@ -50,9 +46,7 @@ const DeleteCategorySource = ({
           alt="backArrow"
           width={30}
           height={30}
-          onClick={() => {
-            setDelete(false);
-          }}
+          onClick={() => setDelete(false)}
         />
         <span className="text-2xl font-bold pl-2">{title}編集</span>
         <div className="w-[30px] h-[30px]"></div>

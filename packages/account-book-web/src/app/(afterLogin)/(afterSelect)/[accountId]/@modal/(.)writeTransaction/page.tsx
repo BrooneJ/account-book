@@ -28,6 +28,19 @@ const oldData = z.object({
 
 type OldData = z.infer<typeof oldData>;
 
+export type StateType = {
+  errorMessages: string;
+  isIncome: "income" | "expense";
+  selectSource: boolean;
+  inputValue: string;
+  isCamera: boolean;
+  deleteSource: boolean;
+  selectedDate: string;
+  deleteCategory: boolean;
+  selected: string[];
+  selectCategory: boolean;
+};
+
 export default function Page({ params }: { params: { accountId: string } }) {
   const goBack = useGoBack();
   const accountId = params.accountId;
@@ -42,26 +55,25 @@ export default function Page({ params }: { params: { accountId: string } }) {
     queryFn: () => getSource(accountId),
   });
 
-  const [isCamera, setIsCamera] = useState(false);
-  const [isIncome, setIsIncome] = useState<IncomeType>("income");
+  const [state, setState] = useState({
+    isCamera: false,
+    isIncome: "income" as IncomeType,
+    selectedDate: new Date().toISOString().split("T")[0],
+    selectCategory: false,
+    selectSource: false,
+    deleteCategory: false,
+    deleteSource: false,
+    selected: [] as string[],
+    errorMessages: "",
+    inputValue: "",
+  });
 
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0],
-  );
-
-  const [selectCategory, setSelectCategory] = useState(false);
-  const [selectSource, setSelectSource] = useState(false);
-  const [deleteCategory, setDeleteCategory] = useState(false);
-  const [deleteSource, setDeleteSource] = useState(false);
-
-  const [selected, setSelected] = useState<string[]>([]);
-
-  const [errorMessages, setErrorMessages] = useState("");
-
-  const [inputValue, setInputValue] = useState("");
+  const updateState = (newState: Partial<StateType>) => {
+    setState((prevState) => ({ ...prevState, ...newState }));
+  };
 
   const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSelectedDate(e.target.value);
+    updateState({ selectedDate: e.target.value });
   };
 
   const queryClient = useQueryClient();
@@ -69,39 +81,39 @@ export default function Page({ params }: { params: { accountId: string } }) {
   const mutationCategory = useMutation({
     mutationFn: async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      setInputValue("");
+      updateState({ inputValue: "" });
 
       const form = e.target as HTMLFormElement;
       const name = form.elements.namedItem("name") as HTMLInputElement;
 
       const categoryData = {
         name: name.value,
-        type: isIncome,
+        type: state.isIncome,
       };
 
       const result = await createCategory(categoryData, accountId);
       return result;
     },
     onSuccess: (response) => {
-      setErrorMessages("");
+      updateState({ errorMessages: "" });
       queryClient.setQueryData(
         ["categories", accountId],
         (oldData: OldData) => {
           return {
             ...oldData,
-            [response.type]: [...oldData[isIncome], response.name],
+            [response.type]: [...oldData[state.isIncome], response.name],
           };
         },
       );
     },
     onError: (error) => {
-      setErrorMessages("カテゴリーが既に登録されています。");
+      updateState({ errorMessages: "カテゴリーが既に登録されています。" });
     },
   });
 
   const mutationDeleteCategory = useMutation({
     mutationFn: async () => {
-      await deleteCategoryList(accountId, isIncome, selected);
+      await deleteCategoryList(accountId, state.isIncome, state.selected);
     },
     onSuccess: () => {
       queryClient.setQueryData(
@@ -109,8 +121,8 @@ export default function Page({ params }: { params: { accountId: string } }) {
         (oldData: OldData) => {
           return {
             ...oldData,
-            [isIncome]: oldData[isIncome].filter(
-              (item) => !selected.includes(item),
+            [state.isIncome]: oldData[state.isIncome].filter(
+              (item) => !state.selected.includes(item),
             ),
           };
         },
@@ -124,43 +136,43 @@ export default function Page({ params }: { params: { accountId: string } }) {
   const mutationSource = useMutation({
     mutationFn: async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      setInputValue("");
+      updateState({ inputValue: "" });
 
       const form = e.target as HTMLFormElement;
       const name = form.elements.namedItem("name") as HTMLInputElement;
 
       const sourceData = {
         name: name.value,
-        type: isIncome,
+        type: state.isIncome,
       };
 
       const result = await createSource(sourceData, accountId);
       return result;
     },
     onSuccess: (response) => {
-      setErrorMessages("");
+      updateState({ errorMessages: "" });
       queryClient.setQueryData(["sources", accountId], (oldData: OldData) => {
         return {
           ...oldData,
-          [response.type]: [...oldData[isIncome], response.name],
+          [response.type]: [...oldData[state.isIncome], response.name],
         };
       });
     },
     onError: (error) => {
-      setErrorMessages("収入源が既に登録されています。");
+      updateState({ errorMessages: "収入源が既に登録されています。" });
     },
   });
 
   const mutationDeleteSource = useMutation({
     mutationFn: async () => {
-      await deleteSourceList(accountId, isIncome, selected);
+      await deleteSourceList(accountId, state.isIncome, state.selected);
     },
     onSuccess: () => {
       queryClient.setQueryData(["sources", accountId], (oldData: OldData) => {
         return {
           ...oldData,
-          [isIncome]: oldData[isIncome].filter(
-            (item) => !selected.includes(item),
+          [state.isIncome]: oldData[state.isIncome].filter(
+            (item) => !state.selected.includes(item),
           ),
         };
       });
@@ -182,21 +194,21 @@ export default function Page({ params }: { params: { accountId: string } }) {
         <div className="flex">
           <div
             className={`grow flex justify-center font-bold text-xl pb-[10px] ${
-              isCamera
+              state.isCamera
                 ? "text-gray-2 border-b-2 border-b-gray-2"
                 : "text-primary border-b-2 border-b-primary"
             }`}
-            onClick={() => setIsCamera(false)}
+            onClick={() => updateState({ isCamera: false })}
           >
             手入力
           </div>
           <div
             className={`grow flex justify-center font-bold text-xl pb-[10px] ${
-              isCamera
+              state.isCamera
                 ? "text-primary border-b-2 border-b-primary"
                 : "text-gray-2 border-b-2 border-b-gray-2"
             }`}
-            onClick={() => setIsCamera(true)}
+            onClick={() => updateState({ isCamera: true })}
           >
             カメラ
           </div>
@@ -204,17 +216,17 @@ export default function Page({ params }: { params: { accountId: string } }) {
         <div className="mt-6 bg-gray-1 rounded-lg flex p-[5px] h-[42px]">
           <div
             className={`grow flex items-center justify-center rounded-lg ${
-              isIncome === "income" ? "bg-background shadow" : ""
+              state.isIncome === "income" ? "bg-background shadow" : ""
             }`}
-            onClick={() => setIsIncome("income")}
+            onClick={() => updateState({ isIncome: "income" })}
           >
             収入
           </div>
           <div
             className={`grow flex items-center justify-center rounded-lg ${
-              isIncome === "expense" ? "bg-background shadow" : ""
+              state.isIncome === "expense" ? "bg-background shadow" : ""
             }`}
-            onClick={() => setIsIncome("expense")}
+            onClick={() => updateState({ isIncome: "expense" })}
           >
             支出
           </div>
@@ -236,17 +248,19 @@ export default function Page({ params }: { params: { accountId: string } }) {
           <input
             type="date"
             className="border-0 bg-background p-2 rounded focus:outline-none focus:border-b-primary text-xl text-right border-b-2 border"
-            value={selectedDate}
+            value={state.selectedDate}
             onChange={handleDateChange}
           />
         </div>
         <div className="mt-3 flex items-center justify-between">
           <span className="text-2xl">カテゴリ</span>
-          <div onClick={() => setSelectCategory(true)}>未登録</div>
+          <div onClick={() => updateState({ selectCategory: true })}>
+            未登録
+          </div>
         </div>
         <div className="mt-3 flex items-center justify-between">
           <span className="text-2xl">どこから？</span>
-          <div onClick={() => setSelectSource(true)}>未登録</div>
+          <div onClick={() => updateState({ selectSource: true })}>未登録</div>
         </div>
         <div className="pt-4 grow flex flex-col">
           <label className="text-2xl">メモ</label>
@@ -259,67 +273,75 @@ export default function Page({ params }: { params: { accountId: string } }) {
           登録
         </Button>
       </div>
-      {selectCategory ? (
+      {state.selectCategory ? (
         <TransactionCommon
           title="カテゴリー"
           mutation={mutationCategory.mutate}
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-          errorMessages={errorMessages}
-          setDelete={setDeleteCategory}
+          inputValue={state.inputValue}
+          setInputValue={(value) => updateState({ inputValue: value })}
+          errorMessages={state.errorMessages}
+          setDelete={(value) => updateState({ deleteCategory: value })}
           data={
-            isIncome === "income" ? categoryData?.income : categoryData?.expense
+            state.isIncome === "income"
+              ? categoryData?.income
+              : categoryData?.expense
           }
           onClose={() => {
-            setSelectCategory(false);
-            setErrorMessages("");
+            updateState({ selectCategory: false });
+            updateState({ errorMessages: "" });
           }}
         />
       ) : null}
 
-      {deleteCategory ? (
+      {state.deleteCategory ? (
         <DeleteCategorySource
           title="カテゴリー"
           mutation={mutationDeleteCategory.mutate}
-          setDelete={setDeleteCategory}
+          updateState={updateState}
           data={
-            isIncome === "income" ? categoryData?.income : categoryData?.expense
+            state.isIncome === "income"
+              ? categoryData?.income
+              : categoryData?.expense
           }
-          isIncome={isIncome}
-          selected={selected}
-          setSelected={setSelected}
+          isIncome={state.isIncome}
+          selected={state.selected}
+          setDelete={(value) => updateState({ deleteCategory: value })}
         />
       ) : null}
 
-      {selectSource ? (
+      {state.selectSource ? (
         <TransactionCommon
           title="収入源"
           mutation={mutationSource.mutate}
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-          errorMessages={errorMessages}
-          setDelete={setDeleteSource}
+          inputValue={state.inputValue}
+          setInputValue={(value) => updateState({ inputValue: value })}
+          errorMessages={state.errorMessages}
+          setDelete={(value) => updateState({ deleteSource: value })}
           data={
-            isIncome === "income" ? sourceData?.income : sourceData?.expense
+            state.isIncome === "income"
+              ? sourceData?.income
+              : sourceData?.expense
           }
           onClose={() => {
-            setSelectSource(false);
-            setErrorMessages("");
+            updateState({ selectSource: false });
+            updateState({ errorMessages: "" });
           }}
         />
       ) : null}
 
-      {deleteSource ? (
+      {state.deleteSource ? (
         <DeleteCategorySource
           title="収入源"
           mutation={mutationDeleteSource.mutate}
-          setDelete={setDeleteSource}
+          updateState={updateState}
           data={
-            isIncome === "income" ? sourceData?.income : sourceData?.expense
+            state.isIncome === "income"
+              ? sourceData?.income
+              : sourceData?.expense
           }
-          isIncome={isIncome}
-          selected={selected}
-          setSelected={setSelected}
+          isIncome={state.isIncome}
+          selected={state.selected}
+          setDelete={(value) => updateState({ deleteSource: value })}
         />
       ) : null}
     </div>
