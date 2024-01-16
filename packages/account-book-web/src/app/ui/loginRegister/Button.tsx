@@ -3,7 +3,7 @@ import Image from "next/image";
 
 interface ButtonProps {
   layoutMode?: "fullWidth" | "inline";
-  mode?: "register" | "login";
+  mode?: "register" | "login" | "delete";
 }
 
 interface Props
@@ -23,6 +23,7 @@ export function Button({
       className={clsx(
         "h-[50px] rounded-xl font-bold flex justify-center items-center",
         {
+          "bg-rose-400": mode === "delete",
           "bg-primary": mode === "login",
           "bg-secondary": mode === "register",
           "w-full text-xl": layoutMode === "fullWidth",

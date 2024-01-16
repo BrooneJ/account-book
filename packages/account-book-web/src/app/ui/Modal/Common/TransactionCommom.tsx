@@ -11,7 +11,7 @@ type TransactionCommonProps = {
   errorMessages: string;
   data: string[];
   onClose: () => void;
-  isIncome: string;
+  setDelete: (value: boolean) => void;
 };
 
 const TransactionCommon = ({
@@ -21,6 +21,7 @@ const TransactionCommon = ({
   setInputValue,
   errorMessages,
   data,
+  setDelete,
   onClose,
 }: TransactionCommonProps) => {
   return (
@@ -42,7 +43,12 @@ const TransactionCommon = ({
       </form>
       <div className="flex items-center justify-between">
         <span className="text-sm text-caution ml-2">{errorMessages}</span>
-        <span className="block text-right py-2 mr-2">編集</span>
+        <span
+          className="block text-right py-2 mr-2"
+          onClick={() => setDelete(true)}
+        >
+          編集
+        </span>
       </div>
       <div className="h-2/3 overflow-scroll">
         <div className="flex flex-wrap">

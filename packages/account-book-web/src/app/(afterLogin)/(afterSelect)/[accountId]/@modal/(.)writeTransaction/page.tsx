@@ -4,11 +4,15 @@ import Image from "next/image";
 import { useGoBack } from "@/app/hooks/useGoBack";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getCategory } from "@/app/lib/getCategory";
-import { createCategory } from "@/app/lib/createCategory";
 import { z } from "zod";
 import { createSource, getSource } from "@/app/lib/financialSource";
 import TransactionCommon from "@/app/ui/Modal/Common/TransactionCommom";
+import DeleteCategorySource from "@/app/ui/Modal/Common/DeleteCategorySource";
+import {
+  createCategory,
+  deleteCategoryList,
+  getCategory,
+} from "@/app/lib/category";
 
 type IncomeType = "income" | "expense";
 
@@ -42,6 +46,10 @@ export default function Page({ params }: { params: { accountId: string } }) {
 
   const [selectCategory, setSelectCategory] = useState(false);
   const [selectSource, setSelectSource] = useState(false);
+  const [deleteCategory, setDeleteCategory] = useState(false);
+  const [deleteSource, setDeleteSource] = useState(false);
+
+  const [selected, setSelected] = useState<string[]>([]);
 
   const [errorMessages, setErrorMessages] = useState("");
 
@@ -83,6 +91,28 @@ export default function Page({ params }: { params: { accountId: string } }) {
     },
     onError: (error) => {
       setErrorMessages("カテゴリーが既に登録されています。");
+    },
+  });
+
+  const mutationDeleteCategory = useMutation({
+    mutationFn: async () => {
+      await deleteCategoryList(accountId, isIncome, selected);
+    },
+    onSuccess: () => {
+      queryClient.setQueryData(
+        ["categories", accountId],
+        (oldData: OldData) => {
+          return {
+            ...oldData,
+            [isIncome]: oldData[isIncome].filter(
+              (item) => !selected.includes(item),
+            ),
+          };
+        },
+      );
+    },
+    onError: (error) => {
+      console.log(error);
     },
   });
 
@@ -202,6 +232,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
           inputValue={inputValue}
           setInputValue={setInputValue}
           errorMessages={errorMessages}
+          setDelete={setDeleteCategory}
           data={
             isIncome === "income" ? categoryData?.income : categoryData?.expense
           }
@@ -209,7 +240,20 @@ export default function Page({ params }: { params: { accountId: string } }) {
             setSelectCategory(false);
             setErrorMessages("");
           }}
+        />
+      ) : null}
+
+      {deleteCategory ? (
+        <DeleteCategorySource
+          title="カテゴリー"
+          mutation={mutationDeleteCategory.mutate}
+          setDelete={setDeleteCategory}
+          data={
+            isIncome === "income" ? categoryData?.income : categoryData?.expense
+          }
           isIncome={isIncome}
+          selected={selected}
+          setSelected={setSelected}
         />
       ) : null}
 
@@ -220,6 +264,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
           inputValue={inputValue}
           setInputValue={setInputValue}
           errorMessages={errorMessages}
+          setDelete={setDeleteSource}
           data={
             isIncome === "income" ? sourceData?.income : sourceData?.expense
           }
@@ -227,7 +272,6 @@ export default function Page({ params }: { params: { accountId: string } }) {
             setSelectSource(false);
             setErrorMessages("");
           }}
-          isIncome={isIncome}
         />
       ) : null}
     </div>
