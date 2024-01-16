@@ -26,7 +26,17 @@ const TransactionCommon = ({
 }: TransactionCommonProps) => {
   return (
     <div className="absolute h-90vh bottom-0 p-5 bg-background w-full rounded-t-xl flex flex-col">
-      <span className="text-2xl font-bold">{title}</span>
+      <div className="flex justify-between">
+        <Image
+          src="/images/backArrow.svg"
+          alt="backArrow"
+          width={30}
+          height={30}
+          onClick={onClose}
+        />
+        <span className="text-2xl font-bold pl-2">{title}</span>
+        <div className="w-[30px] h-[30px]"></div>
+      </div>
       <form onSubmit={mutation}>
         <div className="mt-6 relative flex items-center">
           <input
