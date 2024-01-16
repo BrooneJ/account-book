@@ -18,6 +18,7 @@ import {
   getCategory,
 } from "@/app/lib/category";
 import { Button } from "@/app/ui/loginRegister/Button";
+import { categorySourceStore } from "@/app/store/categorySourceStore";
 
 type IncomeType = "income" | "expense";
 
@@ -42,6 +43,8 @@ export type StateType = {
 };
 
 export default function Page({ params }: { params: { accountId: string } }) {
+  const { type, setTransactionType, category, source, setSource, setCategory } =
+    categorySourceStore();
   const goBack = useGoBack();
   const accountId = params.accountId;
 
@@ -57,7 +60,6 @@ export default function Page({ params }: { params: { accountId: string } }) {
 
   const [state, setState] = useState({
     isCamera: false,
-    isIncome: "income" as IncomeType,
     selectedDate: new Date().toISOString().split("T")[0],
     selectCategory: false,
     selectSource: false,
@@ -88,7 +90,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
 
       const categoryData = {
         name: name.value,
-        type: state.isIncome,
+        type,
       };
 
       const result = await createCategory(categoryData, accountId);
@@ -101,7 +103,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
         (oldData: OldData) => {
           return {
             ...oldData,
-            [response.type]: [...oldData[state.isIncome], response.name],
+            [response.type]: [...oldData[type], response.name],
           };
         },
       );
@@ -113,7 +115,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
 
   const mutationDeleteCategory = useMutation({
     mutationFn: async () => {
-      await deleteCategoryList(accountId, state.isIncome, state.selected);
+      await deleteCategoryList(accountId, type, state.selected);
     },
     onSuccess: () => {
       queryClient.setQueryData(
@@ -121,7 +123,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
         (oldData: OldData) => {
           return {
             ...oldData,
-            [state.isIncome]: oldData[state.isIncome].filter(
+            [type]: oldData[type].filter(
               (item) => !state.selected.includes(item),
             ),
           };
@@ -143,7 +145,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
 
       const sourceData = {
         name: name.value,
-        type: state.isIncome,
+        type,
       };
 
       const result = await createSource(sourceData, accountId);
@@ -154,7 +156,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
       queryClient.setQueryData(["sources", accountId], (oldData: OldData) => {
         return {
           ...oldData,
-          [response.type]: [...oldData[state.isIncome], response.name],
+          [response.type]: [...oldData[type], response.name],
         };
       });
     },
@@ -165,13 +167,13 @@ export default function Page({ params }: { params: { accountId: string } }) {
 
   const mutationDeleteSource = useMutation({
     mutationFn: async () => {
-      await deleteSourceList(accountId, state.isIncome, state.selected);
+      await deleteSourceList(accountId, type, state.selected);
     },
     onSuccess: () => {
       queryClient.setQueryData(["sources", accountId], (oldData: OldData) => {
         return {
           ...oldData,
-          [state.isIncome]: oldData[state.isIncome].filter(
+          [type]: oldData[type].filter(
             (item) => !state.selected.includes(item),
           ),
         };
@@ -186,7 +188,12 @@ export default function Page({ params }: { params: { accountId: string } }) {
     <div className="absolute h-screen w-full bg-black bg-opacity-40 top-0 left-0 z-10">
       <div
         className="absolute right-4 top-4 bg-background rounded-xl"
-        onClick={goBack}
+        onClick={() => {
+          goBack();
+          setTransactionType("income");
+          setCategory({ type: "income", name: "未登録" });
+          setSource({ type: "income", name: "未登録" });
+        }}
       >
         <Image src="/images/close.svg" alt="close" width={20} height={20} />
       </div>
@@ -216,17 +223,25 @@ export default function Page({ params }: { params: { accountId: string } }) {
         <div className="mt-6 bg-gray-1 rounded-lg flex p-[5px] h-[42px]">
           <div
             className={`grow flex items-center justify-center rounded-lg ${
-              state.isIncome === "income" ? "bg-background shadow" : ""
+              type === "income" ? "bg-background shadow" : ""
             }`}
-            onClick={() => updateState({ isIncome: "income" })}
+            onClick={() => {
+              setTransactionType("income");
+              setSource({ type: "income", name: "未登録" });
+              setCategory({ type: "income", name: "未登録" });
+            }}
           >
             収入
           </div>
           <div
             className={`grow flex items-center justify-center rounded-lg ${
-              state.isIncome === "expense" ? "bg-background shadow" : ""
+              type === "expense" ? "bg-background shadow" : ""
             }`}
-            onClick={() => updateState({ isIncome: "expense" })}
+            onClick={() => {
+              setTransactionType("expense");
+              setSource({ type: "expense", name: "未登録" });
+              setCategory({ type: "expense", name: "未登録" });
+            }}
           >
             支出
           </div>
@@ -253,14 +268,18 @@ export default function Page({ params }: { params: { accountId: string } }) {
           />
         </div>
         <div className="mt-3 flex items-center justify-between">
-          <span className="text-2xl">カテゴリ</span>
+          <span className="text-2xl">カテゴリー</span>
           <div onClick={() => updateState({ selectCategory: true })}>
-            未登録
+            {category.name}
           </div>
         </div>
         <div className="mt-3 flex items-center justify-between">
-          <span className="text-2xl">どこから？</span>
-          <div onClick={() => updateState({ selectSource: true })}>未登録</div>
+          <span className="text-2xl">
+            {type === "income" ? "どこから？" : "どこで？"}
+          </span>
+          <div onClick={() => updateState({ selectSource: true })}>
+            {source.name}
+          </div>
         </div>
         <div className="pt-4 grow flex flex-col">
           <label className="text-2xl">メモ</label>
@@ -282,14 +301,13 @@ export default function Page({ params }: { params: { accountId: string } }) {
           errorMessages={state.errorMessages}
           setDelete={(value) => updateState({ deleteCategory: value })}
           data={
-            state.isIncome === "income"
-              ? categoryData?.income
-              : categoryData?.expense
+            type === "income" ? categoryData?.income : categoryData?.expense
           }
           onClose={() => {
             updateState({ selectCategory: false });
             updateState({ errorMessages: "" });
           }}
+          onSelected={(value) => setCategory(value)}
         />
       ) : null}
 
@@ -299,11 +317,9 @@ export default function Page({ params }: { params: { accountId: string } }) {
           mutation={mutationDeleteCategory.mutate}
           updateState={updateState}
           data={
-            state.isIncome === "income"
-              ? categoryData?.income
-              : categoryData?.expense
+            type === "income" ? categoryData?.income : categoryData?.expense
           }
-          isIncome={state.isIncome}
+          isIncome={type}
           selected={state.selected}
           setDelete={(value) => updateState({ deleteCategory: value })}
         />
@@ -317,15 +333,12 @@ export default function Page({ params }: { params: { accountId: string } }) {
           setInputValue={(value) => updateState({ inputValue: value })}
           errorMessages={state.errorMessages}
           setDelete={(value) => updateState({ deleteSource: value })}
-          data={
-            state.isIncome === "income"
-              ? sourceData?.income
-              : sourceData?.expense
-          }
+          data={type === "income" ? sourceData?.income : sourceData?.expense}
           onClose={() => {
             updateState({ selectSource: false });
             updateState({ errorMessages: "" });
           }}
+          onSelected={(value) => setSource(value)}
         />
       ) : null}
 
@@ -334,12 +347,8 @@ export default function Page({ params }: { params: { accountId: string } }) {
           title="収入源"
           mutation={mutationDeleteSource.mutate}
           updateState={updateState}
-          data={
-            state.isIncome === "income"
-              ? sourceData?.income
-              : sourceData?.expense
-          }
-          isIncome={state.isIncome}
+          data={type === "income" ? sourceData?.income : sourceData?.expense}
+          isIncome={type}
           selected={state.selected}
           setDelete={(value) => updateState({ deleteSource: value })}
         />

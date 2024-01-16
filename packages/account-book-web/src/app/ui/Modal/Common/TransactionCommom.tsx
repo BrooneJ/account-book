@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Button } from "@/app/ui/loginRegister/Button";
 import { UseMutateFunction } from "@tanstack/react-query";
 import { FormEvent } from "react";
+import { categorySourceStore } from "@/app/store/categorySourceStore";
 
 type TransactionCommonProps = {
   title: string;
@@ -12,6 +13,7 @@ type TransactionCommonProps = {
   data: string[];
   onClose: () => void;
   setDelete: (value: boolean) => void;
+  onSelected: (source: { type: "income" | "expense"; name: string }) => void;
 };
 
 const TransactionCommon = ({
@@ -23,7 +25,9 @@ const TransactionCommon = ({
   data,
   setDelete,
   onClose,
+  onSelected,
 }: TransactionCommonProps) => {
+  const { type } = categorySourceStore();
   return (
     <div className="absolute h-90vh bottom-0 p-5 bg-background w-full rounded-t-xl flex flex-col">
       <div className="flex justify-between">
@@ -67,6 +71,7 @@ const TransactionCommon = ({
               tabIndex={0}
               className="border border-2 border-gray-1 text-gray-1 rounded-lg p-2 m-1 focus:border-primary focus:border-2 focus:text-point"
               key={item}
+              onClick={() => onSelected({ type, name: item })}
             >
               {item}
             </div>
