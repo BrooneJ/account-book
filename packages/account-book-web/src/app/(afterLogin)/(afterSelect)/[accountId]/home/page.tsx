@@ -1,31 +1,29 @@
-"use client";
-
-import { useQuery } from "@tanstack/react-query";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 import { getAccountBook } from "@/app/lib/getAccountBook";
-import Image from "next/image";
-import Link from "next/link";
+import AccountTitle from "@/app/ui/Home/AccountTitle";
 
-export default function Page({ params }: { params: { accountId: string } }) {
+export default async function Page({
+  params,
+}: {
+  params: { accountId: string };
+}) {
   const id = params.accountId;
-  const { data } = useQuery({
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
     queryKey: ["accountbook", id],
     queryFn: () => getAccountBook(id),
   });
+  const dehydratedState = dehydrate(queryClient);
 
   return (
     <div className="pt-5">
-      <div className="flex items-center">
-        <span className="text-2xl">{data?.name}</span>
-        <Link href="/select">
-          <Image
-            src="/images/arrowCircle.svg"
-            alt="arrowCircle"
-            width={20}
-            height={20}
-            className="ml-2"
-          />
-        </Link>
-      </div>
+      <HydrationBoundary state={dehydratedState}>
+        <AccountTitle id={id} />
+      </HydrationBoundary>
     </div>
   );
 }
