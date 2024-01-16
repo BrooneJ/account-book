@@ -17,6 +17,7 @@ class TransactionService {
     amount: number,
     category: string,
     financialSource: string,
+    dateString: string,
     description?: string,
   ) {
     const categoryResult = await db.category.findFirst({
@@ -39,6 +40,8 @@ class TransactionService {
       throw new Error('Financial source not found')
     }
 
+    const date = new Date(dateString)
+
     const transaction = await db.transaction.create({
       data: {
         type,
@@ -48,6 +51,7 @@ class TransactionService {
         amount,
         financialSourceId: sourceResult.id,
         description,
+        date,
       },
     })
 

@@ -13,5 +13,6 @@ export const createTransactionSchema = routeSchema({
     category: z.string(),
     financialSource: z.string(),
     description: z.string().optional(),
+    date: z.string(),
   }),
 })

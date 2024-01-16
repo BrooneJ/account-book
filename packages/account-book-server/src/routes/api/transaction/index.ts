@@ -12,8 +12,15 @@ const transactionRouter: FastifyPluginAsyncWithZod = async (fastify) => {
     { schema: createTransactionSchema },
     async (request, reply) => {
       const { accountId } = request.params
-      const { type, userId, amount, category, financialSource, description } =
-        request.body
+      const {
+        type,
+        userId,
+        amount,
+        category,
+        financialSource,
+        description,
+        date,
+      } = request.body
 
       return transactionService.createTransaction(
         type,
@@ -22,6 +29,7 @@ const transactionRouter: FastifyPluginAsyncWithZod = async (fastify) => {
         amount,
         category,
         financialSource,
+        date,
         description,
       )
     },
