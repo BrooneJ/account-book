@@ -5,7 +5,11 @@ import { useGoBack } from "@/app/hooks/useGoBack";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
-import { createSource, getSource } from "@/app/lib/financialSource";
+import {
+  createSource,
+  deleteSourceList,
+  getSource,
+} from "@/app/lib/financialSource";
 import TransactionCommon from "@/app/ui/Modal/Common/TransactionCommom";
 import DeleteCategorySource from "@/app/ui/Modal/Common/DeleteCategorySource";
 import {
@@ -13,6 +17,7 @@ import {
   deleteCategoryList,
   getCategory,
 } from "@/app/lib/category";
+import { Button } from "@/app/ui/loginRegister/Button";
 
 type IncomeType = "income" | "expense";
 
@@ -146,6 +151,25 @@ export default function Page({ params }: { params: { accountId: string } }) {
     },
   });
 
+  const mutationDeleteSource = useMutation({
+    mutationFn: async () => {
+      await deleteSourceList(accountId, isIncome, selected);
+    },
+    onSuccess: () => {
+      queryClient.setQueryData(["sources", accountId], (oldData: OldData) => {
+        return {
+          ...oldData,
+          [isIncome]: oldData[isIncome].filter(
+            (item) => !selected.includes(item),
+          ),
+        };
+      });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
   return (
     <div className="absolute h-screen w-full bg-black bg-opacity-40 top-0 left-0 z-10">
       <div
@@ -154,7 +178,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
       >
         <Image src="/images/close.svg" alt="close" width={20} height={20} />
       </div>
-      <div className="absolute h-90vh bottom-0 p-5 bg-background w-full rounded-t-xl">
+      <div className="absolute h-90vh bottom-0 p-5 bg-background w-full rounded-t-xl flex flex-col">
         <div className="flex">
           <div
             className={`grow flex justify-center font-bold text-xl pb-[10px] ${
@@ -224,6 +248,16 @@ export default function Page({ params }: { params: { accountId: string } }) {
           <span className="text-2xl">どこから？</span>
           <div onClick={() => setSelectSource(true)}>未登録</div>
         </div>
+        <div className="pt-4 grow flex flex-col">
+          <label className="text-2xl">メモ</label>
+          <textarea
+            className="w-full h-50 rounded-lg bg-gray-200 p-3 my-2 focus:outline-none text-lg grow"
+            placeholder="メモを入力してください。"
+          ></textarea>
+        </div>
+        <Button layoutMode="fullWidth" disabled={false}>
+          登録
+        </Button>
       </div>
       {selectCategory ? (
         <TransactionCommon
@@ -272,6 +306,20 @@ export default function Page({ params }: { params: { accountId: string } }) {
             setSelectSource(false);
             setErrorMessages("");
           }}
+        />
+      ) : null}
+
+      {deleteSource ? (
+        <DeleteCategorySource
+          title="収入源"
+          mutation={mutationDeleteSource.mutate}
+          setDelete={setDeleteSource}
+          data={
+            isIncome === "income" ? sourceData?.income : sourceData?.expense
+          }
+          isIncome={isIncome}
+          selected={selected}
+          setSelected={setSelected}
         />
       ) : null}
     </div>

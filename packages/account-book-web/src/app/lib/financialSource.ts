@@ -43,3 +43,20 @@ export async function createSource(data: FormData, accountId: string) {
   }
   return result;
 }
+
+export async function deleteSourceList(
+  accountId: string,
+  type: "income" | "expense",
+  name: string[],
+) {
+  await fetch(`http://localhost:4000/api/financial-source/${accountId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: cookies().toString(),
+    },
+    body: JSON.stringify({ type, name }),
+    cache: "no-cache",
+    credentials: "include",
+  });
+}

@@ -44,7 +44,7 @@ const DeleteCategorySource = ({
 
   return (
     <div className="absolute h-90vh bottom-0 p-5 bg-background w-full rounded-t-xl flex flex-col">
-      <div className="flex justify-between">
+      <div className="flex justify-between pb-2">
         <Image
           src="/images/backArrow.svg"
           alt="backArrow"

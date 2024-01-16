@@ -1,6 +1,10 @@
 import { FastifyPluginAsyncWithZod } from '../../../lib/types'
 import securedPlugin from '../../../plugins/securedPlugin'
-import { getSourcesSchema, createSourceSchema } from './schema'
+import {
+  getSourcesSchema,
+  createSourceSchema,
+  deleteSourceSchema,
+} from './schema'
 import FinancialSourceService from '../../../services/FinancialSourceService'
 
 const sourceRouter: FastifyPluginAsyncWithZod = async (fastify) => {
@@ -23,6 +27,16 @@ const sourceRouter: FastifyPluginAsyncWithZod = async (fastify) => {
       const { accountId } = request.params
       const { type, name } = request.body
       return financialSourceService.createSource(accountId, type, name)
+    },
+  )
+
+  fastify.delete(
+    '/:accountId',
+    { schema: deleteSourceSchema },
+    async (request, reply) => {
+      const { accountId } = request.params
+      const { type, name } = request.body
+      return financialSourceService.deleteSource(accountId, type, name)
     },
   )
 }

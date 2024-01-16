@@ -56,6 +56,19 @@ class FinancialSourceService {
     })
     return source
   }
+
+  async deleteSource(accountId: string, type: string, name: string[]) {
+    const deleteResult = await db.financialSource.deleteMany({
+      where: {
+        accountId,
+        type,
+        name: {
+          in: name,
+        },
+      },
+    })
+    return deleteResult
+  }
 }
 
 export default FinancialSourceService

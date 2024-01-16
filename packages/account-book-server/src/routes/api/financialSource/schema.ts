@@ -26,3 +26,14 @@ export const createSourceSchema = routeSchema({
     name: z.string(),
   }),
 })
+
+export const deleteSourceSchema = routeSchema({
+  tags: ['source'],
+  params: z.object({
+    accountId: z.string(),
+  }),
+  body: z.object({
+    type: z.string(),
+    name: z.array(z.string()),
+  }),
+})
