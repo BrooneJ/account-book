@@ -34,7 +34,7 @@ model Token {
 model Account {
   id              String            @id @default(uuid())
   name            String
-  balance         Float
+  balance         Int
   createdAt       DateTime          @default(now())
   transactions    Transaction[]
   userAccounts    UserAccount[]
