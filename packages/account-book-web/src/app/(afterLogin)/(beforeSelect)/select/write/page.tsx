@@ -10,6 +10,7 @@ import Header from "@/app/ui/Header";
 import HeaderBackButton from "@/app/ui/Header/HeaderBackButton";
 import { Input } from "@/app/ui/loginRegister/Input";
 import { Button } from "@/app/ui/loginRegister/Button";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   type: z.string(),
@@ -21,12 +22,12 @@ export type Schema = z.infer<typeof schema>;
 export default function Page() {
   const [isPending, startTransition] = useTransition();
   const onClick = useGoBack();
+  const router = useRouter();
   const { register, handleSubmit } = useForm<Schema>({
     resolver: zodResolver(schema),
   });
 
   const onSubmit = handleSubmit((data: Schema) => {
-    console.log(data);
     startTransition(async () => {
       try {
         const result = await createAccount(data);
@@ -35,6 +36,7 @@ export default function Page() {
         console.log(error);
       }
     });
+    router.push("/select");
   });
 
   return (

@@ -35,7 +35,7 @@ export function Button({
         children
       ) : (
         <Image
-          src="./images/loading.svg"
+          src="/images/loading.svg"
           alt="loading"
           width={24}
           height={24}
