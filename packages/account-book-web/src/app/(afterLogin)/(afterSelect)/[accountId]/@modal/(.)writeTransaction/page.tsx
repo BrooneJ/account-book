@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useGoBack } from "@/app/hooks/useGoBack";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState, useTransition } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import {
@@ -19,8 +19,9 @@ import {
 } from "@/app/lib/category";
 import { Button } from "@/app/ui/loginRegister/Button";
 import { categorySourceStore } from "@/app/store/categorySourceStore";
-
-type IncomeType = "income" | "expense";
+import { createTransaction } from "@/app/lib/transaction";
+import { useUser } from "@/app/contexts/UserContext";
+import { usePathname, useRouter } from "next/navigation";
 
 const oldData = z.object({
   income: z.array(z.string()),
@@ -43,6 +44,10 @@ export type StateType = {
 };
 
 export default function Page({ params }: { params: { accountId: string } }) {
+  const pathname = usePathname();
+  const shouldShowModal = pathname.includes("/writeTransaction");
+  if (!shouldShowModal) return null;
+
   const { type, setTransactionType, category, source, setSource, setCategory } =
     categorySourceStore();
   const goBack = useGoBack();
@@ -69,6 +74,41 @@ export default function Page({ params }: { params: { accountId: string } }) {
     errorMessages: "",
     inputValue: "",
   });
+
+  const [isPending, startTransition] = useTransition();
+  const user = useUser();
+  const router = useRouter();
+
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    startTransition(async () => {
+      const form = e.target as HTMLFormElement;
+      const amount = form.elements.namedItem("amount") as HTMLInputElement;
+      const description = form.elements.namedItem(
+        "description",
+      ) as HTMLTextAreaElement;
+
+      const transactionData = {
+        userId: user!.id,
+        amount: Number(amount.value),
+        description: description.value,
+        date: state.selectedDate,
+        category: category.name,
+        financialSource: source.name,
+        type,
+      };
+
+      try {
+        const result = await createTransaction(transactionData, accountId);
+        router.replace(`/${accountId}/home`);
+        return result;
+        // router.refresh();
+        // goBack();
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  };
 
   const updateState = (newState: Partial<StateType>) => {
     setState((prevState) => ({ ...prevState, ...newState }));
@@ -246,51 +286,55 @@ export default function Page({ params }: { params: { accountId: string } }) {
             支出
           </div>
         </div>
-        <div className="mt-6">
-          <div className="relative flex items-center">
-            <div className="absolute left-0 pl-3 pt-2 items-center justify-center">
-              <span className="text-2xl text-gray-2">¥</span>
+        <form className="flex flex-col grow" onSubmit={onSubmit}>
+          <div className="mt-6">
+            <div className="relative flex items-center">
+              <div className="absolute left-0 pl-3 pt-2 items-center justify-center">
+                <span className="text-2xl text-gray-2">¥</span>
+              </div>
+              <input
+                type="number"
+                name="amount"
+                className="w-full h-12 border-0 bg-background border-b-2 px-4 mt-2 focus:outline-none focus:border-b-2 focus:border-primary text-xl text-right"
+                placeholder="金額を入力してください。"
+              />
             </div>
+          </div>
+          <div className="mt-3 flex items-center justify-between">
+            <span className="text-2xl">日付</span>
             <input
-              type="number"
-              className="w-full h-12 border-0 bg-background border-b-2 px-4 mt-2 focus:outline-none focus:border-b-2 focus:border-primary text-xl text-right"
-              placeholder="金額を入力してください。"
+              type="date"
+              className="border-0 bg-background p-2 rounded focus:outline-none focus:border-b-primary text-xl text-right border-b-2 border"
+              value={state.selectedDate}
+              onChange={handleDateChange}
             />
           </div>
-        </div>
-        <div className="mt-3 flex items-center justify-between">
-          <span className="text-2xl">日付</span>
-          <input
-            type="date"
-            className="border-0 bg-background p-2 rounded focus:outline-none focus:border-b-primary text-xl text-right border-b-2 border"
-            value={state.selectedDate}
-            onChange={handleDateChange}
-          />
-        </div>
-        <div className="mt-3 flex items-center justify-between">
-          <span className="text-2xl">カテゴリー</span>
-          <div onClick={() => updateState({ selectCategory: true })}>
-            {category.name}
+          <div className="mt-3 flex items-center justify-between">
+            <span className="text-2xl">カテゴリー</span>
+            <div onClick={() => updateState({ selectCategory: true })}>
+              {category.name}
+            </div>
           </div>
-        </div>
-        <div className="mt-3 flex items-center justify-between">
-          <span className="text-2xl">
-            {type === "income" ? "どこから？" : "どこで？"}
-          </span>
-          <div onClick={() => updateState({ selectSource: true })}>
-            {source.name}
+          <div className="mt-3 flex items-center justify-between">
+            <span className="text-2xl">
+              {type === "income" ? "どこから？" : "どこで？"}
+            </span>
+            <div onClick={() => updateState({ selectSource: true })}>
+              {source.name}
+            </div>
           </div>
-        </div>
-        <div className="pt-4 grow flex flex-col">
-          <label className="text-2xl">メモ</label>
-          <textarea
-            className="w-full h-50 rounded-lg bg-gray-200 p-3 my-2 focus:outline-none text-lg grow"
-            placeholder="メモを入力してください。"
-          ></textarea>
-        </div>
-        <Button layoutMode="fullWidth" disabled={false}>
-          登録
-        </Button>
+          <div className="pt-4 grow flex flex-col">
+            <label className="text-2xl">メモ</label>
+            <textarea
+              name="description"
+              className="w-full h-50 rounded-lg bg-gray-200 p-3 my-2 focus:outline-none text-lg grow"
+              placeholder="メモを入力してください。"
+            ></textarea>
+          </div>
+          <Button layoutMode="fullWidth" disabled={isPending}>
+            登録
+          </Button>
+        </form>
       </div>
       {state.selectCategory ? (
         <TransactionCommon
