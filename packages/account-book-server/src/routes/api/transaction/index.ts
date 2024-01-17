@@ -1,11 +1,22 @@
 import { FastifyPluginAsyncWithZod } from '../../../lib/types'
 import securedPlugin from '../../../plugins/securedPlugin'
 import TransactionService from '../../../services/TransactionService'
-import { createTransactionSchema } from './schema'
+import {
+  createTransactionSchema,
+  getThisMonthTransactionsSchema,
+} from './schema'
 
 const transactionRouter: FastifyPluginAsyncWithZod = async (fastify) => {
   fastify.register(securedPlugin)
   const transactionService = TransactionService.getInstance()
+
+  fastify.get(
+    '/',
+    { schema: getThisMonthTransactionsSchema },
+    async (request, reply) => {
+      return transactionService.getTransactionsOnThisMonth()
+    },
+  )
 
   fastify.post(
     '/:accountId',

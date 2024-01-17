@@ -16,3 +16,13 @@ export const createTransactionSchema = routeSchema({
     date: z.string(),
   }),
 })
+
+export const getThisMonthTransactionsSchema = routeSchema({
+  tags: ['transaction'],
+  response: {
+    200: z.object({
+      income: z.number(),
+      expense: z.number(),
+    }),
+  },
+})
