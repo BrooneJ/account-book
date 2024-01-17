@@ -44,9 +44,10 @@ export type StateType = {
 };
 
 export default function Page({ params }: { params: { accountId: string } }) {
-  const pathname = usePathname();
-  const shouldShowModal = pathname.includes("/writeTransaction");
-  if (!shouldShowModal) return null;
+  // Left as a precaution in case the same situation occurs again.
+  // const pathname = usePathname();
+  // const shouldShowModal = pathname.includes("/writeTransaction");
+  // if (!shouldShowModal) return null;
 
   const { type, setTransactionType, category, source, setSource, setCategory } =
     categorySourceStore();
@@ -100,10 +101,10 @@ export default function Page({ params }: { params: { accountId: string } }) {
 
       try {
         const result = await createTransaction(transactionData, accountId);
+        setCategory({ type: "income", name: "未登録" });
+        setSource({ type: "income", name: "未登録" });
         router.replace(`/${accountId}/home`);
         return result;
-        // router.refresh();
-        // goBack();
       } catch (error) {
         console.log(error);
       }
