@@ -4,7 +4,6 @@ import Footer from "@/app/ui/Footer";
 
 export default async function AfterLoginLayout({
   children,
-  modal,
 }: {
   children: React.ReactNode;
   modal: React.ReactNode;
@@ -17,7 +16,6 @@ export default async function AfterLoginLayout({
   return (
     <>
       {children}
-      {modal}
       <Footer />
     </>
   );

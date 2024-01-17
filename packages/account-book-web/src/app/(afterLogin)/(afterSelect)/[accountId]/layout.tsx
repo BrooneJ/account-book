@@ -7,7 +7,7 @@ export default async function Page({
 }) {
   return (
     <>
-      <div>{children}</div>
+      {children}
       {modal}
     </>
   );
