@@ -11,10 +11,11 @@ const transactionRouter: FastifyPluginAsyncWithZod = async (fastify) => {
   const transactionService = TransactionService.getInstance()
 
   fastify.get(
-    '/',
+    '/:accountId',
     { schema: getThisMonthTransactionsSchema },
     async (request, reply) => {
-      return transactionService.getTransactionsOnThisMonth()
+      const { accountId } = request.params
+      return transactionService.getTransactionsOnThisMonth(accountId)
     },
   )
 

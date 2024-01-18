@@ -10,13 +10,14 @@ class TransactionService {
     return TransactionService.instance
   }
 
-  async getTransactionsOnThisMonth() {
+  async getTransactionsOnThisMonth(accountId: string) {
     const now = new Date()
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
 
     const result = await db.transaction.findMany({
       where: {
+        accountId,
         date: {
           gte: startOfMonth,
           lte: endOfMonth,

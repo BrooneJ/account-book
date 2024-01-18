@@ -19,6 +19,9 @@ export const createTransactionSchema = routeSchema({
 
 export const getThisMonthTransactionsSchema = routeSchema({
   tags: ['transaction'],
+  params: z.object({
+    accountId: z.string(),
+  }),
   response: {
     200: z.object({
       income: z.number(),
