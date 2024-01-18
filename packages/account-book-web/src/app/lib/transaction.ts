@@ -13,6 +13,24 @@ type FormData = {
   date: string;
 };
 
+export async function getThisMonthTransaction(accountId: string) {
+  const response = await fetch(
+    `http://localhost:4000/api/transaction/${accountId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookies().toString(),
+      },
+      cache: "no-cache",
+      credentials: "include",
+    },
+  );
+  const result = await response.json();
+
+  return result;
+}
+
 export async function createTransaction(data: FormData, accountId: string) {
   const response = await fetch(
     `http://localhost:4000/api/transaction/${accountId}`,
