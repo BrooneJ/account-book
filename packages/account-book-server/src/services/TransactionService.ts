@@ -40,6 +40,28 @@ class TransactionService {
     return resultObject
   }
 
+  async getTransactions(accountId: string) {
+    const result = await db.transaction.findMany({
+      where: {
+        accountId,
+      },
+      include: {
+        financialSource: true,
+        category: true,
+      },
+      orderBy: [
+        {
+          date: 'desc',
+        },
+        {
+          id: 'desc',
+        },
+      ],
+    })
+
+    return result
+  }
+
   async createTransaction(
     type: string,
     userId: string,

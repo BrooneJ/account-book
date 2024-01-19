@@ -52,7 +52,7 @@ model UserAccount {
 }
 
 model Transaction {
-  id                String          @id @default(uuid())
+  id                Int             @id @default(autoincrement())
   userId            String
   user              User            @relation(fields: [userId], references: [id])
   accountId         String
@@ -66,6 +66,8 @@ model Transaction {
   Account           Account         @relation(fields: [accountId], references: [id])
   financialSource   FinancialSource @relation(fields: [financialSourceId], references: [id])
   financialSourceId String
+
+  @@index([date(sort: Desc)])
 }
 
 model Category {
