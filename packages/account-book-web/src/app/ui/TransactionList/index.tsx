@@ -29,7 +29,7 @@ type TotalAmountsPerDay = {
 
 export default function TransactionList({ accountId }: { accountId: string }) {
   const { data, isLoading } = useQuery<Transactions>({
-    queryKey: ["transactions"],
+    queryKey: ["transactions", accountId],
     queryFn: () => getTransactionsAll(accountId),
   });
 

@@ -12,7 +12,7 @@ export default async function Page({
   const accountId = params.accountId;
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
-    queryKey: ["transactions"],
+    queryKey: ["transactions", accountId],
     queryFn: () => getTransactionsAll(accountId),
   });
 

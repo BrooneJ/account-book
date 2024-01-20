@@ -103,6 +103,9 @@ export default function Page({ params }: { params: { accountId: string } }) {
         const result = await createTransaction(transactionData, accountId);
         setCategory({ type: "income", name: "未登録" });
         setSource({ type: "income", name: "未登録" });
+        await queryClient.invalidateQueries({
+          queryKey: ["transactions", accountId],
+        });
         router.replace(`/${accountId}/transactionDetail`);
         return result;
       } catch (error) {
