@@ -31,6 +31,24 @@ export async function getThisMonthTransaction(accountId: string) {
   return result;
 }
 
+export async function getTransactionsAll(accountId: string) {
+  const response = await fetch(
+    `http://localhost:4000/api/transaction/${accountId}/all`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookies().toString(),
+      },
+      cache: "no-cache",
+      credentials: "include",
+    },
+  );
+  const result = await response.json();
+  revalidatePath(`/${accountId}/transactionDetail`);
+  return result;
+}
+
 export async function createTransaction(data: FormData, accountId: string) {
   const response = await fetch(
     `http://localhost:4000/api/transaction/${accountId}`,
@@ -47,6 +65,6 @@ export async function createTransaction(data: FormData, accountId: string) {
   );
   const result = await response.json();
 
-  revalidatePath(`/${accountId}/home`);
+  revalidatePath(`/${accountId}/transactionDetail`);
   return result;
 }

@@ -25,6 +25,10 @@ const config: Config = {
         background: "#f6f6f4",
         white: "#ffffff",
         modalBackground: "rgba(0, 0, 0, 0.4)",
+        expenseBg: "#FFF0F0",
+        expenseText: "#F87675",
+        incomeBg: "#EEFCF0",
+        incomeText: "#2EAC57",
       },
       height: {
         "90vh": "90vh",

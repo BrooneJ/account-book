@@ -103,7 +103,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
         const result = await createTransaction(transactionData, accountId);
         setCategory({ type: "income", name: "未登録" });
         setSource({ type: "income", name: "未登録" });
-        router.replace(`/${accountId}/home`);
+        router.replace(`/${accountId}/transactionDetail`);
         return result;
       } catch (error) {
         console.log(error);
@@ -372,7 +372,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
 
       {state.selectSource ? (
         <TransactionCommon
-          title="収入源"
+          title="支出先"
           mutation={mutationSource.mutate}
           inputValue={state.inputValue}
           setInputValue={(value) => updateState({ inputValue: value })}
@@ -389,7 +389,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
 
       {state.deleteSource ? (
         <DeleteCategorySource
-          title="収入源"
+          title="支出先"
           mutation={mutationDeleteSource.mutate}
           updateState={updateState}
           data={type === "income" ? sourceData?.income : sourceData?.expense}
