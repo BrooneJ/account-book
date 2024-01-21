@@ -25,7 +25,12 @@ const transactionRouter: FastifyPluginAsyncWithZod = async (fastify) => {
     { schema: getTransactionsSchema },
     async (request, reply) => {
       const { accountId } = request.params
-      return transactionService.getTransactions(accountId)
+      const { date, cursor } = request.query
+      return transactionService.getTransactions({
+        accountId,
+        date,
+        cursor: cursor ? Number(cursor) : undefined,
+      })
     },
   )
 

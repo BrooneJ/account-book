@@ -17,26 +17,39 @@ export const createTransactionSchema = routeSchema({
   }),
 })
 
+const itemListSchema = z.array(
+  z.object({
+    id: z.number(),
+    type: z.string(),
+    amount: z.number(),
+    date: z.date(),
+    financialSource: z.object({
+      name: z.string(),
+    }),
+    category: z.object({
+      name: z.string(),
+    }),
+  }),
+)
+
+const paginationSchema = z.object({
+  list: itemListSchema,
+  endCursor: z.number().nullable(),
+  endCursorDate: z.string().nullable(),
+  hasNextPage: z.boolean(),
+})
+
 export const getTransactionsSchema = routeSchema({
   tags: ['transaction'],
+  querystring: z.object({
+    date: z.string().optional(),
+    cursor: z.string().optional(),
+  }),
   params: z.object({
     accountId: z.string(),
   }),
   response: {
-    200: z.array(
-      z.object({
-        id: z.number(),
-        type: z.string(),
-        amount: z.number(),
-        date: z.date(),
-        financialSource: z.object({
-          name: z.string(),
-        }),
-        category: z.object({
-          name: z.string(),
-        }),
-      }),
-    ),
+    200: paginationSchema,
   },
 })
 

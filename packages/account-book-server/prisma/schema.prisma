@@ -67,7 +67,7 @@ model Transaction {
   financialSource   FinancialSource @relation(fields: [financialSourceId], references: [id])
   financialSourceId String
 
-  @@index([date(sort: Desc)])
+  @@index([date(sort: Desc), id(sort: Desc)])
 }
 
 model Category {

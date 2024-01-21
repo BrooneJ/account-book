@@ -1,4 +1,5 @@
 import db from '../lib/db'
+import AppError from '../lib/AppError'
 
 class TransactionService {
   private static instance: TransactionService
@@ -40,26 +41,93 @@ class TransactionService {
     return resultObject
   }
 
-  async getTransactions(accountId: string) {
-    const result = await db.transaction.findMany({
-      where: {
-        accountId,
-      },
-      include: {
-        financialSource: true,
-        category: true,
-      },
-      orderBy: [
-        {
-          date: 'desc',
-        },
-        {
-          id: 'desc',
-        },
-      ],
-    })
+  async getTransactions({
+    accountId,
+    date,
+    cursor,
+  }: {
+    accountId: string
+    date?: string
+    cursor?: number
+  }) {
+    const limit = 10
 
-    return result
+    // throw error if not yyyy-mm-dd format
+    if (date && !date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      throw new AppError('BadRequestError')
+    }
+
+    if (!date) {
+      date = new Date().toISOString().split('T')[0]
+    }
+
+    const [totalCount, list] = await Promise.all([
+      db.transaction.count({
+        where: {
+          accountId,
+          OR: [
+            {
+              date: {
+                lt: new Date(date),
+              },
+            },
+            {
+              date: {
+                lte: new Date(date),
+              },
+              id: {
+                lt: cursor,
+              },
+            },
+          ],
+        },
+      }),
+      db.transaction.findMany({
+        where: {
+          accountId,
+          OR: [
+            {
+              date: {
+                lt: new Date(date),
+              },
+            },
+            {
+              date: {
+                lte: new Date(date),
+              },
+              id: {
+                lt: cursor,
+              },
+            },
+          ],
+        },
+        include: {
+          financialSource: true,
+          category: true,
+        },
+        orderBy: [
+          {
+            date: 'desc',
+          },
+          {
+            id: 'desc',
+          },
+        ],
+        take: limit,
+      }),
+    ])
+
+    const hasNextPage = totalCount >= limit
+    const endCursor = list.at(-1)?.id ?? null
+    const endCursorDate =
+      list[list.length - 1].date.toISOString().split('T')[0] ?? null
+
+    return {
+      list,
+      endCursor,
+      endCursorDate,
+      hasNextPage,
+    }
   }
 
   async createTransaction(
