@@ -18,7 +18,7 @@ export default async function Page({
   await queryClient.prefetchInfiniteQuery({
     queryKey: ["transactions", accountId],
     queryFn: ({ pageParam }) => getTransactionsAll(accountId, pageParam),
-    initialPageParam: ["", 0],
+    initialPageParam: ["", 0] as [string, number],
   });
   const dehydratedState = dehydrate(queryClient);
 
