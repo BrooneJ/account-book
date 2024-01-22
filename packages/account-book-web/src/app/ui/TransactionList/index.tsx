@@ -1,8 +1,21 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import {
+  InfiniteData,
+  useInfiniteQuery,
+  useQuery,
+} from "@tanstack/react-query";
 import { getTransactionsAll } from "@/app/lib/transaction";
 import Image from "next/image";
+import { useEffect } from "react";
+import { useInView } from "react-intersection-observer";
+
+type PaginatedTransactions = {
+  list: Transaction[];
+  endCursor: number;
+  endCursorDate: string;
+  hasNextPage: boolean;
+};
 
 type Transaction = {
   id: number;
@@ -17,8 +30,6 @@ type Transaction = {
   };
 };
 
-type Transactions = Transaction[];
-
 type GroupedTransactions = {
   [key: string]: Transaction[];
 };
@@ -28,31 +39,58 @@ type TotalAmountsPerDay = {
 };
 
 export default function TransactionList({ accountId }: { accountId: string }) {
-  const { data, isLoading } = useQuery<Transactions>({
+  const { data, isFetching, fetchNextPage } = useInfiniteQuery<
+    PaginatedTransactions,
+    Object,
+    InfiniteData<PaginatedTransactions>,
+    [_1: string, _2: string],
+    [string, number]
+  >({
     queryKey: ["transactions", accountId],
-    queryFn: () => getTransactionsAll(accountId),
+    queryFn: ({ pageParam }) => getTransactionsAll(accountId, pageParam),
+    initialPageParam: ["", 0],
+    getNextPageParam: (lastPage) => {
+      return [
+        lastPage.list.at(-1)!.date.toString().split("T")[0],
+        lastPage.list.at(-1)!.id,
+      ];
+    },
   });
 
-  if (isLoading)
+  const hasNextPage = data?.pages[data.pages.length - 1].hasNextPage;
+
+  const { ref, inView } = useInView({
+    threshold: 0,
+    delay: 0,
+  });
+
+  useEffect(() => {
+    if (inView) {
+      !isFetching && hasNextPage && fetchNextPage();
+    }
+  }, [inView, isFetching, hasNextPage, fetchNextPage]);
+
+  if (isFetching)
     return (
       <div className="flex grow justify-center items-center">loading...</div>
     );
-
-  if (!data || data.length === 0)
+  //
+  if (!data || data.pages.length === 0)
     return (
       <div className="flex grow justify-center items-center">
         履歴が存在していません。
       </div>
     );
 
-  const transactions = data!.reduce(
-    (groups: GroupedTransactions, transaction) => {
-      const date = transaction.date.toString().split("T")[0];
-      if (!groups[date]) {
-        groups[date] = [];
-      }
-      groups[date].push(transaction);
-
+  const transactions = data.pages.reduce(
+    (groups: GroupedTransactions, page) => {
+      page.list.forEach((transaction) => {
+        const date = transaction.date.toString().split("T")[0];
+        if (!groups[date]) {
+          groups[date] = [];
+        }
+        groups[date].push(transaction);
+      });
       return groups;
     },
     {},
@@ -155,6 +193,7 @@ export default function TransactionList({ accountId }: { accountId: string }) {
           </div>
         );
       })}
+      <div ref={ref} style={{ height: 50 }} />
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
 export default function ThisMonthTransaction({ id }: { id: string }) {
-  const { data } = useQuery({
+  const { data } = useQuery<{ income: number; expense: number }>({
     queryKey: ["accountbook", "thisMonthTransactions", id],
     queryFn: () => getThisMonthTransaction(id),
   });

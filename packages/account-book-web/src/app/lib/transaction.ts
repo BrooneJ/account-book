@@ -31,19 +31,27 @@ export async function getThisMonthTransaction(accountId: string) {
   return result;
 }
 
-export async function getTransactionsAll(accountId: string) {
-  const response = await fetch(
-    `http://localhost:4000/api/transaction/${accountId}/all`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: cookies().toString(),
-      },
-      cache: "no-cache",
-      credentials: "include",
+export async function getTransactionsAll(
+  accountId: string,
+  pageParam: [string, number],
+) {
+  const [lastDate, lastId] = pageParam;
+
+  const url = new URL(`http://localhost:4000/api/transaction/${accountId}/all`);
+  // Add page parameters to the URL query
+  if (lastDate) url.searchParams.append("date", lastDate);
+  if (lastId) url.searchParams.append("cursor", lastId.toString());
+
+  const response = await fetch(url.toString(), {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: cookies().toString(),
     },
-  );
+    cache: "no-cache",
+    credentials: "include",
+  });
+
   const result = await response.json();
   revalidatePath(`/${accountId}/transactionDetail`);
   return result;
