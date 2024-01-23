@@ -1,14 +1,12 @@
 "use client";
 
-import {
-  InfiniteData,
-  useInfiniteQuery,
-  useQuery,
-} from "@tanstack/react-query";
+import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { getTransactionsAll } from "@/app/lib/transaction";
-import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
+import TransactionItem from "@/app/ui/TransactionList/TransactionItem";
+import AmountsPerDay from "@/app/ui/TransactionList/AmountsPerDay";
+import { calculateTotalAmountPerDay } from "@/app/lib/calculateTotalAmountPerDay";
 
 type PaginatedTransactions = {
   list: Transaction[];
@@ -30,12 +28,8 @@ type Transaction = {
   };
 };
 
-type GroupedTransactions = {
+export type GroupedTransactions = {
   [key: string]: Transaction[];
-};
-
-type TotalAmountsPerDay = {
-  [date: string]: number;
 };
 
 export default function TransactionList({ accountId }: { accountId: string }) {
@@ -57,24 +51,13 @@ export default function TransactionList({ accountId }: { accountId: string }) {
     },
   });
 
-  const hasNextPage = data?.pages[data.pages.length - 1].hasNextPage;
-
   const { ref, inView } = useInView({
     threshold: 0,
     delay: 0,
   });
 
-  useEffect(() => {
-    if (inView) {
-      !isFetching && hasNextPage && fetchNextPage();
-    }
-  }, [inView, isFetching, hasNextPage, fetchNextPage]);
+  const [transactions, setTransactions] = useState({} as GroupedTransactions);
 
-  if (isFetching)
-    return (
-      <div className="flex grow justify-center items-center">loading...</div>
-    );
-  //
   if (!data || data.pages.length === 0)
     return (
       <div className="flex grow justify-center items-center">
@@ -82,38 +65,37 @@ export default function TransactionList({ accountId }: { accountId: string }) {
       </div>
     );
 
-  const transactions = data.pages.reduce(
-    (groups: GroupedTransactions, page) => {
-      page.list.forEach((transaction) => {
-        const date = transaction.date.toString().split("T")[0];
-        if (!groups[date]) {
-          groups[date] = [];
-        }
-        groups[date].push(transaction);
-      });
-      return groups;
-    },
-    {},
-  );
+  const hasNextPage = data.pages[data.pages.length - 1].hasNextPage;
 
-  const calculateTotalAmountPerDay = (
-    groupedTransactions: GroupedTransactions,
-  ): TotalAmountsPerDay => {
-    return Object.keys(groupedTransactions).reduce((totals, date) => {
-      const totalAmount = groupedTransactions[date].reduce(
-        (sum, transaction) => {
-          if (transaction.type === "income") {
-            return sum + transaction.amount;
+  useEffect(() => {
+    const groupedTransactions = data.pages.reduce(
+      (groupedTransactions, page) => {
+        const newGroupedTransactions = { ...groupedTransactions };
+
+        page.list.forEach((transaction) => {
+          const date = transaction.date.toString().split("T")[0];
+          if (newGroupedTransactions[date]) {
+            newGroupedTransactions[date] = [
+              ...newGroupedTransactions[date],
+              transaction,
+            ];
           } else {
-            return sum - transaction.amount;
+            newGroupedTransactions[date] = [transaction];
           }
-        },
-        0,
-      );
-      totals[date] = totalAmount;
-      return totals;
-    }, {} as TotalAmountsPerDay);
-  };
+        });
+
+        return newGroupedTransactions;
+      },
+      {} as GroupedTransactions,
+    );
+    setTransactions(groupedTransactions);
+  }, [data]);
+
+  useEffect(() => {
+    if (inView) {
+      !isFetching && hasNextPage && fetchNextPage();
+    }
+  }, [inView, isFetching, hasNextPage, fetchNextPage]);
 
   const totalAmountsPerDay = calculateTotalAmountPerDay(transactions);
 
@@ -122,73 +104,14 @@ export default function TransactionList({ accountId }: { accountId: string }) {
       {Object.keys(transactions).map((key) => {
         return (
           <div key={key} className="mb-2">
-            <div className="border-b border-b-gray-1 py-1 flex justify-between">
-              <span>
-                {Number(key.split("-")[1])}月{Number(key.split("-")[2])}日
-              </span>
-              <span
-                className={`pr-3 text-sm ${
-                  totalAmountsPerDay[key] >= 0
-                    ? "text-incomeText"
-                    : "text-expenseText"
-                }`}
-              >
-                {totalAmountsPerDay[key].toLocaleString()}
-              </span>
-            </div>
+            <AmountsPerDay
+              totalAmountsPerDay={totalAmountsPerDay}
+              dataKey={key}
+            />
             <div>
-              {transactions[key].map((transaction) => {
-                return (
-                  <div
-                    key={transaction.id}
-                    className="flex justify-between bg-white h-[46px] px-3 rounded-xl items-center justify-center my-2"
-                  >
-                    <div className="flex">
-                      {transaction.type === "income" ? (
-                        <Image
-                          src="/images/income.svg"
-                          alt="income"
-                          width={35}
-                          height={35}
-                        />
-                      ) : (
-                        <Image
-                          src="/images/expense.svg"
-                          alt="expense"
-                          width={35}
-                          height={35}
-                        />
-                      )}
-                      <div className="flex flex-col ml-3">
-                        <span className="text-lg">
-                          {transaction.financialSource.name}
-                        </span>
-                        <span className="text-xs text-gray-2">
-                          {transaction.category.name}
-                        </span>
-                      </div>
-                    </div>
-                    <div
-                      className={`flex py-1 px-2 rounded-xl ${
-                        transaction.type === "income"
-                          ? "bg-incomeBg"
-                          : "bg-expenseBg"
-                      }`}
-                    >
-                      <span
-                        className={`flex justify-center items-center text-xs ${
-                          transaction.type === "income"
-                            ? "text-incomeText"
-                            : "text-expenseText"
-                        }`}
-                      >
-                        {transaction.type === "income" ? "+" : "-"}￥
-                        {transaction.amount.toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
+              {transactions[key].map((transaction, index) => (
+                <TransactionItem key={index} transaction={transaction} />
+              ))}
             </div>
           </div>
         );
