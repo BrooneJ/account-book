@@ -1,5 +1,6 @@
 import db from '../lib/db'
 import AppError from '../lib/AppError'
+import moment from 'moment-timezone'
 
 class TransactionService {
   private static instance: TransactionService
@@ -58,7 +59,8 @@ class TransactionService {
     }
 
     if (!date) {
-      date = new Date().toISOString().split('T')[0]
+      const timezone = moment.tz.guess()
+      date = moment().tz(timezone).format().split('+')[0].concat('.000Z')
     }
 
     const [totalCount, list] = await Promise.all([
