@@ -4,11 +4,9 @@ import { useGoBack } from "@/app/hooks/useGoBack";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { getTransactionDetail } from "@/app/lib/transaction";
-import {
-  Transaction,
-  TransactionDetail,
-} from "@/app/(afterLogin)/(afterSelect)/[accountId]/transactions/type";
+import { TransactionDetail } from "@/app/(afterLogin)/(afterSelect)/[accountId]/transactions/type";
 import MutationButton from "@/app/ui/TransactionList/MutationButton";
+import { useDeleteTransaction } from "@/app/hooks/useTransactionAction";
 
 export default function Page({
   params,
@@ -17,6 +15,7 @@ export default function Page({
 }) {
   const { accountId, transactionId } = params;
   const goBack = useGoBack();
+  const deleteTransaction = useDeleteTransaction();
   const { data, isFetching } = useQuery<TransactionDetail>({
     queryKey: ["transaction", accountId, transactionId],
     queryFn: () => getTransactionDetail(accountId, transactionId),
@@ -101,7 +100,14 @@ export default function Page({
           <MutationButton layoutMode="modal" mode="modify">
             修正
           </MutationButton>
-          <MutationButton layoutMode="modal" mode="delete">
+          <MutationButton
+            layoutMode="modal"
+            mode="delete"
+            onClick={async () => {
+              await deleteTransaction(accountId);
+              goBack();
+            }}
+          >
             削除
           </MutationButton>
         </div>

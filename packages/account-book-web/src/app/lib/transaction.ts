@@ -74,7 +74,6 @@ export async function getTransactionDetail(
     },
   );
   const result = await response.json();
-  console.log(result);
 
   return result;
 }
@@ -89,6 +88,31 @@ export async function createTransaction(data: FormData, accountId: string) {
         Cookie: cookies().toString(),
       },
       body: JSON.stringify(data),
+      cache: "no-cache",
+      credentials: "include",
+    },
+  );
+  const result = await response.json();
+
+  revalidatePath(`/${accountId}/transactions`);
+  return result;
+}
+
+export async function deleteTransaction({
+  accountId,
+  transactionId,
+}: {
+  accountId: string;
+  transactionId: number;
+}) {
+  const response = await fetch(
+    `http://localhost:4000/api/transaction/${accountId}/${transactionId}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookies().toString(),
+      },
       cache: "no-cache",
       credentials: "include",
     },
