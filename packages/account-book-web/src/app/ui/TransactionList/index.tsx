@@ -7,6 +7,7 @@ import { useInView } from "react-intersection-observer";
 import TransactionItem from "@/app/ui/TransactionList/TransactionItem";
 import AmountsPerDay from "@/app/ui/TransactionList/AmountsPerDay";
 import { calculateTotalAmountPerDay } from "@/app/lib/calculateTotalAmountPerDay";
+import Image from "next/image";
 
 type PaginatedTransactions = {
   list: Transaction[];
@@ -116,6 +117,17 @@ export default function TransactionList({ accountId }: { accountId: string }) {
           </div>
         );
       })}
+      {isFetching && (
+        <div className="flex justify-center items-center pt-2">
+          <Image
+            src="/images/loading.svg"
+            alt=""
+            width={24}
+            height={24}
+            className="animate-spin"
+          />
+        </div>
+      )}
       <div ref={ref} style={{ height: 50 }} />
     </div>
   );
