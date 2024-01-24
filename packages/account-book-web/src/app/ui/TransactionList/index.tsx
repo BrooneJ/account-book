@@ -8,6 +8,7 @@ import TransactionItem from "@/app/ui/TransactionList/TransactionItem";
 import AmountsPerDay from "@/app/ui/TransactionList/AmountsPerDay";
 import { calculateTotalAmountPerDay } from "@/app/lib/calculateTotalAmountPerDay";
 import Image from "next/image";
+import Link from "next/link";
 
 type PaginatedTransactions = {
   list: Transaction[];
@@ -110,8 +111,13 @@ export default function TransactionList({ accountId }: { accountId: string }) {
               dataKey={key}
             />
             <div>
-              {transactions[key].map((transaction, index) => (
-                <TransactionItem key={index} transaction={transaction} />
+              {transactions[key].map((transaction) => (
+                <Link
+                  href={`/${accountId}/transactions/${transaction.id}/detail`}
+                  key={transaction.id}
+                >
+                  <TransactionItem transaction={transaction} />
+                </Link>
               ))}
             </div>
           </div>
