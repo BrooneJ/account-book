@@ -64,7 +64,7 @@ export default function Page({
             }`}
           >
             <span
-              className={`${
+              className={`text-xs ${
                 data?.type === "income" ? "text-incomeText" : "text-expenseText"
               }`}
             >
