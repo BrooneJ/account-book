@@ -74,7 +74,7 @@ export const getTransactionDetailSchema = routeSchema({
       user: z.object({
         username: z.string(),
       }),
-      description: z.string(),
+      description: z.string().nullable(),
     }),
   },
 })

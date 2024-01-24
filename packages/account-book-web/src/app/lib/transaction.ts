@@ -57,6 +57,28 @@ export async function getTransactionsAll(
   return result;
 }
 
+export async function getTransactionDetail(
+  accountId: string,
+  transactionId: string,
+) {
+  const response = await fetch(
+    `http://localhost:4000/api/transaction/${accountId}/detail/${transactionId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookies().toString(),
+      },
+      cache: "no-cache",
+      credentials: "include",
+    },
+  );
+  const result = await response.json();
+  console.log(result);
+
+  return result;
+}
+
 export async function createTransaction(data: FormData, accountId: string) {
   const response = await fetch(
     `http://localhost:4000/api/transaction/${accountId}`,

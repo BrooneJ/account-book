@@ -1,18 +1,6 @@
 import { memo } from "react";
 import Image from "next/image";
-
-type Transaction = {
-  id: number;
-  type: "income" | "expense";
-  amount: number;
-  date: Date;
-  category: {
-    name: string;
-  };
-  financialSource: {
-    name: string;
-  };
-};
+import { Transaction } from "@/app/(afterLogin)/(afterSelect)/[accountId]/transactions/type";
 
 type Props = {
   transaction: Transaction;

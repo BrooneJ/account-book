@@ -9,25 +9,13 @@ import AmountsPerDay from "@/app/ui/TransactionList/AmountsPerDay";
 import { calculateTotalAmountPerDay } from "@/app/lib/calculateTotalAmountPerDay";
 import Image from "next/image";
 import Link from "next/link";
+import { Transaction } from "@/app/(afterLogin)/(afterSelect)/[accountId]/transactions/type";
 
 type PaginatedTransactions = {
   list: Transaction[];
   endCursor: number;
   endCursorDate: string;
   hasNextPage: boolean;
-};
-
-type Transaction = {
-  id: number;
-  type: "income" | "expense";
-  amount: number;
-  date: Date;
-  category: {
-    name: string;
-  };
-  financialSource: {
-    name: string;
-  };
 };
 
 export type GroupedTransactions = {
