@@ -101,7 +101,7 @@ export default function writeAccountBookPage({
         const result = await createTransaction(transactionData, accountId);
         setCategory({ type: "income", name: "未登録" });
         setSource({ type: "income", name: "未登録" });
-        router.replace(`/${accountId}/transactionDetail`);
+        router.replace(`/${accountId}/transactions`);
         return result;
       } catch (error) {
         console.log(error);

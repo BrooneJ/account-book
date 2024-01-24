@@ -12,7 +12,7 @@ export default function ThisMonthTransaction({ id }: { id: string }) {
   const thisMonth = new Date().getMonth() + 1;
 
   return (
-    <Link href={`/${id}/transactionDetail`}>
+    <Link href={`/${id}/transactions`}>
       <div className="flex items-center justify-between border border-gray-1 py-2 px-3 rounded-xl mt-4 bg-white">
         <div className="bg-sub h-12 w-12 rounded-3xl shadow shadow-gray-1 flex justify-center items-center">
           <span className="text-xl">{thisMonth}月</span>

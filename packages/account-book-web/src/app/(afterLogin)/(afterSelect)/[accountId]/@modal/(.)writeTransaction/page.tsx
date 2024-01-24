@@ -106,7 +106,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
         await queryClient.invalidateQueries({
           queryKey: ["transactions", accountId],
         });
-        router.replace(`/${accountId}/transactionDetail`);
+        router.replace(`/${accountId}/transactions`);
         return result;
       } catch (error) {
         console.log(error);

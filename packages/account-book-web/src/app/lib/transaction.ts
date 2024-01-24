@@ -53,7 +53,7 @@ export async function getTransactionsAll(
   });
 
   const result = await response.json();
-  revalidatePath(`/${accountId}/transactionDetail`);
+  revalidatePath(`/${accountId}/transactions`);
   return result;
 }
 
@@ -73,6 +73,6 @@ export async function createTransaction(data: FormData, accountId: string) {
   );
   const result = await response.json();
 
-  revalidatePath(`/${accountId}/transactionDetail`);
+  revalidatePath(`/${accountId}/transactions`);
   return result;
 }
