@@ -91,3 +91,11 @@ export const getThisMonthTransactionsSchema = routeSchema({
     }),
   },
 })
+
+export const deleteTransactionSchema = routeSchema({
+  tags: ['transaction'],
+  params: z.object({
+    accountId: z.string(),
+    transactionId: z.string(),
+  }),
+})

@@ -227,6 +227,28 @@ class TransactionService {
 
     return transaction
   }
+
+  async deleteTransaction(accountId: string, transactionId: string) {
+    const transaction = await db.transaction.findUnique({
+      where: {
+        id: parseInt(transactionId),
+        accountId,
+      },
+    })
+
+    if (!transaction) {
+      throw new AppError('BadRequestError')
+    }
+
+    await db.transaction.delete({
+      where: {
+        accountId,
+        id: parseInt(transactionId),
+      },
+    })
+
+    return transaction
+  }
 }
 
 export default TransactionService

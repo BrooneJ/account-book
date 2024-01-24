@@ -3,6 +3,7 @@ import securedPlugin from '../../../plugins/securedPlugin'
 import TransactionService from '../../../services/TransactionService'
 import {
   createTransactionSchema,
+  deleteTransactionSchema,
   getThisMonthTransactionsSchema,
   getTransactionDetailSchema,
   getTransactionsSchema,
@@ -72,6 +73,15 @@ const transactionRouter: FastifyPluginAsyncWithZod = async (fastify) => {
         date,
         description,
       )
+    },
+  )
+
+  fastify.delete(
+    '/:accountId/:transactionId',
+    { schema: deleteTransactionSchema },
+    async (request, reply) => {
+      const { accountId, transactionId } = request.params
+      return transactionService.deleteTransaction(accountId, transactionId)
     },
   )
 }
