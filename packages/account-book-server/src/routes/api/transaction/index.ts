@@ -4,6 +4,7 @@ import TransactionService from '../../../services/TransactionService'
 import {
   createTransactionSchema,
   getThisMonthTransactionsSchema,
+  getTransactionDetailSchema,
   getTransactionsSchema,
 } from './schema'
 
@@ -30,6 +31,18 @@ const transactionRouter: FastifyPluginAsyncWithZod = async (fastify) => {
         accountId,
         date,
         cursor: cursor ? Number(cursor) : undefined,
+      })
+    },
+  )
+
+  fastify.get(
+    '/:accountId/detail/:transactionId',
+    { schema: getTransactionDetailSchema },
+    async (request, reply) => {
+      const { accountId, transactionId } = request.params
+      return transactionService.getTransactionDetail({
+        accountId,
+        transactionId,
       })
     },
   )

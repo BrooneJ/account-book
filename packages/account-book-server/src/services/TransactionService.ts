@@ -130,6 +130,32 @@ class TransactionService {
     }
   }
 
+  async getTransactionDetail({
+    accountId,
+    transactionId,
+  }: {
+    accountId: string
+    transactionId: string
+  }) {
+    const result = await db.transaction.findUnique({
+      where: {
+        id: parseInt(transactionId),
+        accountId,
+      },
+      include: {
+        financialSource: true,
+        category: true,
+        user: true,
+      },
+    })
+
+    if (!result) {
+      throw new AppError('BadRequestError')
+    }
+
+    return result
+  }
+
   async createTransaction(
     type: string,
     userId: string,

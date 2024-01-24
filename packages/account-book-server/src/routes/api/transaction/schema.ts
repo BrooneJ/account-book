@@ -53,6 +53,31 @@ export const getTransactionsSchema = routeSchema({
   },
 })
 
+export const getTransactionDetailSchema = routeSchema({
+  tags: ['transaction'],
+  params: z.object({
+    accountId: z.string(),
+    transactionId: z.string(),
+  }),
+  response: {
+    200: z.object({
+      id: z.number(),
+      type: z.string(),
+      amount: z.number(),
+      date: z.date(),
+      financialSource: z.object({
+        name: z.string(),
+      }),
+      category: z.object({
+        name: z.string(),
+      }),
+      user: z.object({
+        username: z.string(),
+      }),
+    }),
+  },
+})
+
 export const getThisMonthTransactionsSchema = routeSchema({
   tags: ['transaction'],
   params: z.object({
