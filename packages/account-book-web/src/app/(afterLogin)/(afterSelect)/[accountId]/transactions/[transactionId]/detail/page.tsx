@@ -5,6 +5,7 @@ import { getTransactionDetail } from "@/app/lib/transaction";
 import { TransactionDetail } from "@/app/(afterLogin)/(afterSelect)/[accountId]/transactions/type";
 import MutationButton from "@/app/ui/TransactionList/MutationButton";
 import LowHeader from "@/app/ui/Header/lowHeader";
+import Image from "next/image";
 
 export default function Page({
   params,
@@ -12,11 +13,24 @@ export default function Page({
   params: { accountId: string; transactionId: string };
 }) {
   const { accountId, transactionId } = params;
-  const { data } = useQuery<TransactionDetail>({
+  const { data, isFetching } = useQuery<TransactionDetail>({
     queryKey: ["transaction", accountId, transactionId],
     queryFn: () => getTransactionDetail(accountId, transactionId),
   });
-  console.log(data);
+
+  if (isFetching) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Image
+          src="/images/loading.svg"
+          alt="loading"
+          width={24}
+          height={24}
+          className="animate-spin"
+        />
+      </div>
+    );
+  }
 
   const date = data?.date.toString().split("T")[0].split("-");
 
