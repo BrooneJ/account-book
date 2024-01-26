@@ -78,6 +78,7 @@ model Category {
   defaultCategory Boolean       @default(false)
   account         Account       @relation(fields: [accountId], references: [id])
   transactions    Transaction[]
+  isArchived      Boolean       @default(false)
 }
 
 model FinancialSource {
@@ -87,4 +88,5 @@ model FinancialSource {
   name         String
   type         String
   transactions Transaction[]
+  isArchived   Boolean       @default(false)
 }
