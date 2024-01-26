@@ -6,6 +6,8 @@ import { TransactionDetail } from "@/app/(afterLogin)/(afterSelect)/[accountId]/
 import MutationButton from "@/app/ui/TransactionList/MutationButton";
 import LowHeader from "@/app/ui/Header/lowHeader";
 import Image from "next/image";
+import { useGoBack } from "@/app/hooks/useGoBack";
+import { useDeleteTransaction } from "@/app/hooks/useTransactionAction";
 
 export default function Page({
   params,
@@ -13,6 +15,8 @@ export default function Page({
   params: { accountId: string; transactionId: string };
 }) {
   const { accountId, transactionId } = params;
+  const goBack = useGoBack();
+  const deleteTransaction = useDeleteTransaction();
   const { data, isFetching } = useQuery<TransactionDetail>({
     queryKey: ["transaction", accountId, transactionId],
     queryFn: () => getTransactionDetail(accountId, transactionId),
@@ -32,7 +36,7 @@ export default function Page({
     );
   }
 
-  const date = data?.date.toString().split("T")[0].split("-");
+  const date = data?.date?.toString().split("T")[0].split("-");
 
   return (
     <div className="flex flex-col bg-background rounded-xl h-full pb-16">
@@ -44,7 +48,7 @@ export default function Page({
           }`}
         >
           {data?.type === "income" ? "+" : "-"}
-          {data?.amount.toLocaleString()}
+          {data?.amount?.toLocaleString()}
         </span>
         <div
           className={`px-4 rounded-2xl border border-gray-1 ${
@@ -69,11 +73,11 @@ export default function Page({
             <span className="text-xs">
               {data?.type === "income" ? "収入源" : "支出先"}
             </span>
-            <span className="text-[20px]">{data?.financialSource.name}</span>
+            <span className="text-[20px]">{data?.financialSource?.name}</span>
           </div>
           <div className="flex flex-col grow">
             <span className="text-xs">カテゴリー</span>
-            <span className="text-[20px]">{data?.category.name}</span>
+            <span className="text-[20px]">{data?.category?.name}</span>
           </div>
         </div>
         <div className="flex flex-col">
@@ -89,7 +93,14 @@ export default function Page({
         <MutationButton layoutMode="page" mode="modify">
           修正
         </MutationButton>
-        <MutationButton layoutMode="page" mode="delete">
+        <MutationButton
+          layoutMode="page"
+          mode="delete"
+          onClick={async () => {
+            await deleteTransaction(accountId);
+            goBack();
+          }}
+        >
           削除
         </MutationButton>
       </div>

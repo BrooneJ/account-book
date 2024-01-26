@@ -22,8 +22,6 @@ export default async function Page({
   });
   const dehydratedState = dehydrate(queryClient);
 
-  // return;
-
   return (
     <HydrationBoundary state={dehydratedState}>
       <div className="flex flex-col h-full">
