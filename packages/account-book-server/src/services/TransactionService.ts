@@ -122,7 +122,7 @@ class TransactionService {
     const hasNextPage = totalCount > limit
     const endCursor = list.at(-1)?.id ?? null
     const endCursorDate =
-      list[list.length - 1].date.toISOString().split('T')[0] ?? null
+      list[list.length - 1]?.date.toISOString().split('T')[0] ?? null
 
     return {
       list,

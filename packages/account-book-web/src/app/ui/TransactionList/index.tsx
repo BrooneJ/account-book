@@ -28,15 +28,15 @@ export default function TransactionList({ accountId }: { accountId: string }) {
     Object,
     InfiniteData<PaginatedTransactions>,
     [_1: string, _2: string],
-    [string, number]
+    [string | undefined, number | undefined]
   >({
     queryKey: ["transactions", accountId],
     queryFn: ({ pageParam }) => getTransactionsAll(accountId, pageParam),
     initialPageParam: ["", 0],
     getNextPageParam: (lastPage) => {
       return [
-        lastPage.list.at(-1)!.date.toString().split("T")[0],
-        lastPage.list.at(-1)!.id,
+        lastPage?.list.at(-1)?.date.toString().split("T")[0],
+        lastPage?.list.at(-1)?.id,
       ];
     },
   });
@@ -48,7 +48,7 @@ export default function TransactionList({ accountId }: { accountId: string }) {
 
   const [transactions, setTransactions] = useState({} as GroupedTransactions);
 
-  if (!data || data.pages.length === 0)
+  if (!data || data.pages[0].list.length === 0)
     return (
       <div className="flex grow justify-center items-center">
         履歴が存在していません。

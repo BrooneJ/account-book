@@ -33,7 +33,7 @@ export async function getThisMonthTransaction(accountId: string) {
 
 export async function getTransactionsAll(
   accountId: string,
-  pageParam: [string, number],
+  pageParam: [string | undefined, number | undefined],
 ) {
   const [lastDate, lastId] = pageParam;
 
