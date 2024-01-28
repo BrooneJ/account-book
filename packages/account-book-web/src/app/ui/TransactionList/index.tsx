@@ -47,17 +47,10 @@ export default function TransactionList({ accountId }: { accountId: string }) {
   });
 
   const [transactions, setTransactions] = useState({} as GroupedTransactions);
-
-  if (!data || data.pages[0].list.length === 0)
-    return (
-      <div className="flex grow justify-center items-center">
-        履歴が存在していません。
-      </div>
-    );
-
-  const hasNextPage = data.pages[data.pages.length - 1].hasNextPage;
+  const hasNextPage = data?.pages[data.pages.length - 1].hasNextPage;
 
   useEffect(() => {
+    if (!data) return;
     const groupedTransactions = data.pages.reduce(
       (groupedTransactions, page) => {
         const newGroupedTransactions = { ...groupedTransactions };
@@ -86,6 +79,14 @@ export default function TransactionList({ accountId }: { accountId: string }) {
       !isFetching && hasNextPage && fetchNextPage();
     }
   }, [inView, isFetching, hasNextPage, fetchNextPage]);
+
+  if (!data || data.pages[0].list.length === 0) {
+    return (
+      <div className="flex grow justify-center items-center">
+        履歴が存在していません。
+      </div>
+    );
+  }
 
   const totalAmountsPerDay = calculateTotalAmountPerDay(transactions);
 
