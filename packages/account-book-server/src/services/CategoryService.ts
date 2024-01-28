@@ -36,17 +36,6 @@ class CategoryService {
   }
 
   async createCategory(accountId: string, type: string, name: string) {
-    const existingCategory = await db.category.findFirst({
-      where: {
-        accountId,
-        type,
-        name,
-      },
-    })
-    if (existingCategory) {
-      throw new AppError('CategoryExistsError')
-    }
-
     const category = await db.category.create({
       data: {
         accountId,
@@ -57,17 +46,19 @@ class CategoryService {
     return category
   }
 
-  async deleteCategory(accountId: string, type: string, name: string[]) {
-    const deleteResult = await db.category.deleteMany({
+  async deleteCategory(accountId: string, type: string, id: string[]) {
+    await db.category.updateMany({
       where: {
         accountId,
         type,
-        name: {
-          in: name,
+        id: {
+          in: id,
         },
       },
+      data: {
+        isArchived: true,
+      },
     })
-    return deleteResult
   }
 }
 

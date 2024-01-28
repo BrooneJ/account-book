@@ -34,6 +34,6 @@ export const deleteCategorySchema = routeSchema({
   }),
   body: z.object({
     type: z.string(),
-    name: z.array(z.string()),
+    id: z.array(z.string()),
   }),
 })

@@ -30,13 +30,13 @@ const categoryRouter: FastifyPluginAsyncWithZod = async (fastify) => {
     },
   )
 
-  fastify.delete(
+  fastify.patch(
     '/:accountId',
     { schema: deleteCategorySchema },
     async (request, reply) => {
       const { accountId } = request.params
-      const { type, name } = request.body
-      return categoryService.deleteCategory(accountId, type, name)
+      const { type, id } = request.body
+      return categoryService.deleteCategory(accountId, type, id)
     },
   )
 }
