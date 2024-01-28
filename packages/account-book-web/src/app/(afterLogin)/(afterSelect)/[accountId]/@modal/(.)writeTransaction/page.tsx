@@ -236,9 +236,9 @@ export default function Page({ params }: { params: { accountId: string } }) {
         className="absolute right-4 top-4 bg-background rounded-xl"
         onClick={() => {
           goBack();
-          setTransactionType("income");
-          setCategory({ type: "income", name: "未登録" });
-          setSource({ type: "income", name: "未登録" });
+          setTransactionType("expense");
+          setCategory({ type: "expense", name: "未登録" });
+          setSource({ type: "expense", name: "未登録" });
         }}
       >
         <Image src="/images/close.svg" alt="close" width={20} height={20} />
@@ -269,18 +269,6 @@ export default function Page({ params }: { params: { accountId: string } }) {
         <div className="mt-6 bg-gray-1 rounded-lg flex p-[5px] h-[42px]">
           <div
             className={`grow flex items-center justify-center rounded-lg ${
-              type === "income" ? "bg-background shadow" : ""
-            }`}
-            onClick={() => {
-              setTransactionType("income");
-              setSource({ type: "income", name: "未登録" });
-              setCategory({ type: "income", name: "未登録" });
-            }}
-          >
-            収入
-          </div>
-          <div
-            className={`grow flex items-center justify-center rounded-lg ${
               type === "expense" ? "bg-background shadow" : ""
             }`}
             onClick={() => {
@@ -290,6 +278,18 @@ export default function Page({ params }: { params: { accountId: string } }) {
             }}
           >
             支出
+          </div>
+          <div
+            className={`grow flex items-center justify-center rounded-lg ${
+              type === "income" ? "bg-background shadow" : ""
+            }`}
+            onClick={() => {
+              setTransactionType("income");
+              setSource({ type: "income", name: "未登録" });
+              setCategory({ type: "income", name: "未登録" });
+            }}
+          >
+            収入
           </div>
         </div>
         <form className="flex flex-col grow" onSubmit={onSubmit}>

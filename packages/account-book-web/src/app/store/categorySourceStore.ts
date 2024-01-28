@@ -13,7 +13,7 @@ type Action = {
 };
 
 export const categorySourceStore = create<State & Action>((set) => ({
-  type: "income",
+  type: "expense",
   setTransactionType: (type) => set({ type }),
   category: { type: "income", name: "未登録" },
   setCategory: (category) => set({ category }),
