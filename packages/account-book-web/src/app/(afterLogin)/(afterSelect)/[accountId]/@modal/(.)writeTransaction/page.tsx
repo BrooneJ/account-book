@@ -22,6 +22,7 @@ import { categorySourceStore } from "@/app/store/categorySourceStore";
 import { createTransaction } from "@/app/lib/transaction";
 import { useUser } from "@/app/contexts/UserContext";
 import { usePathname, useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 
 const oldData = z.object({
   income: z.array(z.object({ id: z.string(), name: z.string() })),
@@ -230,12 +231,17 @@ export default function Page({ params }: { params: { accountId: string } }) {
     },
   });
 
+  const [isVisible, setIsVisible] = useState(true);
+  console.log("isVisible", isVisible);
   return (
     <div className="absolute h-screen w-full bg-black bg-opacity-40 top-0 left-0 z-10">
       <div
         className="absolute right-4 top-4 bg-background rounded-xl"
         onClick={() => {
-          goBack();
+          setIsVisible(false);
+          setTimeout(() => {
+            goBack();
+          }, 500);
           setTransactionType("expense");
           setCategory({ type: "expense", name: "未登録" });
           setSource({ type: "expense", name: "未登録" });
@@ -243,105 +249,115 @@ export default function Page({ params }: { params: { accountId: string } }) {
       >
         <Image src="/images/close.svg" alt="close" width={20} height={20} />
       </div>
-      <div className="absolute h-90vh bottom-0 p-5 bg-background w-full rounded-t-xl flex flex-col">
-        <div className="flex">
-          <div
-            className={`grow flex justify-center font-bold text-xl pb-[10px] ${
-              state.isCamera
-                ? "text-gray-2 border-b-2 border-b-gray-2"
-                : "text-primary border-b-2 border-b-primary"
-            }`}
-            onClick={() => updateState({ isCamera: false })}
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div
+            initial={{ y: 600 }}
+            animate={{ y: 0 }}
+            exit={{ y: 600 }}
+            transition={{ type: "spring", stiffness: 100, damping: 20 }}
+            className="absolute h-90vh bottom-0 p-5 bg-background w-full rounded-t-xl flex flex-col"
           >
-            手入力
-          </div>
-          <div
-            className={`grow flex justify-center font-bold text-xl pb-[10px] ${
-              state.isCamera
-                ? "text-primary border-b-2 border-b-primary"
-                : "text-gray-2 border-b-2 border-b-gray-2"
-            }`}
-            onClick={() => updateState({ isCamera: true })}
-          >
-            カメラ
-          </div>
-        </div>
-        <div className="mt-6 bg-gray-1 rounded-lg flex p-[5px] h-[42px]">
-          <div
-            className={`grow flex items-center justify-center rounded-lg ${
-              type === "expense" ? "bg-background shadow" : ""
-            }`}
-            onClick={() => {
-              setTransactionType("expense");
-              setSource({ type: "expense", name: "未登録" });
-              setCategory({ type: "expense", name: "未登録" });
-            }}
-          >
-            支出
-          </div>
-          <div
-            className={`grow flex items-center justify-center rounded-lg ${
-              type === "income" ? "bg-background shadow" : ""
-            }`}
-            onClick={() => {
-              setTransactionType("income");
-              setSource({ type: "income", name: "未登録" });
-              setCategory({ type: "income", name: "未登録" });
-            }}
-          >
-            収入
-          </div>
-        </div>
-        <form className="flex flex-col grow" onSubmit={onSubmit}>
-          <div className="mt-6">
-            <div className="relative flex items-center">
-              <div className="absolute left-0 pl-3 pt-2 items-center justify-center">
-                <span className="text-2xl text-gray-2">¥</span>
+            <div className="flex">
+              <div
+                className={`grow flex justify-center font-bold text-xl pb-[10px] ${
+                  state.isCamera
+                    ? "text-gray-2 border-b-2 border-b-gray-2"
+                    : "text-primary border-b-2 border-b-primary"
+                }`}
+                onClick={() => updateState({ isCamera: false })}
+              >
+                手入力
               </div>
-              <input
-                type="number"
-                name="amount"
-                className="w-full h-12 border-0 bg-background border-b-2 px-4 mt-2 focus:outline-none focus:border-b-2 focus:border-primary text-xl text-right"
-                placeholder="金額を入力してください。"
-              />
+              <div
+                className={`grow flex justify-center font-bold text-xl pb-[10px] ${
+                  state.isCamera
+                    ? "text-primary border-b-2 border-b-primary"
+                    : "text-gray-2 border-b-2 border-b-gray-2"
+                }`}
+                onClick={() => updateState({ isCamera: true })}
+              >
+                カメラ
+              </div>
             </div>
-          </div>
-          <div className="mt-3 flex items-center justify-between">
-            <span className="text-2xl">日付</span>
-            <input
-              type="date"
-              className="border-0 bg-background p-2 rounded focus:outline-none focus:border-b-primary text-xl text-right border-b-2 border"
-              value={state.selectedDate}
-              onChange={handleDateChange}
-            />
-          </div>
-          <div className="mt-3 flex items-center justify-between">
-            <span className="text-2xl">カテゴリー</span>
-            <div onClick={() => updateState({ selectCategory: true })}>
-              {category.name}
+            <div className="mt-6 bg-gray-1 rounded-lg flex p-[5px] h-[42px]">
+              <div
+                className={`grow flex items-center justify-center rounded-lg ${
+                  type === "expense" ? "bg-background shadow" : ""
+                }`}
+                onClick={() => {
+                  setTransactionType("expense");
+                  setSource({ type: "expense", name: "未登録" });
+                  setCategory({ type: "expense", name: "未登録" });
+                }}
+              >
+                支出
+              </div>
+              <div
+                className={`grow flex items-center justify-center rounded-lg ${
+                  type === "income" ? "bg-background shadow" : ""
+                }`}
+                onClick={() => {
+                  setTransactionType("income");
+                  setSource({ type: "income", name: "未登録" });
+                  setCategory({ type: "income", name: "未登録" });
+                }}
+              >
+                収入
+              </div>
             </div>
-          </div>
-          <div className="mt-3 flex items-center justify-between">
-            <span className="text-2xl">
-              {type === "income" ? "どこから？" : "どこで？"}
-            </span>
-            <div onClick={() => updateState({ selectSource: true })}>
-              {source.name}
-            </div>
-          </div>
-          <div className="pt-4 grow flex flex-col">
-            <label className="text-2xl">メモ</label>
-            <textarea
-              name="description"
-              className="w-full h-50 rounded-lg bg-gray-200 p-3 my-2 focus:outline-none text-lg grow"
-              placeholder="メモを入力してください。"
-            ></textarea>
-          </div>
-          <Button layoutMode="fullWidth" disabled={isPending}>
-            登録
-          </Button>
-        </form>
-      </div>
+            <form className="flex flex-col grow" onSubmit={onSubmit}>
+              <div className="mt-6">
+                <div className="relative flex items-center">
+                  <div className="absolute left-0 pl-3 pt-2 items-center justify-center">
+                    <span className="text-2xl text-gray-2">¥</span>
+                  </div>
+                  <input
+                    type="number"
+                    name="amount"
+                    className="w-full h-12 border-0 bg-background border-b-2 px-4 mt-2 focus:outline-none focus:border-b-2 focus:border-primary text-xl text-right"
+                    placeholder="金額を入力してください。"
+                  />
+                </div>
+              </div>
+              <div className="mt-3 flex items-center justify-between">
+                <span className="text-2xl">日付</span>
+                <input
+                  type="date"
+                  className="border-0 bg-background p-2 rounded focus:outline-none focus:border-b-primary text-xl text-right border-b-2 border"
+                  value={state.selectedDate}
+                  onChange={handleDateChange}
+                />
+              </div>
+              <div className="mt-3 flex items-center justify-between">
+                <span className="text-2xl">カテゴリー</span>
+                <div onClick={() => updateState({ selectCategory: true })}>
+                  {category.name}
+                </div>
+              </div>
+              <div className="mt-3 flex items-center justify-between">
+                <span className="text-2xl">
+                  {type === "income" ? "どこから？" : "どこで？"}
+                </span>
+                <div onClick={() => updateState({ selectSource: true })}>
+                  {source.name}
+                </div>
+              </div>
+              <div className="pt-4 grow flex flex-col">
+                <label className="text-2xl">メモ</label>
+                <textarea
+                  name="description"
+                  className="w-full h-50 rounded-lg bg-gray-200 p-3 my-2 focus:outline-none text-lg grow"
+                  placeholder="メモを入力してください。"
+                ></textarea>
+              </div>
+              <Button layoutMode="fullWidth" disabled={isPending}>
+                登録
+              </Button>
+            </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {state.selectCategory ? (
         <TransactionCommon
           title="カテゴリー"
