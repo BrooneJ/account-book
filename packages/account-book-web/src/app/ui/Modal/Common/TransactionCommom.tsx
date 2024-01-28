@@ -58,7 +58,7 @@ const TransactionCommon = ({
           </button>
         </div>
       </form>
-      <div className="flex items-center justify-between">
+      <div>
         <span
           className="block text-right py-2 mr-2"
           onClick={() => setDelete(true)}
