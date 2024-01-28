@@ -2,8 +2,8 @@ import { routeSchema } from '../../../lib/routeSchema'
 import { z } from 'zod'
 
 const categoriesResult = z.object({
-  income: z.array(z.string()),
-  expense: z.array(z.string()),
+  income: z.array(z.object({ id: z.string(), name: z.string() })),
+  expense: z.array(z.object({ id: z.string(), name: z.string() })),
 })
 
 export const getCategoriesSchema = routeSchema({

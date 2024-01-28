@@ -1,9 +1,14 @@
 import db from '../lib/db'
 import AppError from '../lib/AppError'
 
+type Source = {
+  id: string
+  name: string
+}
+
 type SourceObject = {
-  income: string[]
-  expense: string[]
+  income: Source[]
+  expense: Source[]
 }
 
 class FinancialSourceService {
@@ -26,7 +31,8 @@ class FinancialSourceService {
     const sourceObject: SourceObject = sources.reduce(
       (acc, source) => {
         const key = source.type === 'income' ? 'income' : 'expense'
-        acc[key].push(source.name)
+        if (source.isArchived) return acc
+        acc[key].push({ id: source.id, name: source.name })
         return acc
       },
       { income: [], expense: [] } as SourceObject,
@@ -57,17 +63,19 @@ class FinancialSourceService {
     return source
   }
 
-  async deleteSource(accountId: string, type: string, name: string[]) {
-    const deleteResult = await db.financialSource.deleteMany({
+  async deleteSource(accountId: string, type: string, id: string[]) {
+    await db.financialSource.updateMany({
       where: {
         accountId,
         type,
-        name: {
-          in: name,
+        id: {
+          in: id,
         },
       },
+      data: {
+        isArchived: true,
+      },
     })
-    return deleteResult
   }
 }
 

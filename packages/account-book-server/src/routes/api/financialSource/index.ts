@@ -30,13 +30,13 @@ const sourceRouter: FastifyPluginAsyncWithZod = async (fastify) => {
     },
   )
 
-  fastify.delete(
+  fastify.patch(
     '/:accountId',
     { schema: deleteSourceSchema },
     async (request, reply) => {
       const { accountId } = request.params
-      const { type, name } = request.body
-      return financialSourceService.deleteSource(accountId, type, name)
+      const { type, id } = request.body
+      return financialSourceService.deleteSource(accountId, type, id)
     },
   )
 }

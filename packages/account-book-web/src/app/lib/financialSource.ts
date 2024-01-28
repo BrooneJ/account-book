@@ -47,15 +47,15 @@ export async function createSource(data: FormData, accountId: string) {
 export async function deleteSourceList(
   accountId: string,
   type: "income" | "expense",
-  name: string[],
+  id: string[],
 ) {
   await fetch(`http://localhost:4000/api/financial-source/${accountId}`, {
-    method: "DELETE",
+    method: "PATCH",
     headers: {
       "Content-Type": "application/json",
       Cookie: cookies().toString(),
     },
-    body: JSON.stringify({ type, name }),
+    body: JSON.stringify({ type, id }),
     cache: "no-cache",
     credentials: "include",
   });

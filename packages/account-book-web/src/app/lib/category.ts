@@ -44,15 +44,15 @@ export async function getCategory(accountId: string) {
 export async function deleteCategoryList(
   accountId: string,
   type: "income" | "expense",
-  name: string[],
+  id: string[],
 ) {
   await fetch(`http://localhost:4000/api/category/${accountId}`, {
-    method: "DELETE",
+    method: "PATCH",
     headers: {
       "Content-Type": "application/json",
       Cookie: cookies().toString(),
     },
-    body: JSON.stringify({ type, name }),
+    body: JSON.stringify({ type, id }),
     cache: "no-cache",
     credentials: "include",
   });

@@ -1,9 +1,13 @@
 import db from '../lib/db'
-import AppError from '../lib/AppError'
+
+type Category = {
+  id: string
+  name: string
+}
 
 type CategoryObject = {
-  income: string[]
-  expense: string[]
+  income: Category[]
+  expense: Category[]
 }
 
 class CategoryService {
@@ -26,7 +30,8 @@ class CategoryService {
     const categoryObject: CategoryObject = categories.reduce(
       (acc, category) => {
         const key = category.type === 'income' ? 'income' : 'expense'
-        acc[key].push(category.name)
+        if (category.isArchived) return acc
+        acc[key].push({ id: category.id, name: category.name })
         return acc
       },
       { income: [], expense: [] } as CategoryObject,

@@ -24,8 +24,8 @@ import { useUser } from "@/app/contexts/UserContext";
 import { usePathname, useRouter } from "next/navigation";
 
 const oldData = z.object({
-  income: z.array(z.string()),
-  expense: z.array(z.string()),
+  income: z.array(z.object({ id: z.string(), name: z.string() })),
+  expense: z.array(z.object({ id: z.string(), name: z.string() })),
 });
 
 type OldData = z.infer<typeof oldData>;
@@ -147,7 +147,10 @@ export default function Page({ params }: { params: { accountId: string } }) {
         (oldData: OldData) => {
           return {
             ...oldData,
-            [response.type]: [...oldData[type], response.name],
+            [response.type]: [
+              ...oldData[type],
+              { id: response.id, name: response.name },
+            ],
           };
         },
       );
@@ -168,7 +171,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
           return {
             ...oldData,
             [type]: oldData[type].filter(
-              (item) => !state.selected.includes(item),
+              (item) => !state.selected.includes(item.id),
             ),
           };
         },
@@ -200,7 +203,10 @@ export default function Page({ params }: { params: { accountId: string } }) {
       queryClient.setQueryData(["sources", accountId], (oldData: OldData) => {
         return {
           ...oldData,
-          [response.type]: [...oldData[type], response.name],
+          [response.type]: [
+            ...oldData[type],
+            { id: response.id, name: response.name },
+          ],
         };
       });
     },
@@ -218,7 +224,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
         return {
           ...oldData,
           [type]: oldData[type].filter(
-            (item) => !state.selected.includes(item),
+            (item) => !state.selected.includes(item.id),
           ),
         };
       });

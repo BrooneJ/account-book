@@ -4,13 +4,18 @@ import { UseMutateFunction } from "@tanstack/react-query";
 import { FormEvent } from "react";
 import { categorySourceStore } from "@/app/store/categorySourceStore";
 
+type DataType = {
+  id: string;
+  name: string;
+};
+
 type TransactionCommonProps = {
   title: string;
   mutation: UseMutateFunction<any, Error, FormEvent<HTMLFormElement>, unknown>;
   inputValue: string;
   setInputValue: (value: string) => void;
   errorMessages: string;
-  data: string[];
+  data: DataType[];
   onClose: () => void;
   setDelete: (value: boolean) => void;
   onSelected: (source: { type: "income" | "expense"; name: string }) => void;
@@ -66,14 +71,14 @@ const TransactionCommon = ({
       </div>
       <div className="h-2/3 overflow-scroll">
         <div className="flex flex-wrap">
-          {data.map((item: string) => (
+          {data.map((item: DataType) => (
             <div
               tabIndex={0}
               className="border border-2 border-gray-1 text-gray-1 rounded-lg p-2 m-1 focus:border-primary focus:border-2 focus:text-point"
-              key={item}
-              onClick={() => onSelected({ type, name: item })}
+              key={item.id}
+              onClick={() => onSelected({ type, name: item.name })}
             >
-              {item}
+              {item.name}
             </div>
           ))}
         </div>

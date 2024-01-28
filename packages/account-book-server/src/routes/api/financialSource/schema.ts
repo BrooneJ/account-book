@@ -2,8 +2,8 @@ import { routeSchema } from '../../../lib/routeSchema'
 import { z } from 'zod'
 
 const sourcesResult = z.object({
-  income: z.array(z.string()),
-  expense: z.array(z.string()),
+  income: z.array(z.object({ id: z.string(), name: z.string() })),
+  expense: z.array(z.object({ id: z.string(), name: z.string() })),
 })
 
 export const getSourcesSchema = routeSchema({
@@ -34,6 +34,6 @@ export const deleteSourceSchema = routeSchema({
   }),
   body: z.object({
     type: z.string(),
-    name: z.array(z.string()),
+    id: z.array(z.string()),
   }),
 })

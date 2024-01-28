@@ -4,10 +4,15 @@ import { useTransition } from "react";
 import Image from "next/image";
 import { StateType } from "@/app/(afterLogin)/(afterSelect)/[accountId]/@modal/(.)writeTransaction/page";
 
+type DataType = {
+  id: string;
+  name: string;
+};
+
 type Props = {
   title: string;
   mutation: UseMutateFunction<void, Error, void, unknown>;
-  data: string[];
+  data: DataType[];
   updateState: (newState: Partial<StateType>) => void; // 상태 업데이트 함수
   selected: string[];
   isIncome: string;
@@ -23,11 +28,11 @@ const DeleteCategorySource = ({
   setDelete,
 }: Props) => {
   const [isPending, startTransition] = useTransition();
-  const toggleItemSelection = (item: string) => {
-    if (selected.includes(item)) {
-      updateState({ selected: selected.filter((i) => i !== item) });
+  const toggleItemSelection = (item: DataType) => {
+    if (selected.includes(item.id)) {
+      updateState({ selected: selected.filter((i) => i !== item.id) });
     } else {
-      updateState({ selected: [...selected, item] });
+      updateState({ selected: [...selected, item.id] });
     }
   };
 
@@ -53,18 +58,20 @@ const DeleteCategorySource = ({
       </div>
       <div className="grow overflow-scroll">
         <div className="flex flex-wrap">
-          {data.map((item: string) => (
+          {data.map((item: DataType) => (
             <div
               tabIndex={0}
               className={`border border-2 ${
-                selected.includes(item)
+                selected.includes(item.id)
                   ? "border-rose-400 text-rose-400"
                   : "border-gray-1 text-gray-1"
               } rounded-lg p-2 m-1 focus:outline-none`}
-              key={item}
-              onClick={() => toggleItemSelection(item)}
+              key={item.id}
+              onClick={() => {
+                toggleItemSelection(item);
+              }}
             >
-              {item}
+              {item.name}
             </div>
           ))}
         </div>
