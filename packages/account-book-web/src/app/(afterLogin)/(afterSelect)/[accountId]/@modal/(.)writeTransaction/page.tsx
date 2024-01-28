@@ -232,7 +232,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
   });
 
   const [isVisible, setIsVisible] = useState(true);
-  console.log("isVisible", isVisible);
+
   return (
     <div className="absolute h-screen w-full bg-black bg-opacity-40 top-0 left-0 z-10">
       <div
