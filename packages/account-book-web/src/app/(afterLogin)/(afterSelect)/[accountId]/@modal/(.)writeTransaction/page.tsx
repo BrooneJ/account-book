@@ -31,7 +31,6 @@ const oldData = z.object({
 type OldData = z.infer<typeof oldData>;
 
 export type StateType = {
-  errorMessages: string;
   isIncome: "income" | "expense";
   selectSource: boolean;
   inputValue: string;
@@ -72,7 +71,6 @@ export default function Page({ params }: { params: { accountId: string } }) {
     deleteCategory: false,
     deleteSource: false,
     selected: [] as string[],
-    errorMessages: "",
     inputValue: "",
   });
 
@@ -141,7 +139,6 @@ export default function Page({ params }: { params: { accountId: string } }) {
       return result;
     },
     onSuccess: (response) => {
-      updateState({ errorMessages: "" });
       queryClient.setQueryData(
         ["categories", accountId],
         (oldData: OldData) => {
@@ -156,7 +153,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
       );
     },
     onError: (error) => {
-      updateState({ errorMessages: "カテゴリーが既に登録されています。" });
+      console.log(error);
     },
   });
 
@@ -199,7 +196,6 @@ export default function Page({ params }: { params: { accountId: string } }) {
       return result;
     },
     onSuccess: (response) => {
-      updateState({ errorMessages: "" });
       queryClient.setQueryData(["sources", accountId], (oldData: OldData) => {
         return {
           ...oldData,
@@ -211,7 +207,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
       });
     },
     onError: (error) => {
-      updateState({ errorMessages: "収入源が既に登録されています。" });
+      console.log(error);
     },
   });
 
@@ -352,14 +348,12 @@ export default function Page({ params }: { params: { accountId: string } }) {
           mutation={mutationCategory.mutate}
           inputValue={state.inputValue}
           setInputValue={(value) => updateState({ inputValue: value })}
-          errorMessages={state.errorMessages}
           setDelete={(value) => updateState({ deleteCategory: value })}
           data={
             type === "income" ? categoryData?.income : categoryData?.expense
           }
           onClose={() => {
             updateState({ selectCategory: false });
-            updateState({ errorMessages: "" });
           }}
           onSelected={(value) => setCategory(value)}
         />
@@ -385,12 +379,10 @@ export default function Page({ params }: { params: { accountId: string } }) {
           mutation={mutationSource.mutate}
           inputValue={state.inputValue}
           setInputValue={(value) => updateState({ inputValue: value })}
-          errorMessages={state.errorMessages}
           setDelete={(value) => updateState({ deleteSource: value })}
           data={type === "income" ? sourceData?.income : sourceData?.expense}
           onClose={() => {
             updateState({ selectSource: false });
-            updateState({ errorMessages: "" });
           }}
           onSelected={(value) => setSource(value)}
         />

@@ -14,7 +14,6 @@ type TransactionCommonProps = {
   mutation: UseMutateFunction<any, Error, FormEvent<HTMLFormElement>, unknown>;
   inputValue: string;
   setInputValue: (value: string) => void;
-  errorMessages: string;
   data: DataType[];
   onClose: () => void;
   setDelete: (value: boolean) => void;
@@ -26,7 +25,6 @@ const TransactionCommon = ({
   mutation,
   inputValue,
   setInputValue,
-  errorMessages,
   data,
   setDelete,
   onClose,
@@ -61,7 +59,6 @@ const TransactionCommon = ({
         </div>
       </form>
       <div className="flex items-center justify-between">
-        <span className="text-sm text-caution ml-2">{errorMessages}</span>
         <span
           className="block text-right py-2 mr-2"
           onClick={() => setDelete(true)}

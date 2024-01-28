@@ -42,17 +42,6 @@ class FinancialSourceService {
   }
 
   async createSource(accountId: string, type: string, name: string) {
-    const existingSource = await db.financialSource.findFirst({
-      where: {
-        accountId,
-        type,
-        name,
-      },
-    })
-    if (existingSource) {
-      throw new AppError('SourceExistsError')
-    }
-
     const source = await db.financialSource.create({
       data: {
         accountId,
