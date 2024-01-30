@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 
 type FormData = {
-  type: string;
+  type?: string;
   name: string;
 };
 

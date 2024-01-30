@@ -7,8 +7,8 @@ type FormData = {
   type: string;
   userId: string;
   amount: number;
-  category: string;
-  financialSource: string;
+  category?: string;
+  financialSource?: string;
   description: string;
   date: string;
 };

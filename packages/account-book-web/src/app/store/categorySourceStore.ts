@@ -2,14 +2,23 @@ import { create } from "zustand";
 
 type State = {
   type: "income" | "expense";
-  category: { type: "income" | "expense"; name: string };
-  source: { type: "income" | "expense"; name: string };
+  category: {
+    type: "income" | "expense" | undefined;
+    name: string | undefined;
+  };
+  source: { type: "income" | "expense" | undefined; name: string | undefined };
 };
 
 type Action = {
   setTransactionType: (type: "income" | "expense") => void;
-  setCategory: (category: { type: "income" | "expense"; name: string }) => void;
-  setSource: (source: { type: "income" | "expense"; name: string }) => void;
+  setCategory: (category: {
+    type: "income" | "expense" | undefined;
+    name: string | undefined;
+  }) => void;
+  setSource: (source: {
+    type: "income" | "expense" | undefined;
+    name: string | undefined;
+  }) => void;
 };
 
 export const categorySourceStore = create<State & Action>((set) => ({
