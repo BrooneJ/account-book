@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 type FormData = {
-  type: string;
+  type?: string;
   userId: string;
   amount: number;
   category?: string;
@@ -83,6 +83,30 @@ export async function createTransaction(data: FormData, accountId: string) {
     `http://localhost:4000/api/transaction/${accountId}`,
     {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookies().toString(),
+      },
+      body: JSON.stringify(data),
+      cache: "no-cache",
+      credentials: "include",
+    },
+  );
+  const result = await response.json();
+
+  revalidatePath(`/${accountId}/transactions`);
+  return result;
+}
+
+export async function updateTransaction(
+  data: FormData,
+  accountId: string,
+  transactionId: number,
+) {
+  const response = await fetch(
+    `http://localhost:4000/api/transaction/${accountId}/${transactionId}`,
+    {
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Cookie: cookies().toString(),

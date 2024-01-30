@@ -4,7 +4,7 @@ import MutationButton from "@/app/ui/TransactionList/MutationButton";
 import { TransactionDetail } from "@/app/(afterLogin)/(afterSelect)/[accountId]/transactions/type";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getTransactionDetail } from "@/app/lib/transaction";
+import { getTransactionDetail, updateTransaction } from "@/app/lib/transaction";
 import { FormEvent, useEffect, useState } from "react";
 import CancelButton from "@/app/ui/TransactionList/CancelButton";
 import { categorySourceStore } from "@/app/store/categorySourceStore";
@@ -22,6 +22,8 @@ import {
 } from "@/app/lib/financialSource";
 import TransactionCommon from "@/app/ui/Modal/Write/TransactionCommom";
 import DeleteCategorySource from "@/app/ui/Modal/Write/DeleteCategorySource";
+import { useUser } from "@/app/contexts/UserContext";
+import { useRouter } from "next/navigation";
 
 type Props = {
   accountId: string;
@@ -51,6 +53,8 @@ export default function Edit({ setIsEdit, transactionId, accountId }: Props) {
     queryKey: ["sources", accountId],
     queryFn: () => getSource(accountId),
   });
+
+  const router = useRouter();
 
   const queryClient = useQueryClient();
 
@@ -163,6 +167,7 @@ export default function Edit({ setIsEdit, transactionId, accountId }: Props) {
   });
 
   const { setCategory, category, setSource, source } = categorySourceStore();
+  const user = useUser();
 
   useEffect(() => {
     setCategory({ type: data?.type, name: data?.category.name });
@@ -171,7 +176,7 @@ export default function Edit({ setIsEdit, transactionId, accountId }: Props) {
 
   const date = data?.date.toString().split("T")[0];
 
-  const { register, setValue, watch } = useForm({
+  const { register, setValue, watch, handleSubmit } = useForm({
     defaultValues: {
       amount: data?.amount,
       description: data?.description,
@@ -197,90 +202,112 @@ export default function Edit({ setIsEdit, transactionId, accountId }: Props) {
 
   if (isFetching) return <div>loading...</div>;
 
+  const schema = z.object({
+    amount: z.number().optional(),
+    description: z.string().optional(),
+    date: z.string().optional(),
+  });
+
+  type Schema = z.infer<typeof schema>;
+
+  const onSubmit = async (data: Schema) => {
+    const formData = {
+      type: type,
+      userId: user!.id,
+      amount: Number(data.amount!),
+      description: data.description!,
+      date: data.date!,
+      category: category.name,
+      financialSource: source.name,
+    };
+
+    try {
+      await updateTransaction(formData, accountId, Number(transactionId));
+      router.push(`/${accountId}/transactions`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col p-5 bg-background rounded-xl h-[463px] w-[285px]">
-        <div className="flex items-center justify-between py-2 border-b border-b-gray-1">
-          <input
-            type="number"
-            {...register("amount")}
-            onChange={(event) => setValue("amount", Number(event.target.value))}
-          />
-          <div
-            className={`px-4 rounded-2xl border border-gray-1 ${
-              type === "income" ? "bg-incomeBg" : "bg-expenseBg"
-            }`}
-            onClick={() => {
-              if (type === "income") {
-                setType("expense");
-              } else {
-                setType("income");
-              }
-            }}
-          >
-            <span
-              className={`text-xs ${
-                type === "income" ? "text-incomeText" : "text-expenseText"
-              }`}
-            >
-              {type === "income" ? "収入" : "支出"}
-            </span>
-          </div>
-        </div>
-        <div className="text-right text-sm text-gray-2 pt-[10px] pb-[14px]">
-          <input
-            type="date"
-            {...register("date", {
-              valueAsDate: true,
-            })}
-          />
-        </div>
-        <div className="flex flex-col grow">
-          <div className="flex border-b border-b-gray-1 pb-2 mb-2">
-            <div className="flex flex-col grow">
-              <span className="text-xs">
-                {type === "income" ? "収入源" : "支出先"}
-              </span>
-              <span
-                className="text-[20px]"
-                onClick={() => updateState({ selectSource: true })}
-              >
-                {source.name}
-              </span>
-            </div>
-            <div className="flex flex-col grow">
-              <span className="text-xs">カテゴリー</span>
-              <span
-                className="text-[20px]"
-                onClick={() => updateState({ selectCategory: true })}
-              >
-                {category.name}
-              </span>
-            </div>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-xs pb-2">メモ</span>
-            <textarea
-              className="text-sm overflow-scroll h-[200px]"
-              {...register("description")}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex items-center justify-between py-2 border-b border-b-gray-1">
+            <input
+              type="number"
+              {...register("amount")}
               onChange={(event) =>
-                setValue("description", event.target.value.toString())
+                setValue("amount", Number(event.target.value))
               }
             />
+            <div
+              className={`px-4 rounded-2xl border border-gray-1 ${
+                type === "income" ? "bg-incomeBg" : "bg-expenseBg"
+              }`}
+              onClick={() => {
+                if (type === "income") {
+                  setType("expense");
+                } else {
+                  setType("income");
+                }
+              }}
+            >
+              <span
+                className={`text-xs ${
+                  type === "income" ? "text-incomeText" : "text-expenseText"
+                }`}
+              >
+                {type === "income" ? "収入" : "支出"}
+              </span>
+            </div>
           </div>
-        </div>
-        <div className="flex justify-between">
-          <MutationButton
-            layoutMode="modal"
-            mode="modify"
-            onClick={() => setIsEdit(true)}
-          >
-            修正
-          </MutationButton>
-          <CancelButton layoutMode="modal" onClick={() => setIsEdit(false)}>
-            キャンセル
-          </CancelButton>
-        </div>
+          <div className="text-right text-sm text-gray-2 pt-[10px] pb-[14px]">
+            <input type="date" {...register("date")} />
+          </div>
+          <div className="flex flex-col grow">
+            <div className="flex border-b border-b-gray-1 pb-2 mb-2">
+              <div className="flex flex-col grow">
+                <span className="text-xs">
+                  {type === "income" ? "収入源" : "支出先"}
+                </span>
+                <span
+                  className="text-[20px]"
+                  onClick={() => updateState({ selectSource: true })}
+                >
+                  {source.name}
+                </span>
+              </div>
+              <div className="flex flex-col grow">
+                <span className="text-xs">カテゴリー</span>
+                <span
+                  className="text-[20px]"
+                  onClick={() => updateState({ selectCategory: true })}
+                >
+                  {category.name}
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs pb-2">メモ</span>
+              <textarea
+                className="text-sm overflow-scroll h-[200px]"
+                {...register("description")}
+                onChange={(event) =>
+                  setValue("description", event.target.value.toString())
+                }
+              />
+            </div>
+          </div>
+          <div className="flex justify-between">
+            <MutationButton layoutMode="modal" mode="modify">
+              修正
+            </MutationButton>
+            <CancelButton layoutMode="modal" onClick={() => setIsEdit(false)}>
+              キャンセル
+            </CancelButton>
+          </div>
+        </form>
       </div>
       {state.selectCategory ? (
         <TransactionCommon
