@@ -7,6 +7,7 @@ import {
   getThisMonthTransactionsSchema,
   getTransactionDetailSchema,
   getTransactionsSchema,
+  updateTransactionSchema,
 } from './schema'
 
 const transactionRouter: FastifyPluginAsyncWithZod = async (fastify) => {
@@ -67,6 +68,35 @@ const transactionRouter: FastifyPluginAsyncWithZod = async (fastify) => {
         type,
         userId,
         accountId,
+        amount,
+        category,
+        financialSource,
+        date,
+        description,
+      )
+    },
+  )
+
+  fastify.patch(
+    '/:accountId/:transactionId',
+    { schema: updateTransactionSchema },
+    async (request, reply) => {
+      const { accountId, transactionId } = request.params
+      const {
+        type,
+        userId,
+        amount,
+        category,
+        financialSource,
+        description,
+        date,
+      } = request.body
+
+      return transactionService.updateTransaction(
+        type,
+        userId,
+        accountId,
+        transactionId,
         amount,
         category,
         financialSource,

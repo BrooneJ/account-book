@@ -230,6 +230,58 @@ class TransactionService {
     return transaction
   }
 
+  async updateTransaction(
+    type: string,
+    userId: string,
+    accountId: string,
+    transactionId: string,
+    amount: number,
+    category: string,
+    financialSource: string,
+    dateString: string,
+    description?: string,
+  ) {
+    const categoryResult = await db.category.findFirst({
+      where: {
+        name: category,
+      },
+    })
+
+    if (!categoryResult) {
+      throw new Error('Category not found')
+    }
+
+    const sourceResult = await db.financialSource.findFirst({
+      where: {
+        name: financialSource,
+      },
+    })
+
+    if (!sourceResult) {
+      throw new Error('Financial source not found')
+    }
+
+    const date = new Date(dateString)
+
+    const transaction = await db.transaction.update({
+      where: {
+        id: parseInt(transactionId),
+        accountId,
+      },
+      data: {
+        type,
+        userId,
+        categoryId: categoryResult.id,
+        amount,
+        financialSourceId: sourceResult.id,
+        description,
+        date,
+      },
+    })
+
+    return transaction
+  }
+
   async deleteTransaction(accountId: string, transactionId: string) {
     const transaction = await db.transaction.findUnique({
       where: {
