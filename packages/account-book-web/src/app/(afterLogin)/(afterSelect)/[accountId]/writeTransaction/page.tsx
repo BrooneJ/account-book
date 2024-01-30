@@ -18,8 +18,8 @@ import { useUser } from "@/app/contexts/UserContext";
 import { useRouter } from "next/navigation";
 import { createTransaction } from "@/app/lib/transaction";
 import { Button } from "@/app/ui/loginRegister/Button";
-import TransactionCommon from "@/app/ui/Modal/Common/TransactionCommom";
-import DeleteCategorySource from "@/app/ui/Modal/Common/DeleteCategorySource";
+import TransactionCommon from "@/app/ui/Modal/Write/TransactionCommom";
+import DeleteCategorySource from "@/app/ui/Modal/Write/DeleteCategorySource";
 import { z } from "zod";
 
 const oldData = z.object({
@@ -330,7 +330,6 @@ export default function writeAccountBookPage({
           mutation={mutationCategory.mutate}
           inputValue={state.inputValue}
           setInputValue={(value) => updateState({ inputValue: value })}
-          errorMessages={state.errorMessages}
           setDelete={(value) => updateState({ deleteCategory: value })}
           data={
             type === "income" ? categoryData?.income : categoryData?.expense
@@ -363,7 +362,6 @@ export default function writeAccountBookPage({
           mutation={mutationSource.mutate}
           inputValue={state.inputValue}
           setInputValue={(value) => updateState({ inputValue: value })}
-          errorMessages={state.errorMessages}
           setDelete={(value) => updateState({ deleteSource: value })}
           data={type === "income" ? sourceData?.income : sourceData?.expense}
           onClose={() => {
