@@ -46,7 +46,7 @@ export async function createSource(data: FormData, accountId: string) {
 
 export async function deleteSourceList(
   accountId: string,
-  type: "income" | "expense",
+  type: "income" | "expense" | undefined,
   id: string[],
 ) {
   await fetch(`http://localhost:4000/api/financial-source/${accountId}`, {

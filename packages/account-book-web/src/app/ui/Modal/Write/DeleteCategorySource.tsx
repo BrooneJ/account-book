@@ -15,7 +15,7 @@ type Props = {
   data: DataType[];
   updateState: (newState: Partial<StateType>) => void; // 상태 업데이트 함수
   selected: string[];
-  isIncome: string;
+  isIncome: string | undefined;
   setDelete: (value: boolean) => void;
 };
 

@@ -43,7 +43,7 @@ export async function getCategory(accountId: string) {
 
 export async function deleteCategoryList(
   accountId: string,
-  type: "income" | "expense",
+  type: "income" | "expense" | undefined,
   id: string[],
 ) {
   await fetch(`http://localhost:4000/api/category/${accountId}`, {
