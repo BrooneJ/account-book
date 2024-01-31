@@ -41,6 +41,28 @@ class CategoryService {
   }
 
   async createCategory(accountId: string, type: string, name: string) {
+    const isExist = await db.category.findFirst({
+      where: {
+        accountId,
+        type,
+        name,
+      },
+    })
+
+    if (isExist) {
+      await db.category.update({
+        where: {
+          accountId,
+          type,
+          id: isExist.id,
+        },
+        data: {
+          isArchived: false,
+        },
+      })
+      return isExist
+    }
+
     const category = await db.category.create({
       data: {
         accountId,

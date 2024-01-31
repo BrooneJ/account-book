@@ -42,6 +42,28 @@ class FinancialSourceService {
   }
 
   async createSource(accountId: string, type: string, name: string) {
+    const isExist = await db.financialSource.findFirst({
+      where: {
+        accountId,
+        type,
+        name,
+      },
+    })
+
+    if (isExist) {
+      await db.financialSource.update({
+        where: {
+          accountId,
+          type,
+          id: isExist.id,
+        },
+        data: {
+          isArchived: false,
+        },
+      })
+      return isExist
+    }
+
     const source = await db.financialSource.create({
       data: {
         accountId,
