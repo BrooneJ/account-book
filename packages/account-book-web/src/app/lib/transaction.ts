@@ -78,6 +78,32 @@ export async function getTransactionDetail(
   return result;
 }
 
+export async function getTransactionByMonth(
+  accountId: string,
+  type: string,
+  date?: string,
+) {
+  const url = new URL(
+    `http://localhost:4000/api/transaction/${accountId}/statistics`,
+  );
+
+  if (type) url.searchParams.append("type", type);
+  if (date) url.searchParams.append("date", date);
+
+  const response = await fetch(url.toString(), {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: cookies().toString(),
+    },
+    cache: "no-cache",
+    credentials: "include",
+  });
+  const result = await response.json();
+  revalidatePath(`/${accountId}/statistics`);
+  return result;
+}
+
 export async function createTransaction(data: FormData, accountId: string) {
   const response = await fetch(
     `http://localhost:4000/api/transaction/${accountId}`,
