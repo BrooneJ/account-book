@@ -10,7 +10,7 @@ type Props = {
 
 const PieChart = ({ accountId, type, date }: Props) => {
   const { data } = useQuery({
-    queryKey: ["statistics", "pie"],
+    queryKey: ["statistics", date, type],
     queryFn: () => getTransactionByMonth(accountId, type, date),
   });
 

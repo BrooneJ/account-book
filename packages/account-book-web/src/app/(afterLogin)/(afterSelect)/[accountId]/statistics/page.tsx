@@ -3,6 +3,7 @@
 import { useState } from "react";
 import LowHeader from "@/app/ui/Header/lowHeader";
 import PieChart from "@/app/ui/Statistics/PieGraph";
+import MonthIndicator from "@/app/ui/Statistics/MonthIndicator";
 
 export default function Page({ params }: { params: { accountId: string } }) {
   const accountId = params.accountId;
@@ -15,7 +16,10 @@ export default function Page({ params }: { params: { accountId: string } }) {
   return (
     <div className="h-full">
       <LowHeader headerLeft={true} title="統計" />
-      <div className="-m-5 h-1/2">
+      <div className="relative">
+        <MonthIndicator setDate={setDate} date={date} />
+      </div>
+      <div className="relative -m-3 h-80 -z-10">
         <PieChart accountId={accountId} type={isIncome} date={date} />
       </div>
     </div>
