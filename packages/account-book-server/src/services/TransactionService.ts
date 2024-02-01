@@ -42,6 +42,88 @@ class TransactionService {
     return resultObject
   }
 
+  async getTransactionsByMonth({
+    accountId,
+    date,
+    type,
+  }: {
+    accountId: string
+    date?: string
+    type: 'income' | 'expense'
+  }) {
+    if (!date) {
+      const timezone = moment.tz.guess()
+      date = moment().tz(timezone).format('YYYY-MM-DD')
+    }
+    const startOfMonth = moment.utc(date).startOf('month').toISOString()
+    const endOfMonth = moment.utc(date).endOf('month').toISOString()
+
+    const result: Result = await db.transaction.findMany({
+      where: {
+        accountId,
+        date: {
+          gte: startOfMonth,
+          lte: endOfMonth,
+        },
+      },
+      include: {
+        financialSource: true,
+        category: true,
+      },
+      orderBy: [
+        {
+          date: 'desc',
+        },
+        {
+          id: 'desc',
+        },
+      ],
+    })
+
+    type Result = {
+      id: number
+      amount: number
+      type: string
+      financialSource: {
+        id: string
+        name: string
+        type: string
+      }
+      category: {
+        id: string
+        name: string
+        type: string
+      }
+    }[]
+
+    type Props = {
+      result: Result
+      type: 'income' | 'expense'
+    }
+
+    const categoryData = ({ result, type }: Props) => {
+      const resultObj: { id: string; label: string; value: number }[] = []
+      result.map((transaction) => {
+        const { id, name } = transaction.category
+        const amount = transaction.amount
+        if (type !== transaction.type) return
+        if (resultObj.some((item) => item.id === id)) {
+          const index = resultObj.findIndex((item) => item.id === id)
+          resultObj[index].value += amount
+          return
+        }
+        resultObj.push({ id, label: name, value: amount })
+      })
+      return resultObj
+    }
+
+    const sortedResult = categoryData({ result, type }).sort(
+      (a, b) => b.value - a.value,
+    )
+    const topTen = sortedResult.slice(0, 10)
+    return topTen
+  }
+
   async getTransactions({
     accountId,
     date,

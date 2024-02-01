@@ -6,6 +6,7 @@ import {
   deleteTransactionSchema,
   getThisMonthTransactionsSchema,
   getTransactionDetailSchema,
+  getTransactionsByMonthSchema,
   getTransactionsSchema,
   updateTransactionSchema,
 } from './schema'
@@ -20,6 +21,20 @@ const transactionRouter: FastifyPluginAsyncWithZod = async (fastify) => {
     async (request, reply) => {
       const { accountId } = request.params
       return transactionService.getTransactionsOnThisMonth(accountId)
+    },
+  )
+
+  fastify.get(
+    '/:accountId/statistics',
+    { schema: getTransactionsByMonthSchema },
+    async (request, reply) => {
+      const { accountId } = request.params
+      const { date, type } = request.query
+      return transactionService.getTransactionsByMonth({
+        accountId,
+        date,
+        type,
+      })
     },
   )
 
