@@ -19,6 +19,5 @@ export async function createAccount(data: FormData) {
     credentials: "include",
   });
   const result = await response.json();
-  console.log("result: ", result);
   return result;
 }
