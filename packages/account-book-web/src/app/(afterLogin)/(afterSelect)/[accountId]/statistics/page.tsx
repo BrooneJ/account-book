@@ -16,10 +16,10 @@ export default function Page({ params }: { params: { accountId: string } }) {
   return (
     <div className="h-full">
       <LowHeader headerLeft={true} title="統計" />
-      <div className="relative">
+      <div className="relative z-10">
         <MonthIndicator setDate={setDate} date={date} />
       </div>
-      <div className="relative -m-3 h-80 -z-10">
+      <div className="relative -m-3 h-80">
         <PieChart accountId={accountId} type={isIncome} date={date} />
       </div>
     </div>
