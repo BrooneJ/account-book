@@ -1,5 +1,6 @@
 import { StatisticsResponseType } from "@/app/ui/Statistics/type";
 import StatisticsRankSkeleton from "@/app/ui/Statistics/StatisticsRank/StatisticsRankSkeleton";
+import { useRouter } from "next/navigation";
 
 type Props = {
   data: StatisticsResponseType | undefined;
@@ -19,6 +20,8 @@ const color = [
 ];
 
 const StatisticsRank = ({ data, isIncome, isFetching }: Props) => {
+  const router = useRouter();
+
   if (isFetching) {
     return <StatisticsRankSkeleton />;
   }
@@ -52,7 +55,10 @@ const StatisticsRank = ({ data, isIncome, isFetching }: Props) => {
             <span className="text-xs mr-2">
               {isIncome === "expense" ? "-" : ""}￥{item.value.toLocaleString()}
             </span>
-            <button className="text-sm text-gray-3 border border-gray-2 rounded-md py-[2px] px-2 shadow-md">
+            <button
+              onClick={() => router.push(`statistics/${item.id}/detail`)}
+              className="text-sm text-gray-3 border border-gray-2 rounded-md py-[2px] px-2 shadow-md"
+            >
               詳細
             </button>
           </div>
