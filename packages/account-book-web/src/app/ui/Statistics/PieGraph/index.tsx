@@ -1,19 +1,11 @@
 import { ResponsivePie } from "@nivo/pie";
-import { useQuery } from "@tanstack/react-query";
-import { getTransactionByMonth } from "@/app/lib/transaction";
+import { StatisticsResponseType } from "@/app/ui/Statistics/type";
 
 type Props = {
-  accountId: string;
-  type: string;
-  date: string;
+  data: StatisticsResponseType | undefined;
 };
 
-const PieChart = ({ accountId, type, date }: Props) => {
-  const { data } = useQuery({
-    queryKey: ["statistics", date, type],
-    queryFn: () => getTransactionByMonth(accountId, type, date),
-  });
-
+const PieChart = ({ data }: Props) => {
   if (!data || data.length === 0) {
     const dataDummy = [
       {
@@ -61,7 +53,7 @@ const PieChart = ({ accountId, type, date }: Props) => {
         },
       }}
       colors={{ scheme: "pastel2" }}
-      margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+      margin={{ top: 30, right: 80, bottom: 80, left: 80 }}
       innerRadius={0.4}
       padAngle={0.7}
       cornerRadius={5}

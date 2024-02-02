@@ -66,7 +66,7 @@ function Footer() {
   const segments = useSelectedLayoutSegments();
 
   return (
-    <footer className="fixed bottom-0 left-0 w-full h-16 bg-background border-t border-gray-1 flex justify-around items-center">
+    <footer className="fixed bottom-0 left-0 w-full h-16 bg-background border-t border-gray-1 flex justify-around items-center z-20">
       <Link href={`/${segment}/home`}>
         <div className="flex flex-col items-center">
           {segments.includes("home") ? iconMap.activeHome : iconMap.home}
