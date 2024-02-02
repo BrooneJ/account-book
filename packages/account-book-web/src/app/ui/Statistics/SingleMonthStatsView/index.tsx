@@ -25,7 +25,7 @@ const SingleMonthStatsView = ({ accountId }: { accountId: string }) => {
       <div className="relative -m-3 h-80">
         <PieChart data={data} />
       </div>
-      <div className="relative -mt-10 h-64 pb-16 overflow-scroll z-10">
+      <div className="relative -mt-10 h-64 pb-16 overflow-scroll">
         <StatisticsRank
           data={data}
           isIncome={isIncome}
