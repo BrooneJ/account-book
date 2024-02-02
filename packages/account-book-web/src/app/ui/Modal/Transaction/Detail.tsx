@@ -7,6 +7,7 @@ import { useGoBack } from "@/app/hooks/useGoBack";
 import { useQuery } from "@tanstack/react-query";
 import { getTransactionDetail } from "@/app/lib/transaction";
 import Spinner from "@/app/ui/Common/Spinner";
+import SkeletonForDetail from "@/app/ui/Modal/Transaction/SkeletonForDetail";
 
 type Props = {
   accountId: string;
@@ -24,12 +25,7 @@ export default function Detail({ setIsEdit, accountId, transactionId }: Props) {
 
   const date = data?.date.toString().split("T")[0].split("-");
 
-  if (isFetching)
-    return (
-      <div>
-        <Spinner />
-      </div>
-    );
+  if (isFetching) return <SkeletonForDetail />;
 
   return (
     <div className="flex flex-col p-5 bg-background rounded-xl h-[463px] w-[285px]">
