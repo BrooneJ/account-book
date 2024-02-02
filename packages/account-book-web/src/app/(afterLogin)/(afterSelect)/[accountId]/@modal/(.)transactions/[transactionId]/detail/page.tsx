@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Detail from "@/app/ui/Modal/Transaction/Detail";
-import Edit from "@/app/ui/Modal/Transaction/Edit";
+import Detail from "@/app/ui/ModalContents/Transaction/Detail";
+import Edit from "@/app/ui/ModalContents/Transaction/Edit";
 import CloseButton from "@/app/ui/Common/CloseButton";
 
 export default function Page({

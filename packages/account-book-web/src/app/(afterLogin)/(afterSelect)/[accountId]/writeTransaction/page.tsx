@@ -18,8 +18,8 @@ import { useUser } from "@/app/contexts/UserContext";
 import { useRouter } from "next/navigation";
 import { createTransaction } from "@/app/lib/transaction";
 import { Button } from "@/app/ui/loginRegister/Button";
-import TransactionCommon from "@/app/ui/Modal/Write/TransactionCommom";
-import DeleteCategorySource from "@/app/ui/Modal/Write/DeleteCategorySource";
+import TransactionCommon from "@/app/ui/ModalContents/Write/TransactionCommom";
+import DeleteCategorySource from "@/app/ui/ModalContents/Write/DeleteCategorySource";
 import { z } from "zod";
 
 const oldData = z.object({

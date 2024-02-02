@@ -7,7 +7,7 @@ import { useGoBack } from "@/app/hooks/useGoBack";
 import { useQuery } from "@tanstack/react-query";
 import { getTransactionDetail } from "@/app/lib/transaction";
 import Spinner from "@/app/ui/Common/Spinner";
-import SkeletonForDetail from "@/app/ui/Modal/Transaction/SkeletonForDetail";
+import SkeletonForDetail from "@/app/ui/ModalContents/Transaction/SkeletonForDetail";
 
 type Props = {
   accountId: string;

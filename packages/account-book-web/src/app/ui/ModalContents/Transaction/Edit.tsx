@@ -20,8 +20,8 @@ import {
   deleteSourceList,
   getSource,
 } from "@/app/lib/financialSource";
-import TransactionCommon from "@/app/ui/Modal/Write/TransactionCommom";
-import DeleteCategorySource from "@/app/ui/Modal/Write/DeleteCategorySource";
+import TransactionCommon from "@/app/ui/ModalContents/Write/TransactionCommom";
+import DeleteCategorySource from "@/app/ui/ModalContents/Write/DeleteCategorySource";
 import { useUser } from "@/app/contexts/UserContext";
 import { useRouter } from "next/navigation";
 
