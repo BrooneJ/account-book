@@ -102,7 +102,13 @@ class TransactionService {
     }
 
     const categoryData = ({ result, type }: Props) => {
-      const resultObj: { id: string; label: string; value: number }[] = []
+      const resultObj: {
+        id: string
+        label: string
+        value: number
+        count: number
+      }[] = []
+
       result.map((transaction) => {
         const { id, name } = transaction.category
         const amount = transaction.amount
@@ -110,9 +116,10 @@ class TransactionService {
         if (resultObj.some((item) => item.id === id)) {
           const index = resultObj.findIndex((item) => item.id === id)
           resultObj[index].value += amount
+          resultObj[index].count += 1
           return
         }
-        resultObj.push({ id, label: name, value: amount })
+        resultObj.push({ id, label: name, value: amount, count: 1 })
       })
       return resultObj
     }

@@ -107,6 +107,7 @@ export const getTransactionsByMonthSchema = routeSchema({
         id: z.string(),
         label: z.string(),
         value: z.number(),
+        count: z.number(),
       }),
     ),
   },
