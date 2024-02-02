@@ -4,10 +4,12 @@ import { useState } from "react";
 import LowHeader from "@/app/ui/Header/lowHeader";
 import PieChart from "@/app/ui/Statistics/PieGraph";
 import MonthIndicator from "@/app/ui/Statistics/MonthIndicator";
+import StatisticsPeriodSelector from "@/app/ui/Statistics/StatisticsPeriodSelector";
 
 export default function Page({ params }: { params: { accountId: string } }) {
   const accountId = params.accountId;
 
+  const [isSixMonth, setIsSixMonth] = useState(false);
   const [isIncome, setIsIncome] = useState<"income" | "expense">("expense");
   const [date, setDate] = useState<string>(
     new Date().toISOString().split("T")[0],
@@ -16,6 +18,12 @@ export default function Page({ params }: { params: { accountId: string } }) {
   return (
     <div className="h-full">
       <LowHeader headerLeft={true} title="統計" />
+      <div className="mb-[10px]">
+        <StatisticsPeriodSelector
+          isSixMonth={isSixMonth}
+          setIsSixMonth={setIsSixMonth}
+        />
+      </div>
       <div className="relative z-10">
         <MonthIndicator setDate={setDate} date={date} />
       </div>
