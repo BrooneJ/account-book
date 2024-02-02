@@ -127,7 +127,7 @@ class TransactionService {
     const sortedResult = categoryData({ result, type }).sort(
       (a, b) => b.value - a.value,
     )
-    const topTen = sortedResult.slice(0, 10)
+    const topTen = sortedResult.slice(0, 8)
     return topTen
   }
 
