@@ -143,15 +143,12 @@ class TransactionService {
     date?: string
     type: 'income' | 'expense'
   }) {
-    console.log('data: ', accountId, categoryId, date, type)
     if (!date) {
       const timezone = moment.tz.guess()
       date = moment().tz(timezone).format('YYYY-MM-DD')
     }
     const startOfMonth = moment.utc(date).startOf('month').toISOString()
     const endOfMonth = moment.utc(date).endOf('month').toISOString()
-    console.log('startOfMonth: ', startOfMonth)
-    console.log('endOfMonth: ', endOfMonth)
 
     const result = await db.transaction.findMany({
       where: {
