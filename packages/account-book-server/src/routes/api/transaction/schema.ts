@@ -113,6 +113,34 @@ export const getTransactionsByMonthSchema = routeSchema({
   },
 })
 
+export const getTransactionsByCategorySchema = routeSchema({
+  tags: ['transaction'],
+  params: z.object({
+    accountId: z.string(),
+    categoryId: z.string(),
+  }),
+  querystring: z.object({
+    date: z.string().optional(),
+    type: z.enum(['income', 'expense']),
+  }),
+  response: {
+    200: z.array(
+      z.object({
+        id: z.number(),
+        amount: z.number(),
+        type: z.string(),
+        date: z.date(),
+        financialSource: z.object({
+          name: z.string(),
+        }),
+        category: z.object({
+          name: z.string(),
+        }),
+      }),
+    ),
+  },
+})
+
 export const updateTransactionSchema = routeSchema({
   tags: ['transaction'],
   params: z.object({

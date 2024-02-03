@@ -13,9 +13,10 @@ class TransactionService {
   }
 
   async getTransactionsOnThisMonth(accountId: string) {
-    const now = new Date()
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+    const timezone = moment.tz.guess()
+    const now = moment().tz(timezone).format('YYYY-MM-DD')
+    const startOfMonth = moment.utc(now).startOf('month').toISOString()
+    const endOfMonth = moment.utc(now).endOf('month').toISOString()
 
     const result = await db.transaction.findMany({
       where: {
@@ -129,6 +130,54 @@ class TransactionService {
     )
     const topTen = sortedResult.slice(0, 8)
     return topTen
+  }
+
+  async getTransactionsByCategory({
+    accountId,
+    categoryId,
+    date,
+    type,
+  }: {
+    accountId: string
+    categoryId: string
+    date?: string
+    type: 'income' | 'expense'
+  }) {
+    console.log('data: ', accountId, categoryId, date, type)
+    if (!date) {
+      const timezone = moment.tz.guess()
+      date = moment().tz(timezone).format('YYYY-MM-DD')
+    }
+    const startOfMonth = moment.utc(date).startOf('month').toISOString()
+    const endOfMonth = moment.utc(date).endOf('month').toISOString()
+    console.log('startOfMonth: ', startOfMonth)
+    console.log('endOfMonth: ', endOfMonth)
+
+    const result = await db.transaction.findMany({
+      where: {
+        accountId,
+        categoryId: categoryId,
+        type,
+        date: {
+          gte: startOfMonth,
+          lte: endOfMonth,
+        },
+      },
+      include: {
+        financialSource: true,
+        category: true,
+      },
+      orderBy: [
+        {
+          date: 'desc',
+        },
+        {
+          id: 'desc',
+        },
+      ],
+    })
+
+    return result
   }
 
   async getTransactions({
