@@ -1,12 +1,8 @@
-import { Dispatch, SetStateAction } from "react";
 import Image from "next/image";
+import { useStatisticsStore } from "@/app/store/statisticsStore";
 
-type Props = {
-  date: string;
-  setDate: Dispatch<SetStateAction<string>>;
-};
-
-const MonthIndicator = ({ date, setDate }: Props) => {
+const MonthIndicator = () => {
+  const { date, setDate } = useStatisticsStore((state) => state);
   const month =
     date.split("-")[1].split("")[0] === "0"
       ? date.split("-")[1].split("")[1]

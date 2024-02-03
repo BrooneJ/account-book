@@ -2,10 +2,10 @@ import { StatisticsResponseType } from "@/app/ui/Statistics/type";
 import StatisticsRankSkeleton from "@/app/ui/Statistics/StatisticsRank/StatisticsRankSkeleton";
 import { useRouter } from "next/navigation";
 import { useModalVisibleStore } from "@/app/store/modalVisibleStore";
+import { useStatisticsStore } from "@/app/store/statisticsStore";
 
 type Props = {
   data: StatisticsResponseType | undefined;
-  isIncome: "income" | "expense";
   isFetching: boolean;
 };
 
@@ -20,9 +20,10 @@ const color = [
   "#cccccc",
 ];
 
-const StatisticsRank = ({ data, isIncome, isFetching }: Props) => {
+const StatisticsRank = ({ data, isFetching }: Props) => {
   const router = useRouter();
   const open = useModalVisibleStore((store) => store.open);
+  const type = useStatisticsStore((state) => state.type);
 
   if (isFetching) {
     return <StatisticsRankSkeleton />;
@@ -55,7 +56,7 @@ const StatisticsRank = ({ data, isIncome, isFetching }: Props) => {
           </div>
           <div className="flex items-center">
             <span className="text-xs mr-2">
-              {isIncome === "expense" ? "-" : ""}￥{item.value.toLocaleString()}
+              {type === "expense" ? "-" : ""}￥{item.value.toLocaleString()}
             </span>
             <button
               onClick={() => {
