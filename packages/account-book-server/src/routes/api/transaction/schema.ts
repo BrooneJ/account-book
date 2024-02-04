@@ -113,6 +113,28 @@ export const getTransactionsByMonthSchema = routeSchema({
   },
 })
 
+const expenseEntrySchema = z
+  .object({
+    date: z.string(),
+  })
+  .catchall(z.number())
+
+const expensesSchema = z.array(expenseEntrySchema)
+
+export const getTopCategoriesByMonthSchema = routeSchema({
+  tags: ['transaction'],
+  params: z.object({
+    accountId: z.string(),
+  }),
+  querystring: z.object({
+    date: z.string().optional(),
+    type: z.enum(['income', 'expense']),
+  }),
+  response: {
+    200: expensesSchema,
+  },
+})
+
 export const getTransactionsByCategorySchema = routeSchema({
   tags: ['transaction'],
   params: z.object({

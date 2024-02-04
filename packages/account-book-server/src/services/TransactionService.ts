@@ -177,6 +177,116 @@ class TransactionService {
     return result
   }
 
+  async getTopCategoriesByMonth({
+    accountId,
+    date,
+    type,
+  }: {
+    accountId: string
+    date?: string
+    type: 'income' | 'expense'
+  }) {
+    if (!date) {
+      const timezone = moment.tz.guess()
+      date = moment().tz(timezone).format('YYYY-MM-DD')
+    }
+    const startOfSizeMonthsAgo = moment
+      .utc(date)
+      .subtract(6, 'months')
+      .startOf('month')
+      .toISOString()
+    const endOfMonth = moment.utc(date).endOf('month').toISOString()
+
+    const transactions = await db.transaction.groupBy({
+      by: ['categoryId', 'date'],
+      _sum: {
+        amount: true,
+      },
+      where: {
+        accountId,
+        type,
+        date: {
+          gte: startOfSizeMonthsAgo,
+          lte: endOfMonth,
+        },
+      },
+      orderBy: {
+        _sum: {
+          amount: 'desc',
+        },
+      },
+    })
+
+    type CategoryAmount = {
+      categoryId: string
+      amount: number
+    }
+
+    type MonthlyData = {
+      [key: string]: CategoryAmount[]
+    }
+
+    type Transaction = {
+      date: Date
+      categoryId: string
+      _sum: {
+        amount: number | null
+      }
+    }
+
+    let monthlyData = {} as MonthlyData
+    transactions.forEach((transaction: Transaction) => {
+      const month = transaction.date.toISOString().slice(0, 7) // 'YYYY-MM'
+      if (!monthlyData[month]) {
+        monthlyData[month] = []
+      }
+      const index = monthlyData[month].findIndex(
+        (item) => item.categoryId === transaction.categoryId,
+      )
+      if (index !== -1) {
+        monthlyData[month][index].amount += transaction._sum.amount!
+      } else {
+        if (monthlyData[month].length >= 8) return
+        monthlyData[month].push({
+          categoryId: transaction.categoryId,
+          amount: transaction._sum.amount!,
+        })
+      }
+    })
+
+    type Result = {
+      date: string
+    } & Record<string, number>
+
+    type ResultArray = Result[]
+
+    let results = [] as ResultArray
+    for (let month in monthlyData) {
+      let topCategories = monthlyData[month]
+      let result = { date: month } as Result
+      for (let category of topCategories) {
+        const categoryData = await db.category.findUnique({
+          where: {
+            id: category.categoryId,
+          },
+        })
+        if (categoryData) {
+          if (!result[categoryData.name]) {
+            result[categoryData.name] = 0
+          }
+          result[categoryData.name] += category.amount
+        }
+      }
+      results.push(result)
+    }
+
+    const sortedResults = results.sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime()
+    })
+
+    return sortedResults
+  }
+
   async getTransactions({
     accountId,
     date,
