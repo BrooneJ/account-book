@@ -30,10 +30,6 @@ export default function Page({
     queryFn: () => getTransactionByCategory(accountId, categoryId, type, date),
   });
 
-  const month =
-    date.split("-")[1].split("")[0] === "0"
-      ? date.split("-")[1].split("")[1]
-      : date.split("-")[1];
   const [transactions, setTransactions] = useState({} as GroupedTransactions);
 
   useEffect(() => {
@@ -63,7 +59,7 @@ export default function Page({
     <>
       <Modal visible={visible}>
         <div className="p-[10px]">
-          {month}月{data?.[0].category.name}利用履歴
+          <span className="flex justify-center font-semibold">利用履歴</span>
           <>
             {Object.keys(transactions).map((key) => {
               return (
