@@ -8,9 +8,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Transaction } from "@/app/(afterLogin)/(afterSelect)/[accountId]/transactions/type";
 import { useEffect, useState } from "react";
 import { calculateTotalAmountPerDay } from "@/app/lib/calculateTotalAmountPerDay";
-import Index from "@/app/ui/TransactionList/AmountsPerDay";
+import AmountsPerDay from "@/app/ui/TransactionList/AmountsPerDay";
 import Link from "next/link";
 import TransactionItem from "@/app/ui/TransactionList/TransactionItem";
+import ListModalSkeleton from "@/app/ui/Statistics/StatisticsRank/ListModalSkeleton";
 
 export type GroupedTransactions = {
   [key: string]: Transaction[];
@@ -25,7 +26,7 @@ export default function Page({
   const visible = useModalVisibleStore((store) => store.visible);
   const { type, date } = useStatisticsStore((state) => state);
 
-  const { data } = useQuery<Transaction[]>({
+  const { data, isFetching } = useQuery<Transaction[]>({
     queryKey: ["statistics", categoryId, accountId],
     queryFn: () => getTransactionByCategory(accountId, categoryId, type, date),
   });
@@ -58,31 +59,35 @@ export default function Page({
   return (
     <>
       <Modal visible={visible}>
-        <div className="p-[10px]">
-          <span className="flex justify-center font-semibold">利用履歴</span>
-          <>
-            {Object.keys(transactions).map((key) => {
-              return (
-                <div key={key} className="mb-3">
-                  <Index
-                    totalAmountsPerDay={totalAmountsPerDay}
-                    dataKey={key}
-                  />
-                  <div>
-                    {transactions[key].map((transaction) => (
-                      <Link
-                        href={`/${accountId}/transactions/${transaction.id}/detail`}
-                        key={transaction.id}
-                      >
-                        <TransactionItem transaction={transaction} modal />
-                      </Link>
-                    ))}
+        {isFetching ? (
+          <ListModalSkeleton />
+        ) : (
+          <div className="p-[10px]">
+            <span className="flex justify-center font-semibold">利用履歴</span>
+            <>
+              {Object.keys(transactions).map((key) => {
+                return (
+                  <div key={key} className="mb-3">
+                    <AmountsPerDay
+                      totalAmountsPerDay={totalAmountsPerDay}
+                      dataKey={key}
+                    />
+                    <div>
+                      {transactions[key].map((transaction) => (
+                        <Link
+                          href={`/${accountId}/transactions/${transaction.id}/detail`}
+                          key={transaction.id}
+                        >
+                          <TransactionItem transaction={transaction} modal />
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </>
-        </div>
+                );
+              })}
+            </>
+          </div>
+        )}
       </Modal>
     </>
   );
