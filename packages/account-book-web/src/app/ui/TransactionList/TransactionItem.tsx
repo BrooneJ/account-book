@@ -4,16 +4,17 @@ import TransactionTypeIcon from "@/app/ui/TransactionList/TransactionTypeIcon";
 
 type Props = {
   transaction: Transaction;
+  modal?: boolean;
 };
 
-const TransactionItem = memo(({ transaction }: Props) => {
+const TransactionItem = memo(({ transaction, modal }: Props) => {
   return (
     <div
       key={transaction.id}
       className="flex justify-between bg-white h-[46px] px-3 rounded-xl items-center justify-center my-2"
     >
       <div className="flex">
-        <TransactionTypeIcon type={transaction.type} />
+        <TransactionTypeIcon type={transaction.type} modal={modal} />
         <div className="flex flex-col ml-3">
           <span className="text-lg">{transaction.financialSource.name}</span>
           <span className="text-xs text-gray-2">

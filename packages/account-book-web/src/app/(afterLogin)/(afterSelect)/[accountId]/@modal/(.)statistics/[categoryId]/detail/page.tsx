@@ -74,7 +74,7 @@ export default function Page({
                         href={`/${accountId}/transactions/${transaction.id}/detail`}
                         key={transaction.id}
                       >
-                        <TransactionItem transaction={transaction} />
+                        <TransactionItem transaction={transaction} modal />
                       </Link>
                     ))}
                   </div>
