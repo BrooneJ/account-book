@@ -62,9 +62,9 @@ export default function Page({
         {isFetching ? (
           <ListModalSkeleton />
         ) : (
-          <div className="p-[10px]">
+          <div className="p-[10px] flex flex-col h-full">
             <span className="flex justify-center font-semibold">利用履歴</span>
-            <>
+            <div className="grow overflow-scroll">
               {Object.keys(transactions).map((key) => {
                 return (
                   <div key={key} className="mb-3">
@@ -85,7 +85,7 @@ export default function Page({
                   </div>
                 );
               })}
-            </>
+            </div>
           </div>
         )}
       </Modal>
