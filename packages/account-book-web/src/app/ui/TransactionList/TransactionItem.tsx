@@ -1,6 +1,6 @@
 import { memo } from "react";
-import Image from "next/image";
 import { Transaction } from "@/app/(afterLogin)/(afterSelect)/[accountId]/transactions/type";
+import TransactionTypeIcon from "@/app/ui/TransactionList/TransactionTypeIcon";
 
 type Props = {
   transaction: Transaction;
@@ -13,16 +13,7 @@ const TransactionItem = memo(({ transaction }: Props) => {
       className="flex justify-between bg-white h-[46px] px-3 rounded-xl items-center justify-center my-2"
     >
       <div className="flex">
-        {transaction.type === "income" ? (
-          <Image src="/images/income.svg" alt="income" width={35} height={35} />
-        ) : (
-          <Image
-            src="/images/expense.svg"
-            alt="expense"
-            width={35}
-            height={35}
-          />
-        )}
+        <TransactionTypeIcon type={transaction.type} />
         <div className="flex flex-col ml-3">
           <span className="text-lg">{transaction.financialSource.name}</span>
           <span className="text-xs text-gray-2">

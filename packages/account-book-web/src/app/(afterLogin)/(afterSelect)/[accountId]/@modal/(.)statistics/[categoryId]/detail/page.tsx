@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Transaction } from "@/app/(afterLogin)/(afterSelect)/[accountId]/transactions/type";
 import { useEffect, useState } from "react";
 import { calculateTotalAmountPerDay } from "@/app/lib/calculateTotalAmountPerDay";
-import AmountsPerDay from "@/app/ui/TransactionList/AmountsPerDay";
+import Index from "@/app/ui/TransactionList/AmountsPerDay";
 import Link from "next/link";
 import TransactionItem from "@/app/ui/TransactionList/TransactionItem";
 
@@ -64,7 +64,7 @@ export default function Page({
             {Object.keys(transactions).map((key) => {
               return (
                 <div key={key} className="mb-3">
-                  <AmountsPerDay
+                  <Index
                     totalAmountsPerDay={totalAmountsPerDay}
                     dataKey={key}
                   />
