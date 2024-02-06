@@ -1,60 +1,23 @@
-import { ResponsiveBar } from "@nivo/bar";
 import { useQuery } from "@tanstack/react-query";
 import { getTopTransactionByHalfYear } from "@/app/lib/transaction";
 import { useStatisticsStore } from "@/app/store/statisticsStore";
 import { usePathname } from "next/navigation";
 import MonthIndicator from "@/app/ui/Statistics/MonthIndicator";
 import { useEffect, useState } from "react";
+import BarChartSkeleton from "@/app/ui/Statistics/SixMonthStatsView/BarChartSkeleton";
+import MyResponsiveBar from "@/app/ui/Statistics/SixMonthStatsView/BarChart";
+import { ResultType } from "@/app/ui/Statistics/SixMonthStatsView/type";
 
-const MyResponsiveBar = ({ data, keys /* see data tab */ }: any) => (
-  <ResponsiveBar
-    data={data}
-    keys={keys}
-    indexBy="date"
-    margin={{ top: 20, right: 0, bottom: 70, left: 50 }}
-    padding={0.2}
-    layout="vertical"
-    valueScale={{ type: "linear" }}
-    indexScale={{ type: "band", round: true }}
-    colors={{ scheme: "set3" }}
-    labelSkipWidth={12}
-    labelSkipHeight={12}
-    legends={[
-      {
-        dataFrom: "keys",
-        anchor: "bottom",
-        direction: "row",
-        justify: false,
-        translateY: 50,
-        itemsSpacing: 0,
-        itemWidth: 40,
-        itemHeight: 20,
-        itemDirection: "top-to-bottom",
-        itemOpacity: 0.85,
-        symbolSize: 20,
-        effects: [
-          {
-            on: "hover",
-            style: {
-              itemOpacity: 1,
-            },
-          },
-        ],
-      },
-    ]}
-    role="application"
-    ariaLabel="Nivo bar chart demo"
-    barAriaLabel={(e) =>
-      e.id + ": " + e.formattedValue + " in date: " + e.indexValue
-    }
-  />
-);
+type SixMonthDataType = {
+  result: ResultType[];
+  list: string[];
+};
 
 export default function SixMonthStatsView() {
   const { date, type } = useStatisticsStore((state) => state);
   const accountId = usePathname().split("/")[1];
 
-  const { data } = useQuery({
+  const { data } = useQuery<SixMonthDataType>({
     queryKey: ["statistics", "barGraph", accountId, date],
     queryFn: () => getTopTransactionByHalfYear(accountId, type, date),
   });
@@ -66,13 +29,35 @@ export default function SixMonthStatsView() {
     setPrevData(data);
   }, [data]);
 
-  if (!prevData) return <div>Loading...</div>;
+  if (!prevData)
+    return (
+      <div style={{ height: "450px" }}>
+        <MonthIndicator />
+        <BarChartSkeleton />
+      </div>
+    );
+
+  let count = 0;
+  prevData.result.forEach((item) => {
+    for (const key in item) {
+      count++;
+    }
+  });
 
   return (
     <>
       <MonthIndicator />
-      <div style={{ height: "450px" }}>
-        <MyResponsiveBar data={prevData.result} keys={prevData.list} />
+      <div style={{ height: "450px" }} className="overflow-hidden">
+        {count === 6 ? (
+          <>
+            <BarChartSkeleton />
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <span className="text-xl font-bold">データがありません。</span>
+            </div>
+          </>
+        ) : (
+          <MyResponsiveBar data={prevData.result} keys={prevData.list} />
+        )}
       </div>
     </>
   );
