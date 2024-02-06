@@ -119,7 +119,10 @@ const expenseEntrySchema = z
   })
   .catchall(z.number())
 
-const expensesSchema = z.array(expenseEntrySchema)
+const expensesSchema = z.object({
+  result: z.array(expenseEntrySchema),
+  list: z.array(z.string()),
+})
 
 export const getTopCategoriesByMonthSchema = routeSchema({
   tags: ['transaction'],

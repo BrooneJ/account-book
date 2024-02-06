@@ -234,7 +234,7 @@ class TransactionService {
       }
     }
 
-    let monthlyData = {} as MonthlyData
+    const monthlyData = {} as MonthlyData
     transactions.forEach((transaction: Transaction) => {
       const month = transaction.date.toISOString().slice(0, 7) // 'YYYY-MM'
       if (!monthlyData[month]) {
@@ -260,10 +260,11 @@ class TransactionService {
 
     type ResultArray = Result[]
 
-    let results = [] as ResultArray
+    const results = [] as ResultArray
+    const categoryListSet = new Set<string>()
     for (let month in monthlyData) {
-      let topCategories = monthlyData[month]
-      let result = { date: month } as Result
+      const topCategories = monthlyData[month]
+      const result = { date: month } as Result
       for (let category of topCategories) {
         const categoryData = await db.category.findUnique({
           where: {
@@ -271,6 +272,7 @@ class TransactionService {
           },
         })
         if (categoryData) {
+          categoryListSet.add(categoryData.name)
           if (!result[categoryData.name]) {
             result[categoryData.name] = 0
           }
@@ -279,12 +281,13 @@ class TransactionService {
       }
       results.push(result)
     }
+    const categoryList = Array.from(categoryListSet)
 
     const sortedResults = results.sort((a, b) => {
       return new Date(b.date).getTime() - new Date(a.date).getTime()
     })
 
-    return sortedResults
+    return { result: sortedResults, list: categoryList }
   }
 
   async getTransactions({
