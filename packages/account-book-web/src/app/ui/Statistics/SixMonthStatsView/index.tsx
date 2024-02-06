@@ -47,7 +47,7 @@ export default function SixMonthStatsView() {
   return (
     <>
       <MonthIndicator />
-      <div style={{ height: "450px" }} className="overflow-hidden">
+      <div style={{ height: "450px" }}>
         {count === 6 ? (
           <>
             <BarChartSkeleton />

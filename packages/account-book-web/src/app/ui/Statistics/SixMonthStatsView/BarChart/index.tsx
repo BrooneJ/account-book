@@ -46,6 +46,14 @@ const MyResponsiveBar = ({ data, keys }: Props) => (
     barAriaLabel={(e) =>
       e.id + ": " + e.formattedValue + " in date: " + e.indexValue
     }
+    tooltip={({ id, value, color }) => (
+      <div className="flex justify-between bg-gray-3 text-primary p-4 rounded">
+        <span className="text-xs flex flex-col">
+          <span>{id}:</span>
+          <span>{value}</span>
+        </span>
+      </div>
+    )}
   />
 );
 

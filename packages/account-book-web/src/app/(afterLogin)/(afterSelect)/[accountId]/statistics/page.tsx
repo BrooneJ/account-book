@@ -4,7 +4,6 @@ import { useState } from "react";
 import LowHeader from "@/app/ui/Header/lowHeader";
 import StatisticsPeriodSelector from "@/app/ui/Statistics/StatisticsPeriodSelector";
 import SingleMonthStatsView from "@/app/ui/Statistics/SingleMonthStatsView";
-import BarGraph from "../../../../ui/Statistics/SixMonthStatsView";
 import SixMonthStatsView from "../../../../ui/Statistics/SixMonthStatsView";
 
 export default function Page({ params }: { params: { accountId: string } }) {
@@ -13,7 +12,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
   const [isSixMonth, setIsSixMonth] = useState(false);
 
   return (
-    <div className="h-full">
+    <div className="h-full overflow-hidden">
       <LowHeader headerLeft={true} title="統計" />
       <div className="mb-[10px]">
         <StatisticsPeriodSelector
