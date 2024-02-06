@@ -11,7 +11,7 @@ import { calculateTotalAmountPerDay } from "@/app/lib/calculateTotalAmountPerDay
 import AmountsPerDay from "@/app/ui/TransactionList/AmountsPerDay";
 import Link from "next/link";
 import TransactionItem from "@/app/ui/TransactionList/TransactionItem";
-import ListModalSkeleton from "@/app/ui/Statistics/StatisticsRank/ListModalSkeleton";
+import ListModalSkeleton from "@/app/ui/Statistics/SingleMonthStatsView/StatisticsRank/ListModalSkeleton";
 
 export type GroupedTransactions = {
   [key: string]: Transaction[];

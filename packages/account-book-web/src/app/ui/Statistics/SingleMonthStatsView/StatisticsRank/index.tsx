@@ -1,5 +1,5 @@
-import { StatisticsResponseType } from "@/app/ui/Statistics/type";
-import StatisticsRankSkeleton from "@/app/ui/Statistics/StatisticsRank/StatisticsRankSkeleton";
+import { StatisticsResponseType } from "@/app/ui/Statistics/SingleMonthStatsView/type";
+import StatisticsRankSkeleton from "@/app/ui/Statistics/SingleMonthStatsView/StatisticsRank/StatisticsRankSkeleton";
 import { useRouter } from "next/navigation";
 import { useModalVisibleStore } from "@/app/store/modalVisibleStore";
 import { useStatisticsStore } from "@/app/store/statisticsStore";

@@ -1,11 +1,10 @@
-import { useState } from "react";
 import MonthIndicator from "@/app/ui/Statistics/MonthIndicator";
-import PieChart from "@/app/ui/Statistics/PieGraph";
 import { useQuery } from "@tanstack/react-query";
 import { getTransactionByMonth } from "@/app/lib/transaction";
-import { StatisticsResponseType } from "@/app/ui/Statistics/type";
-import StatisticsRank from "@/app/ui/Statistics/StatisticsRank";
+import { StatisticsResponseType } from "@/app/ui/Statistics/SingleMonthStatsView/type";
 import { useStatisticsStore } from "@/app/store/statisticsStore";
+import PieChart from "@/app/ui/Statistics/SingleMonthStatsView/PieGraph";
+import StatisticsRank from "@/app/ui/Statistics/SingleMonthStatsView/StatisticsRank";
 
 const SingleMonthStatsView = ({ accountId }: { accountId: string }) => {
   const { date, type } = useStatisticsStore((state) => state);

@@ -1,5 +1,5 @@
 import { ResponsivePie } from "@nivo/pie";
-import { StatisticsResponseType } from "@/app/ui/Statistics/type";
+import { StatisticsResponseType } from "@/app/ui/Statistics/SingleMonthStatsView/type";
 
 type Props = {
   data: StatisticsResponseType | undefined;
