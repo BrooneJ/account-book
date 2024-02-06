@@ -4,6 +4,8 @@ import { useState } from "react";
 import LowHeader from "@/app/ui/Header/lowHeader";
 import StatisticsPeriodSelector from "@/app/ui/Statistics/StatisticsPeriodSelector";
 import SingleMonthStatsView from "@/app/ui/Statistics/SingleMonthStatsView";
+import BarGraph from "../../../../ui/Statistics/SixMonthStatsView";
+import SixMonthStatsView from "../../../../ui/Statistics/SixMonthStatsView";
 
 export default function Page({ params }: { params: { accountId: string } }) {
   const accountId = params.accountId;
@@ -19,7 +21,11 @@ export default function Page({ params }: { params: { accountId: string } }) {
           setIsSixMonth={setIsSixMonth}
         />
       </div>
-      <SingleMonthStatsView accountId={accountId} />
+      {isSixMonth ? (
+        <SixMonthStatsView />
+      ) : (
+        <SingleMonthStatsView accountId={accountId} />
+      )}
     </div>
   );
 }

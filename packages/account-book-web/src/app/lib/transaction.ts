@@ -131,6 +131,32 @@ export async function getTransactionByCategory(
   return result;
 }
 
+export async function getTopTransactionByHalfYear(
+  accountId: string,
+  type: string,
+  date: string,
+) {
+  const url = new URL(
+    `http://localhost:4000/api/transaction/${accountId}/statistics/half-year`,
+  );
+
+  if (type) url.searchParams.append("type", type);
+  if (date) url.searchParams.append("date", date);
+
+  const response = await fetch(url.toString(), {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: cookies().toString(),
+    },
+    cache: "no-cache",
+    credentials: "include",
+  });
+  const result = await response.json();
+
+  return result;
+}
+
 export async function createTransaction(data: FormData, accountId: string) {
   const response = await fetch(
     `http://localhost:4000/api/transaction/${accountId}`,
