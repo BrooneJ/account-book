@@ -5,7 +5,7 @@ import {
   createTransactionSchema,
   deleteTransactionSchema,
   getThisMonthTransactionsSchema,
-  getTopCategoriesByMonthSchema,
+  getTopCategoriesByHalfYearSchema,
   getTransactionDetailSchema,
   getTransactionsByCategorySchema,
   getTransactionsByMonthSchema,
@@ -57,11 +57,11 @@ const transactionRouter: FastifyPluginAsyncWithZod = async (fastify) => {
 
   fastify.get(
     '/:accountId/statistics/half-year',
-    { schema: getTopCategoriesByMonthSchema },
+    { schema: getTopCategoriesByHalfYearSchema },
     async (request, reply) => {
       const { accountId } = request.params
       const { date, type } = request.query
-      return transactionService.getTopCategoriesByMonth({
+      return transactionService.getTopCategoriesByHalfYear({
         accountId,
         date,
         type,

@@ -177,7 +177,7 @@ class TransactionService {
     return result
   }
 
-  async getTopCategoriesByMonth({
+  async getTopCategoriesByHalfYear({
     accountId,
     date,
     type,
@@ -192,10 +192,19 @@ class TransactionService {
     }
     const startOfSizeMonthsAgo = moment
       .utc(date)
-      .subtract(6, 'months')
+      .subtract(5, 'months')
       .startOf('month')
       .toISOString()
     const endOfMonth = moment.utc(date).endOf('month').toISOString()
+
+    const lastSixMonths = Array.from({ length: 6 }, (_, i) =>
+      moment
+        .utc(date)
+        .subtract(i, 'months')
+        .startOf('month')
+        .toISOString()
+        .slice(0, 7),
+    ).reverse()
 
     const transactions = await db.transaction.groupBy({
       by: ['categoryId', 'date'],
@@ -254,6 +263,14 @@ class TransactionService {
       }
     })
 
+    if (Object.keys(monthlyData).length < 6) {
+      for (let month of lastSixMonths) {
+        if (!monthlyData[month]) {
+          monthlyData[month] = []
+        }
+      }
+    }
+
     type Result = {
       date: string
     } & Record<string, number>
@@ -262,6 +279,7 @@ class TransactionService {
 
     const results = [] as ResultArray
     const categoryListSet = new Set<string>()
+
     for (let month in monthlyData) {
       const topCategories = monthlyData[month]
       const result = { date: month } as Result
@@ -281,10 +299,11 @@ class TransactionService {
       }
       results.push(result)
     }
+
     const categoryList = Array.from(categoryListSet)
 
     const sortedResults = results.sort((a, b) => {
-      return new Date(b.date).getTime() - new Date(a.date).getTime()
+      return new Date(a.date).getTime() - new Date(b.date).getTime()
     })
 
     return { result: sortedResults, list: categoryList }

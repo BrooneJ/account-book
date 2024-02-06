@@ -124,7 +124,7 @@ const expensesSchema = z.object({
   list: z.array(z.string()),
 })
 
-export const getTopCategoriesByMonthSchema = routeSchema({
+export const getTopCategoriesByHalfYearSchema = routeSchema({
   tags: ['transaction'],
   params: z.object({
     accountId: z.string(),
