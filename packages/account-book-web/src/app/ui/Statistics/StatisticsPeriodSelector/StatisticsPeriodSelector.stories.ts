@@ -1,4 +1,4 @@
-import StatisticsPeriodSelector from "@/app/ui/Statistics/StatisticsPeriodSelector";
+import StatisticsPeriodSelector from "@/app/ui/Statistics/StatisticsPeriodSelector/index";
 import { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
