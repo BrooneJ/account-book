@@ -1,7 +1,7 @@
 import MonthIndicator from "@/app/ui/Statistics/MonthIndicator";
 import { useQuery } from "@tanstack/react-query";
 import { getTransactionByMonth } from "@/app/lib/transaction";
-import { StatisticsResponseType } from "@/app/ui/Statistics/SingleMonthStatsView/type";
+import { StatisticsResponseListType } from "@/app/ui/Statistics/SingleMonthStatsView/type";
 import { useStatisticsStore } from "@/app/store/statisticsStore";
 import PieChart from "@/app/ui/Statistics/SingleMonthStatsView/PieGraph";
 import StatisticsRank from "@/app/ui/Statistics/SingleMonthStatsView/StatisticsRank";
@@ -9,7 +9,7 @@ import StatisticsRank from "@/app/ui/Statistics/SingleMonthStatsView/StatisticsR
 const SingleMonthStatsView = ({ accountId }: { accountId: string }) => {
   const { date, type } = useStatisticsStore((state) => state);
 
-  const { data, isFetching } = useQuery<StatisticsResponseType>({
+  const { data, isFetching } = useQuery<StatisticsResponseListType>({
     queryKey: ["statistics", date, type],
     queryFn: () => getTransactionByMonth(accountId, type, date),
   });

@@ -1,8 +1,8 @@
 import { ResponsivePie } from "@nivo/pie";
-import { StatisticsResponseType } from "@/app/ui/Statistics/SingleMonthStatsView/type";
+import { StatisticsResponseListType } from "@/app/ui/Statistics/SingleMonthStatsView/type";
 
 type Props = {
-  data: StatisticsResponseType | undefined;
+  data: StatisticsResponseListType | undefined;
 };
 
 const PieChart = ({ data }: Props) => {
