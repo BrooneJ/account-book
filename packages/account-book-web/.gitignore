@@ -45,7 +45,6 @@ next-env.d.ts
 !.yarn/sdks
 !.yarn/versions
 
-
 # Storybook
 storybook-static
 build-storybook.log
