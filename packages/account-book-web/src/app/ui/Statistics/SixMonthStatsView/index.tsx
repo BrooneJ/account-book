@@ -47,18 +47,16 @@ export default function SixMonthStatsView() {
   return (
     <>
       <MonthIndicator />
-      <div style={{ height: "450px" }}>
-        {count === 6 ? (
-          <>
-            <BarChartSkeleton />
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <span className="text-xl font-bold">データがありません。</span>
-            </div>
-          </>
-        ) : (
-          <MyResponsiveBar data={prevData.result} keys={prevData.list} />
-        )}
-      </div>
+      {count === 6 ? (
+        <>
+          <BarChartSkeleton />
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <span className="text-xl font-bold">データがありません。</span>
+          </div>
+        </>
+      ) : (
+        <MyResponsiveBar data={prevData.result} keys={prevData.list} />
+      )}
     </>
   );
 }

@@ -2,7 +2,7 @@ import StatisticsRank from "@/app/ui/Statistics/SingleMonthStatsView/StatisticsR
 import { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
-  title: "Statistics/StatisticsRank",
+  title: "Statistics/SingleMonthStatsView/StatisticsRank",
   component: StatisticsRank,
   tags: ["autodocs"],
   argTypes: {
