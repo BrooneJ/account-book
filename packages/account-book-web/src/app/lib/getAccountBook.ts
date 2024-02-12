@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 
 export async function getAccountBook(accountbookId: string) {
   const res = await fetch(
-    `http://localhost:4000/api/account-book/${accountbookId}`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/account-book/${accountbookId}`,
     {
       method: "GET",
       headers: {
