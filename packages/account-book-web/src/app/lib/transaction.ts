@@ -139,7 +139,7 @@ export async function getTopTransactionByHalfYear(
   date: string,
 ) {
   const url = new URL(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/transaction/${accountId}/statistics/half-year`,
+    `http:localhost:9090/api/transaction/${accountId}/statistics/half-year`,
   );
 
   if (type) url.searchParams.append("type", type);

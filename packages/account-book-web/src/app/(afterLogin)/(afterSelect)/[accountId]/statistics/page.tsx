@@ -21,7 +21,7 @@ export default function Page({ params }: { params: { accountId: string } }) {
         />
       </div>
       {isSixMonth ? (
-        <SixMonthStatsView />
+        <SixMonthStatsView accountId={accountId} />
       ) : (
         <SingleMonthStatsView accountId={accountId} />
       )}

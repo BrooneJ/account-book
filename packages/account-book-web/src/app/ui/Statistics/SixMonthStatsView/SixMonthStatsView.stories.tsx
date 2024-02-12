@@ -2,21 +2,38 @@ import SixMonthStatsView from "@/app/ui/Statistics/SixMonthStatsView/index";
 import { Meta, StoryObj } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { http, HttpResponse } from "msw";
+import { handlers } from "@/mocks/handlers";
 
 const meta = {
   title: "Statistics/SixMonthStatsView",
   component: SixMonthStatsView,
   tags: ["autodocs"],
   argTypes: {
-    params: { control: "object" },
+    accountId: { control: "string" },
   },
   args: {
-    params: { accountId: "1" },
+    accountId: "1",
   },
 } satisfies Meta<typeof SixMonthStatsView>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+const defaultQueryClient = new QueryClient();
+
+export const Empty: Story = {
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={defaultQueryClient}>
+        {Story()}
+        <ReactQueryDevtools
+          initialIsOpen={process.env.NEXT_PUBLIC_MODE === "local"}
+        />
+      </QueryClientProvider>
+    ),
+  ],
+};
 
 const mockedQueryClient = new QueryClient({
   defaultOptions: {
@@ -68,19 +85,20 @@ const mockData = {
   list: ["教育・教養", "食費", "ファッション"],
 };
 
-mockedQueryClient.setQueryData(
-  // we need to change the query key to today
-  ["statistics", "barGraph", "", "2024-02-12"],
-  mockData,
-);
-
 const MockTemplate = () => (
   <QueryClientProvider client={mockedQueryClient}>
-    <SixMonthStatsView />
-    <ReactQueryDevtools initialIsOpen={false} />
+    <SixMonthStatsView accountId="1" />
+    <ReactQueryDevtools
+      initialIsOpen={process.env.NEXT_PUBLIC_MODE === "local"}
+    />
   </QueryClientProvider>
 );
 
 export const MockedSuccess: Story = {
-  render: MockTemplate,
+  render: () => <MockTemplate />,
+  parameters: {
+    msw: {
+      handlers: [...handlers],
+    },
+  },
 };

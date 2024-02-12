@@ -13,9 +13,13 @@ type SixMonthDataType = {
   list: string[];
 };
 
-export default function SixMonthStatsView() {
+export default function SixMonthStatsView({
+  accountId,
+}: {
+  accountId: string;
+}) {
   const { date, type } = useStatisticsStore((state) => state);
-  const accountId = usePathname().split("/")[1];
+  // const accountId = usePathname().split("/")[1];
 
   const { data } = useQuery<SixMonthDataType>({
     queryKey: ["statistics", "barGraph", accountId, date],
