@@ -8,7 +8,7 @@ const port = 9090;
 
 app.use(
   cors({
-    origin: ["http://localhost:3001", "http://localhost:6009"],
+    origin: "http://localhost:3001",
     optionsSuccessStatus: 200,
     credentials: true,
   }),
