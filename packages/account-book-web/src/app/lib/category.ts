@@ -9,7 +9,7 @@ type FormData = {
 
 export async function createCategory(data: FormData, accountId: string) {
   const response = await fetch(
-    `http://localhost:4000/api/category/${accountId}`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/category/${accountId}`,
     {
       method: "POST",
       headers: {
@@ -29,14 +29,17 @@ export async function createCategory(data: FormData, accountId: string) {
 }
 
 export async function getCategory(accountId: string) {
-  const res = await fetch(`http://localhost:4000/api/category/${accountId}`, {
-    method: "GET",
-    headers: {
-      Cookie: cookies().toString(),
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/category/${accountId}`,
+    {
+      method: "GET",
+      headers: {
+        Cookie: cookies().toString(),
+      },
+      cache: "no-cache",
+      credentials: "include",
     },
-    cache: "no-cache",
-    credentials: "include",
-  });
+  );
   const data = await res.json();
   return data;
 }
@@ -46,14 +49,17 @@ export async function deleteCategoryList(
   type: "income" | "expense" | undefined,
   id: string[],
 ) {
-  await fetch(`http://localhost:4000/api/category/${accountId}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: cookies().toString(),
+  await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/category/${accountId}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookies().toString(),
+      },
+      body: JSON.stringify({ type, id }),
+      cache: "no-cache",
+      credentials: "include",
     },
-    body: JSON.stringify({ type, id }),
-    cache: "no-cache",
-    credentials: "include",
-  });
+  );
 }

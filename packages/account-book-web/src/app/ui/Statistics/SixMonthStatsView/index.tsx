@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getTopTransactionByHalfYear } from "@/app/lib/transaction";
 import { useStatisticsStore } from "@/app/store/statisticsStore";
-import { usePathname } from "next/navigation";
 import MonthIndicator from "@/app/ui/Statistics/MonthIndicator";
 import { useEffect, useState } from "react";
 import BarChartSkeleton from "@/app/ui/Statistics/SixMonthStatsView/BarChartSkeleton";
@@ -13,9 +12,12 @@ type SixMonthDataType = {
   list: string[];
 };
 
-export default function SixMonthStatsView() {
+export default function SixMonthStatsView({
+  accountId,
+}: {
+  accountId: string;
+}) {
   const { date, type } = useStatisticsStore((state) => state);
-  const accountId = usePathname().split("/")[1];
 
   const { data } = useQuery<SixMonthDataType>({
     queryKey: ["statistics", "barGraph", accountId, date],
@@ -29,7 +31,7 @@ export default function SixMonthStatsView() {
     setPrevData(data);
   }, [data]);
 
-  if (!prevData)
+  if (!prevData || prevData.list.length === 0)
     return (
       <div style={{ height: "450px" }}>
         <MonthIndicator />
@@ -38,7 +40,7 @@ export default function SixMonthStatsView() {
     );
 
   let count = 0;
-  prevData.result.forEach((item) => {
+  prevData?.result.forEach((item) => {
     for (const key in item) {
       count++;
     }
@@ -47,18 +49,16 @@ export default function SixMonthStatsView() {
   return (
     <>
       <MonthIndicator />
-      <div style={{ height: "450px" }}>
-        {count === 6 ? (
-          <>
-            <BarChartSkeleton />
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <span className="text-xl font-bold">データがありません。</span>
-            </div>
-          </>
-        ) : (
-          <MyResponsiveBar data={prevData.result} keys={prevData.list} />
-        )}
-      </div>
+      {count === 6 ? (
+        <>
+          <BarChartSkeleton />
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <span className="text-xl font-bold">データがありません。</span>
+          </div>
+        </>
+      ) : (
+        <MyResponsiveBar data={prevData.result} keys={prevData.list} />
+      )}
     </>
   );
 }

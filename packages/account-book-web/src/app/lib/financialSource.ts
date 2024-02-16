@@ -9,7 +9,7 @@ type FormData = {
 
 export async function getSource(accountId: string) {
   const res = await fetch(
-    `http://localhost:4000/api/financial-source/${accountId}`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financial-source/${accountId}`,
     {
       method: "GET",
       headers: {
@@ -25,7 +25,7 @@ export async function getSource(accountId: string) {
 
 export async function createSource(data: FormData, accountId: string) {
   const response = await fetch(
-    `http://localhost:4000/api/financial-source/${accountId}`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financial-source/${accountId}`,
     {
       method: "POST",
       headers: {
@@ -49,14 +49,17 @@ export async function deleteSourceList(
   type: "income" | "expense" | undefined,
   id: string[],
 ) {
-  await fetch(`http://localhost:4000/api/financial-source/${accountId}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: cookies().toString(),
+  await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/financial-source/${accountId}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookies().toString(),
+      },
+      body: JSON.stringify({ type, id }),
+      cache: "no-cache",
+      credentials: "include",
     },
-    body: JSON.stringify({ type, id }),
-    cache: "no-cache",
-    credentials: "include",
-  });
+  );
 }

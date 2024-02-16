@@ -10,15 +10,18 @@ type FormData = {
 };
 
 export async function actions(endpoint: string, data: FormData) {
-  const response = await fetch(`http://localhost:4000/api/auth/${endpoint}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/${endpoint}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+      cache: "no-cache",
+      credentials: "include",
     },
-    body: JSON.stringify(data),
-    cache: "no-cache",
-    credentials: "include",
-  });
+  );
   const result = await response.json();
   const validatedResult = responseSchema.safeParse(result);
 

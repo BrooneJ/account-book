@@ -15,7 +15,7 @@ type FormData = {
 
 export async function getThisMonthTransaction(accountId: string) {
   const response = await fetch(
-    `http://localhost:4000/api/transaction/${accountId}`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/transaction/${accountId}`,
     {
       method: "GET",
       headers: {
@@ -37,7 +37,9 @@ export async function getTransactionsAll(
 ) {
   const [lastDate, lastId] = pageParam;
 
-  const url = new URL(`http://localhost:4000/api/transaction/${accountId}/all`);
+  const url = new URL(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/transaction/${accountId}/all`,
+  );
   // Add page parameters to the URL query
   if (lastDate) url.searchParams.append("date", lastDate);
   if (lastId) url.searchParams.append("cursor", lastId.toString());
@@ -62,7 +64,7 @@ export async function getTransactionDetail(
   transactionId: string,
 ) {
   const response = await fetch(
-    `http://localhost:4000/api/transaction/${accountId}/detail/${transactionId}`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/transaction/${accountId}/detail/${transactionId}`,
     {
       method: "GET",
       headers: {
@@ -84,7 +86,7 @@ export async function getTransactionByMonth(
   date?: string,
 ) {
   const url = new URL(
-    `http://localhost:4000/api/transaction/${accountId}/statistics`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/transaction/${accountId}/statistics`,
   );
 
   if (type) url.searchParams.append("type", type);
@@ -100,7 +102,7 @@ export async function getTransactionByMonth(
     credentials: "include",
   });
   const result = await response.json();
-  revalidatePath(`/${accountId}/statistics`);
+
   return result;
 }
 
@@ -111,7 +113,7 @@ export async function getTransactionByCategory(
   date: string,
 ) {
   const url = new URL(
-    `http://localhost:4000/api/transaction/${accountId}/statistics/${categoryId}`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/transaction/${accountId}/statistics/${categoryId}`,
   );
 
   if (type) url.searchParams.append("type", type);
@@ -137,7 +139,7 @@ export async function getTopTransactionByHalfYear(
   date: string,
 ) {
   const url = new URL(
-    `http://localhost:4000/api/transaction/${accountId}/statistics/half-year`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/transaction/${accountId}/statistics/half-year`,
   );
 
   if (type) url.searchParams.append("type", type);
@@ -159,7 +161,7 @@ export async function getTopTransactionByHalfYear(
 
 export async function createTransaction(data: FormData, accountId: string) {
   const response = await fetch(
-    `http://localhost:4000/api/transaction/${accountId}`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/transaction/${accountId}`,
     {
       method: "POST",
       headers: {
@@ -183,7 +185,7 @@ export async function updateTransaction(
   transactionId: number,
 ) {
   const response = await fetch(
-    `http://localhost:4000/api/transaction/${accountId}/${transactionId}`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/transaction/${accountId}/${transactionId}`,
     {
       method: "PATCH",
       headers: {
@@ -209,7 +211,7 @@ export async function deleteTransaction({
   transactionId: number;
 }) {
   const response = await fetch(
-    `http://localhost:4000/api/transaction/${accountId}/${transactionId}`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/transaction/${accountId}/${transactionId}`,
     {
       method: "DELETE",
       headers: {

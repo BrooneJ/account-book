@@ -7,7 +7,7 @@ type Props = {
 };
 const StatisticsPeriodSelector = ({ isSixMonth, setIsSixMonth }: Props) => {
   return (
-    <div className="flex bg-gray-0 h-[42px] p-1 rounded-lg">
+    <div className="flex bg-gray-0 h-[42px] w-full p-1 rounded-lg">
       <div
         onClick={() => setIsSixMonth(false)}
         className={`grow flex justify-center relative`}
@@ -19,7 +19,7 @@ const StatisticsPeriodSelector = ({ isSixMonth, setIsSixMonth }: Props) => {
             className={`absolute ${
               isSixMonth
                 ? ""
-                : "w-[156px] h-[32px] bg-white font-semibold shadow-lg p-1 rounded-lg"
+                : "w-full h-[32px] bg-white font-semibold shadow-lg p-1 rounded-lg"
             }`}
           ></motion.div>
         )}
@@ -34,7 +34,7 @@ const StatisticsPeriodSelector = ({ isSixMonth, setIsSixMonth }: Props) => {
             layoutId="circle"
             className={`absolute ${
               isSixMonth
-                ? "w-[156px] h-[32px] bg-white font-semibold shadow-lg p-1 rounded-lg"
+                ? "w-full h-[32px] bg-white font-semibold shadow-lg p-1 rounded-lg"
                 : ""
             }`}
           ></motion.div>
