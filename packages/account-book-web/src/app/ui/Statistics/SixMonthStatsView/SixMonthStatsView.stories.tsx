@@ -61,8 +61,5 @@ export const MockedSuccess: Story = {
     msw: {
       handlers: [...handlers],
     },
-    nextHeaders: {
-      "my-header": "foo",
-    },
   },
 };

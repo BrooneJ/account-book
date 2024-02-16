@@ -3,11 +3,11 @@ import { initialize, mswLoader } from "msw-storybook-addon";
 import "../src/app/globals.css";
 import { withNextHeadersMock } from "./withHeadersMock";
 
-// initialize({ onUnhandledRequest: "warn" });
+initialize({ onUnhandledRequest: "warn" });
 
 const preview: Preview = {
   decorators: [withNextHeadersMock],
-  // loaders: [mswLoader],
+  loaders: [mswLoader],
   parameters: {
     nextjs: {
       appDirectory: true,
