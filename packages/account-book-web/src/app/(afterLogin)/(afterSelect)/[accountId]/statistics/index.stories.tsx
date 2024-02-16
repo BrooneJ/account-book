@@ -2,22 +2,13 @@ import Page from "@/app/(afterLogin)/(afterSelect)/[accountId]/statistics/page";
 import { Meta, StoryObj } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { http, HttpResponse } from "msw";
 
 const queryClient = new QueryClient();
 
 const meta = {
   title: "Statistics/MainPage",
   component: Page,
-  decorators: [
-    (Story) => (
-      <QueryClientProvider client={queryClient}>
-        {Story()}
-        <ReactQueryDevtools
-          initialIsOpen={process.env.NEXT_PUBLIC_MODE === "local"}
-        />
-      </QueryClientProvider>
-    ),
-  ],
   tags: ["autodocs"],
   argTypes: {
     params: { control: "object" },
@@ -27,12 +18,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof Page>;
 
-export const Empty: Story = {
-  args: {
-    params: { accountId: "1" },
-  },
-};
-
 const mockedGraphClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -41,12 +26,21 @@ const mockedGraphClient = new QueryClient({
   },
 });
 
+const MockTemplate = () => (
+  <QueryClientProvider client={mockedGraphClient}>
+    <Page params={{ accountId: "1" }} />
+    <ReactQueryDevtools
+      initialIsOpen={process.env.NEXT_PUBLIC_MODE === "local"}
+    />
+  </QueryClientProvider>
+);
+
 const pieGraphData = [
   {
     count: 1,
     id: "1",
     label: "教育・教養",
-    value: 1234,
+    value: 12341,
   },
   {
     count: 2,
@@ -60,12 +54,31 @@ const pieGraphData = [
     label: "ファッション",
     value: 1234,
   },
+  {
+    count: 4,
+    id: "4",
+    label: "住居",
+    value: 1234,
+  },
+  {
+    count: 5,
+    id: "5",
+    label: "交通",
+    value: 1234,
+  },
+  {
+    count: 6,
+    id: "6",
+    label: "趣味・娯楽",
+    value: 1234,
+  },
+  {
+    count: 7,
+    id: "7",
+    label: "その他",
+    value: 1234,
+  },
 ];
-
-mockedGraphClient.setQueryData(
-  ["statistics", "2024-02-12", "expense"],
-  pieGraphData,
-);
 
 const sixMonthStatsData = {
   result: [
@@ -109,21 +122,18 @@ const sixMonthStatsData = {
   list: ["教育・教養", "食費", "ファッション"],
 };
 
-mockedGraphClient.setQueryData(
-  ["statistics", "barGraph", "", "2024-02-12"],
-  sixMonthStatsData,
-);
-
-export const mockdePieGraph = () => (
-  <QueryClientProvider client={mockedGraphClient}>
-    <Page params={{ accountId: "1" }} />
-  </QueryClientProvider>
-);
-
-const mockedSixMonthStatsClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
+export const MockSuccess: Story = {
+  render: () => <MockTemplate />,
+  parameters: {
+    msw: {
+      handlers: [
+        http.get("*/api/transaction/:accountId/statistics/half-year", () => {
+          return HttpResponse.json(sixMonthStatsData);
+        }),
+        http.get("*/api/transaction/:accountId/statistics", () => {
+          return HttpResponse.json(pieGraphData);
+        }),
+      ],
     },
   },
-});
+};

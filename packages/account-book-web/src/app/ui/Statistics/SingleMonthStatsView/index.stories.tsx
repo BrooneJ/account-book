@@ -7,7 +7,6 @@ import { http, HttpResponse } from "msw";
 const meta = {
   title: "Statistics/SingleMonthStatsView",
   component: SingleMonthStatsView,
-  tags: ["autodocs"],
   argTypes: {
     accountId: { control: "string" },
   },
@@ -30,14 +29,6 @@ export const Empty: Story = {
     ),
   ],
 };
-
-const mockedQueryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-    },
-  },
-});
 
 const mockData = [
   {
@@ -83,24 +74,6 @@ const mockData = [
     value: 1234,
   },
 ];
-
-mockedQueryClient.setQueryData(
-  ["statistics", "2024-02-16", "expense"],
-  mockData,
-);
-
-export const WithData: Story = {
-  decorators: [
-    (Story) => (
-      <QueryClientProvider client={mockedQueryClient}>
-        {Story()}
-        <ReactQueryDevtools
-          initialIsOpen={process.env.NEXT_PUBLIC_MODE === "local"}
-        />
-      </QueryClientProvider>
-    ),
-  ],
-};
 
 const mockedTest = new QueryClient({
   defaultOptions: {

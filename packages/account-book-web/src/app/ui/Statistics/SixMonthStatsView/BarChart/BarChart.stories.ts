@@ -6,7 +6,7 @@ const meta = {
   component: BarChart,
   tags: ["autodocs"],
   argTypes: {
-    data: { control: "object" },
+    data: { control: "object", description: "データ" },
     keys: { control: "object" },
   },
 } satisfies Meta<typeof BarChart>;

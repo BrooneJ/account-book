@@ -1,15 +1,13 @@
 import SixMonthStatsView from "@/app/ui/Statistics/SixMonthStatsView/index";
 import { Meta, StoryObj } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { handlers } from "@/mocks/handlers";
-import { MSWComponent } from "@/mocks/_component/MSWComponent";
 import { withNextHeadersMock } from "../../../../../.storybook/withHeadersMock";
+import { http, HttpResponse } from "msw";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const meta = {
   title: "Statistics/SixMonthStatsView",
   component: SixMonthStatsView,
-  tags: ["autodocs"],
   argTypes: {
     accountId: { control: "string" },
   },
@@ -20,21 +18,6 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-const defaultQueryClient = new QueryClient();
-
-export const Empty: Story = {
-  decorators: [
-    (Story) => (
-      <QueryClientProvider client={defaultQueryClient}>
-        {Story()}
-        <ReactQueryDevtools
-          initialIsOpen={process.env.NEXT_PUBLIC_MODE === "local"}
-        />
-      </QueryClientProvider>
-    ),
-  ],
-};
 
 const mockedQueryClient = new QueryClient({
   defaultOptions: {
@@ -47,10 +30,7 @@ const mockedQueryClient = new QueryClient({
 const MockTemplate = () => (
   <QueryClientProvider client={mockedQueryClient}>
     <SixMonthStatsView accountId="1" />
-    <MSWComponent />
-    <ReactQueryDevtools
-      initialIsOpen={process.env.NEXT_PUBLIC_MODE === "local"}
-    />
+    <ReactQueryDevtools initialIsOpen={false} />
   </QueryClientProvider>
 );
 
@@ -59,7 +39,73 @@ export const MockedSuccess: Story = {
   render: () => <MockTemplate />,
   parameters: {
     msw: {
-      handlers: [...handlers],
+      handlers: [
+        http.get("*/api/transaction/:accountId/statistics/half-year", () => {
+          return HttpResponse.json({
+            result: [
+              {
+                date: "2023-09",
+                test1: 1200,
+                test2: 2100,
+                test3: 3000,
+              },
+              {
+                date: "2023-10",
+                test1: 1600,
+                test2: 1900,
+                test3: 1800,
+              },
+              {
+                date: "2023-11",
+                test1: 1600,
+                test2: 2300,
+                test3: 2800,
+              },
+              {
+                date: "2023-12",
+                test1: 1030,
+                test2: 1800,
+                test3: 3300,
+              },
+              {
+                date: "2024-01",
+                test1: 1200,
+                test2: 2300,
+                test3: 3200,
+              },
+              {
+                date: "2024-02",
+                test1: 1900,
+                test2: 1500,
+                test3: 3400,
+              },
+            ],
+            list: ["test1", "test2", "test3"],
+          });
+        }),
+      ],
+    },
+  },
+};
+
+export const Empty: Story = {
+  decorators: [withNextHeadersMock],
+  render: () => <MockTemplate />,
+  parameters: {
+    msw: {
+      handlers: [
+        http.get("*/api/transaction/:accountId/statistics/half-year", () => {
+          return HttpResponse.json(
+            {
+              result: [],
+              list: [],
+            },
+            {
+              status: 404,
+            },
+          );
+        }),
+      ],
     },
   },
 };

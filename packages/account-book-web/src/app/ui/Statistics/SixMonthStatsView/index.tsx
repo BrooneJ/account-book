@@ -31,7 +31,7 @@ export default function SixMonthStatsView({
     setPrevData(data);
   }, [data]);
 
-  if (!prevData)
+  if (!prevData || prevData.list.length === 0)
     return (
       <div style={{ height: "450px" }}>
         <MonthIndicator />
@@ -40,7 +40,7 @@ export default function SixMonthStatsView({
     );
 
   let count = 0;
-  prevData.result.forEach((item) => {
+  prevData?.result.forEach((item) => {
     for (const key in item) {
       count++;
     }
