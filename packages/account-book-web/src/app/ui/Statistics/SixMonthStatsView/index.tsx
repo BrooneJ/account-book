@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getTopTransactionByHalfYear } from "@/app/lib/transaction";
 import { useStatisticsStore } from "@/app/store/statisticsStore";
-import { usePathname } from "next/navigation";
 import MonthIndicator from "@/app/ui/Statistics/MonthIndicator";
 import { useEffect, useState } from "react";
 import BarChartSkeleton from "@/app/ui/Statistics/SixMonthStatsView/BarChartSkeleton";
@@ -19,7 +18,6 @@ export default function SixMonthStatsView({
   accountId: string;
 }) {
   const { date, type } = useStatisticsStore((state) => state);
-  // const accountId = usePathname().split("/")[1];
 
   const { data } = useQuery<SixMonthDataType>({
     queryKey: ["statistics", "barGraph", accountId, date],

@@ -85,7 +85,7 @@ const mockData = [
 ];
 
 mockedQueryClient.setQueryData(
-  ["statistics", "2024-02-12", "expense"],
+  ["statistics", "2024-02-16", "expense"],
   mockData,
 );
 

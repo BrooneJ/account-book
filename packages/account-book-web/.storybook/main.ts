@@ -1,6 +1,5 @@
+import path = require("path");
 import type { StorybookConfig } from "@storybook/nextjs";
-// @ts-ignore
-import path from "path";
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
@@ -21,6 +20,10 @@ const config: StorybookConfig = {
   staticDirs: ["../public"],
   webpackFinal: async (config) => {
     config.resolve.alias["@"] = path.resolve(__dirname, "../src/");
+    config.resolve.alias["next/headers"] = path.resolve(
+      __dirname,
+      "./withHeadersMock.ts",
+    );
     return config;
   },
   features: {

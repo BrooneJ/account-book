@@ -102,7 +102,7 @@ export async function getTransactionByMonth(
     credentials: "include",
   });
   const result = await response.json();
-  revalidatePath(`/${accountId}/statistics`);
+  // revalidatePath(`/${accountId}/statistics`);
   return result;
 }
 
