@@ -30,6 +30,7 @@ const config: Config = {
         expenseText: "#F87675",
         incomeBg: "#EEFCF0",
         incomeText: "#2EAC57",
+        night: "#3d5a9d",
       },
       height: {
         "90vh": "90vh",

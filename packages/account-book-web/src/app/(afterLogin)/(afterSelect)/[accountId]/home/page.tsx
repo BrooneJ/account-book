@@ -7,7 +7,7 @@ import { getAccountBook } from "@/app/lib/getAccountBook";
 import AccountTitle from "@/app/ui/Home/AccountTitle";
 import { getThisMonthTransaction } from "@/app/lib/transaction";
 import ThisMonthTransaction from "@/app/ui/Home/ThisMonthTransaction";
-import Overlay from "@/app/ui/Common/Overlay";
+import RankWrapper from "@/app/ui/Home/RankWrapper";
 
 export default async function Page({
   params,
@@ -31,6 +31,7 @@ export default async function Page({
       <HydrationBoundary state={dehydratedState}>
         <AccountTitle id={id} />
         <ThisMonthTransaction id={id} />
+        <RankWrapper accountId={id} />
       </HydrationBoundary>
     </div>
   );

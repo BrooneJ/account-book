@@ -1,10 +1,12 @@
 import { StatisticsResponseListType } from "@/app/ui/Statistics/SingleMonthStatsView/type";
 import StatisticsRankSkeleton from "@/app/ui/Statistics/SingleMonthStatsView/StatisticsRank/StatisticsRankSkeleton";
 import StatisticsRankItem from "@/app/ui/Statistics/SingleMonthStatsView/StatisticsRank/StatisticsRankItem";
+import HomeRankSkeleton from "@/app/ui/Home/Skeleton";
 
 type Props = {
   data: StatisticsResponseListType | undefined;
   isFetching: boolean;
+  home?: boolean;
 };
 
 const color = [
@@ -18,9 +20,9 @@ const color = [
   "#cccccc",
 ];
 
-const StatisticsRank = ({ data, isFetching }: Props) => {
+const StatisticsRank = ({ data, isFetching, home }: Props) => {
   if (isFetching) {
-    return <StatisticsRankSkeleton />;
+    return <>{home ? <HomeRankSkeleton /> : <StatisticsRankSkeleton />}</>;
   }
 
   if (!data || data.length === 0) {
@@ -34,7 +36,13 @@ const StatisticsRank = ({ data, isFetching }: Props) => {
   return (
     <>
       {data?.map((item, index) => (
-        <StatisticsRankItem color={color[index]} item={item} key={item.id} />
+        <StatisticsRankItem
+          color={color[index]}
+          item={item}
+          key={item.id}
+          home={home}
+          index={index}
+        />
       ))}
     </>
   );

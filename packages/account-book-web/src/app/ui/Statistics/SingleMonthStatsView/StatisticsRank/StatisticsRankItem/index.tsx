@@ -3,13 +3,21 @@ import { useRouter } from "next/navigation";
 import { useStatisticsStore } from "@/app/store/statisticsStore";
 import { useModalVisibleStore } from "@/app/store/modalVisibleStore";
 import { truncateString } from "@/app/lib/truncate";
+import Image from "next/image";
 
 type Props = {
   color: string;
   item: StatisticsResponseSingleType;
+  home?: boolean;
+  index?: number;
 };
 
-export default function StatisticsRankItem({ item, color }: Props) {
+export default function StatisticsRankItem({
+  item,
+  color,
+  home,
+  index,
+}: Props) {
   const router = useRouter();
   const open = useModalVisibleStore((store) => store.open);
   const type = useStatisticsStore((state) => state.type);
@@ -17,10 +25,34 @@ export default function StatisticsRankItem({ item, color }: Props) {
   return (
     <div className="flex justify-between items-center bg-gray-0 px-3 py-2 mb-[10px] rounded-xl">
       <div className="flex items-center">
-        <div
-          style={{ backgroundColor: color }}
-          className="h-7 w-7 rounded-2xl mr-3 shadow-md border border-gray-0"
-        ></div>
+        {home ? (
+          <>
+            {index !== 0 ? (
+              <div className="h-7 w-7 rounded-2xl mr-3 shadow-md border border-gray-0 flex justify-center items-center bg-white">
+                <span>{index! + 1}</span>
+              </div>
+            ) : (
+              <>
+                <Image
+                  src="/images/star.svg"
+                  width={35}
+                  height={35}
+                  alt="star"
+                  className="mr-2 -ml-[2px]"
+                />
+                <span className="absolute left-[23.5px] top-[18px] bg-none">
+                  {index + 1}
+                </span>
+              </>
+            )}
+          </>
+        ) : (
+          <div
+            style={{ backgroundColor: color }}
+            className="h-7 w-7 rounded-2xl mr-3 shadow-md border border-gray-0"
+          ></div>
+        )}
+
         <div className="flex flex-col">
           <span className="text-[16px] truncate">{item.label}</span>
           <span className="text-xs">{item.count}件があります。</span>

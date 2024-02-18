@@ -23,7 +23,7 @@ const SingleMonthStatsView = ({ accountId }: { accountId: string }) => {
         <PieChart data={data} />
       </div>
       <div className="relative -mt-10 h-64 pb-16 overflow-scroll">
-        <StatisticsRank data={data} isFetching={isFetching} />
+        <StatisticsRank data={data} isFetching={isFetching} home={false} />
       </div>
     </>
   );
