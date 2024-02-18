@@ -8,6 +8,7 @@ import AccountTitle from "@/app/ui/Home/AccountTitle";
 import { getThisMonthTransaction } from "@/app/lib/transaction";
 import ThisMonthTransaction from "@/app/ui/Home/ThisMonthTransaction";
 import RankWrapper from "@/app/ui/Home/RankWrapper";
+import LineGraphWrapper from "@/app/ui/Home/LineGraph";
 
 export default async function Page({
   params,
@@ -27,11 +28,12 @@ export default async function Page({
   const dehydratedState = dehydrate(queryClient);
 
   return (
-    <div className="pt-5">
+    <div className="pt-5 pb-16">
       <HydrationBoundary state={dehydratedState}>
         <AccountTitle id={id} />
         <ThisMonthTransaction id={id} />
         <RankWrapper accountId={id} />
+        <LineGraphWrapper />
       </HydrationBoundary>
     </div>
   );

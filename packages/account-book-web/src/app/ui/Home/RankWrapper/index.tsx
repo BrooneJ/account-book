@@ -16,7 +16,7 @@ export default function RankWrapper({ accountId }: { accountId: string }) {
 
   return (
     <div className="mt-5">
-      <span className="font-bold">今月トップカテゴリー３つ</span>
+      <span className="text-xl font-semibold">今月トップカテゴリー３つ</span>
       <div className="bg-night mt-2 p-2 rounded-xl overflow-hidden">
         <div className="relative h-48">
           <StatisticsRank

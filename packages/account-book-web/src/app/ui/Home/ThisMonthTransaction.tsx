@@ -18,7 +18,7 @@ export default function ThisMonthTransaction({ id }: { id: string }) {
           <span className="text-xl">{thisMonth}月</span>
         </div>
         <div className="flex grow justify-center">
-          <div className="flex flex-col items-center grow border-r-[1px] text-point">
+          <div className="flex flex-col items-center grow border-r-[1px] text-incomeText">
             <span className="text-sm">収入</span>
             <span className="text-2xl">{data?.income.toLocaleString()}</span>
           </div>
