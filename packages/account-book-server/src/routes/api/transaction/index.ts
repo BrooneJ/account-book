@@ -4,6 +4,7 @@ import TransactionService from '../../../services/TransactionService'
 import {
   createTransactionSchema,
   deleteTransactionSchema,
+  getGraphDataByYearSchema,
   getThisMonthTransactionsSchema,
   getTopCategoriesByHalfYearSchema,
   getTransactionDetailSchema,
@@ -65,6 +66,19 @@ const transactionRouter: FastifyPluginAsyncWithZod = async (fastify) => {
         accountId,
         date,
         type,
+      })
+    },
+  )
+
+  fastify.get(
+    '/:accountId/home/graph',
+    { schema: getGraphDataByYearSchema },
+    async (request, reply) => {
+      const { accountId } = request.params
+      const { date } = request.query
+      return transactionService.getGraphDataByYear({
+        accountId,
+        date,
       })
     },
   )

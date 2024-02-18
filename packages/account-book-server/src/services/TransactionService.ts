@@ -1,6 +1,7 @@
 import db from '../lib/db'
 import AppError from '../lib/AppError'
 import moment from 'moment-timezone'
+import { type } from 'node:os'
 
 class TransactionService {
   private static instance: TransactionService
@@ -307,6 +308,78 @@ class TransactionService {
     })
 
     return { result: sortedResults, list: categoryList }
+  }
+
+  async getGraphDataByYear({
+    accountId,
+    date,
+  }: {
+    accountId: string
+    date: string
+  }) {
+    if (!date) {
+      const timezone = moment.tz.guess()
+      date = moment().tz(timezone).format('YYYY-MM-DD')
+    }
+    const startOfTwelveMonthsAgo = moment
+      .utc(date)
+      .subtract(11, 'months')
+      .startOf('month')
+      .toISOString()
+    const endOfMonth = moment.utc(date).endOf('month').toISOString()
+
+    const result = await db.transaction.groupBy({
+      by: ['date', 'type'],
+      _sum: {
+        amount: true,
+      },
+      where: {
+        accountId,
+        date: {
+          gte: startOfTwelveMonthsAgo,
+          lte: endOfMonth,
+        },
+      },
+      orderBy: {
+        date: 'asc',
+      },
+    })
+
+    type GraphData = {
+      x: string
+      y: number
+    }
+
+    type GraphDataArray = {
+      id: string
+      data: GraphData[]
+    }[]
+
+    const graphData = result.reduce(
+      (acc, cur) => {
+        const month = cur.date
+          .toISOString()
+          .slice(0, 7)
+          .split('-')[1]
+          .replace(/^0+/, '')
+        const amount = cur._sum.amount ?? 0
+        const type = cur.type as 'income' | 'expense'
+        const index = acc.findIndex((item) => item.id === type)
+        const monthIndex = acc[index].data.findIndex((item) => item.x === month)
+        if (monthIndex !== -1) {
+          acc[index].data[monthIndex].y += amount
+        } else {
+          acc[index].data.push({ x: month, y: amount })
+        }
+        return acc
+      },
+      [
+        { id: 'expense', data: [] },
+        { id: 'income', data: [] },
+      ] as GraphDataArray,
+    )
+
+    return graphData
   }
 
   async getTransactions({

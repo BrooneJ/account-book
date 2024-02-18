@@ -138,6 +138,16 @@ export const getTopCategoriesByHalfYearSchema = routeSchema({
   },
 })
 
+export const getGraphDataByYearSchema = routeSchema({
+  tags: ['transaction'],
+  params: z.object({
+    accountId: z.string(),
+  }),
+  querystring: z.object({
+    date: z.string(),
+  }),
+})
+
 export const getTransactionsByCategorySchema = routeSchema({
   tags: ['transaction'],
   params: z.object({
