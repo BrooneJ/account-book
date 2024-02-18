@@ -345,6 +345,17 @@ class TransactionService {
       },
     })
 
+    const lastTwelveMonths = Array.from({ length: 12 }, (_, i) =>
+      moment
+        .utc(date)
+        .subtract(i, 'months')
+        .startOf('month')
+        .toISOString()
+        .slice(0, 7)
+        .split('-')[1]
+        .replace(/^0+/, ''),
+    ).reverse()
+
     type GraphData = {
       x: string
       y: number
@@ -354,6 +365,13 @@ class TransactionService {
       id: string
       data: GraphData[]
     }[]
+
+    const expenseDefaultGraphData = lastTwelveMonths.map((month) => {
+      return { x: month, y: 0 }
+    })
+    const incomeDefaultGraphData = lastTwelveMonths.map((month) => {
+      return { x: month, y: 0 }
+    })
 
     const graphData = result.reduce(
       (acc, cur) => {
@@ -368,14 +386,12 @@ class TransactionService {
         const monthIndex = acc[index].data.findIndex((item) => item.x === month)
         if (monthIndex !== -1) {
           acc[index].data[monthIndex].y += amount
-        } else {
-          acc[index].data.push({ x: month, y: amount })
         }
         return acc
       },
       [
-        { id: 'expense', data: [] },
-        { id: 'income', data: [] },
+        { id: 'expense', data: expenseDefaultGraphData },
+        { id: 'income', data: incomeDefaultGraphData },
       ] as GraphDataArray,
     )
 
