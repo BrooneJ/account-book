@@ -2,6 +2,7 @@ import { StatisticsResponseSingleType } from "@/app/ui/Statistics/SingleMonthSta
 import { useRouter } from "next/navigation";
 import { useStatisticsStore } from "@/app/store/statisticsStore";
 import { useModalVisibleStore } from "@/app/store/modalVisibleStore";
+import { truncateString } from "@/app/lib/truncate";
 
 type Props = {
   color: string;
@@ -21,15 +22,14 @@ export default function StatisticsRankItem({ item, color }: Props) {
           className="h-7 w-7 rounded-2xl mr-3 shadow-md border border-gray-0"
         ></div>
         <div className="flex flex-col">
-          <span className="text-[16px] max-[375px]:w-28 truncate">
-            {item.label}
-          </span>
-          <span className="text-xs">{item.count}件の履歴があります。</span>
+          <span className="text-[16px] truncate">{item.label}</span>
+          <span className="text-xs">{item.count}件があります。</span>
         </div>
       </div>
-      <div className=" flex items-center">
-        <span className="grow flex justify-end text-xs mr-2 max-[375px]:w-16 truncate">
-          {type === "expense" ? "-" : ""}￥{item.value.toLocaleString()}
+      <div className="flex items-center">
+        <span className="grow flex justify-end text-xs mr-2">
+          {type === "expense" ? "-" : ""}￥
+          {truncateString(item.value.toLocaleString())}
         </span>
         <button
           onClick={() => {
