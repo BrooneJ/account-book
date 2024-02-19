@@ -45,7 +45,7 @@ const MyResponsiveLine = ({ data /* see data tab */ }: { data: any }) => (
 
 function LineGraphWrapper({ id }: { id: string }) {
   const date = new Date().toISOString().split("T")[0];
-  const { data, isFetching } = useQuery<GraphDataArray>({
+  const { data } = useQuery<GraphDataArray>({
     queryKey: [id, "home", "year"],
     queryFn: () => getTopTransactionByYear(id, date),
   });
@@ -54,7 +54,7 @@ function LineGraphWrapper({ id }: { id: string }) {
     <div className="mt-4">
       <span className="text-xl font-semibold">収入・支出</span>
       <div className="h-60">
-        {isFetching ? <div>loading...</div> : <MyResponsiveLine data={data} />}
+        <MyResponsiveLine data={data} />
       </div>
     </div>
   );
