@@ -33,7 +33,7 @@ export default async function Page({
         <AccountTitle id={id} />
         <ThisMonthTransaction id={id} />
         <RankWrapper accountId={id} />
-        <LineGraphWrapper />
+        <LineGraphWrapper id={id} />
       </HydrationBoundary>
     </div>
   );
