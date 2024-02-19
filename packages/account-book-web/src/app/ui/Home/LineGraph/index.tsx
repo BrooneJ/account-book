@@ -18,6 +18,7 @@ const MyResponsiveLine = ({ data /* see data tab */ }: { data: any }) => (
       stacked: false,
       reverse: false,
     }}
+    useMesh={true}
     yFormat=" >-.2f"
     axisTop={null}
     axisRight={null}
@@ -29,14 +30,12 @@ const MyResponsiveLine = ({ data /* see data tab */ }: { data: any }) => (
     tooltip={({ point }) => {
       return (
         <div
-          style={{
-            background: "white",
-            padding: "9px 12px",
-            border: "1px solid #ccc",
-          }}
+          className={`flex flex-col bg-gray-3 p-4 rounded ${point.serieId === "income" ? "text-primary" : "text-expenseText2"}`}
         >
-          <div>{point.serieId}</div>
-          <div></div>
+          <span className="text-xs">
+            {point.serieId === "income" ? "収入" : "支出"}
+          </span>
+          <span className="text-xs">￥{point.data.y.toString()}</span>
         </div>
       );
     }}

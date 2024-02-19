@@ -28,6 +28,7 @@ const config: Config = {
         modalBackground: "rgba(0, 0, 0, 0.4)",
         expenseBg: "#FFF0F0",
         expenseText: "#F87675",
+        expenseText2: "#FCA5A5",
         incomeBg: "#EEFCF0",
         incomeText: "#2EAC57",
         night: "#3d5a9d",
