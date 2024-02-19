@@ -5,7 +5,10 @@ import {
 } from "@tanstack/react-query";
 import { getAccountBook } from "@/app/lib/getAccountBook";
 import AccountTitle from "@/app/ui/Home/AccountTitle";
-import { getThisMonthTransaction } from "@/app/lib/transaction";
+import {
+  getThisMonthTransaction,
+  getTopTransactionByYear,
+} from "@/app/lib/transaction";
 import ThisMonthTransaction from "@/app/ui/Home/ThisMonthTransaction";
 import RankWrapper from "@/app/ui/Home/RankWrapper";
 import LineGraphWrapper from "@/app/ui/Home/LineGraph";
@@ -16,6 +19,7 @@ export default async function Page({
   params: { accountId: string };
 }) {
   const id = params.accountId;
+  const date = new Date().toISOString().split("T")[0];
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryKey: ["accountbook", id],
@@ -24,6 +28,10 @@ export default async function Page({
   await queryClient.prefetchQuery({
     queryKey: ["accountbook", "thisMonthTransactions", id],
     queryFn: () => getThisMonthTransaction(id),
+  });
+  await queryClient.prefetchQuery({
+    queryKey: [id, "home", "year"],
+    queryFn: () => getTopTransactionByYear(id, date),
   });
   const dehydratedState = dehydrate(queryClient);
 

@@ -3,6 +3,7 @@
 import { ResponsiveLine } from "@nivo/line";
 import { useQuery } from "@tanstack/react-query";
 import { getTopTransactionByYear } from "@/app/lib/transaction";
+import { GraphDataArray } from "@/app/ui/Home/LineGraph/type";
 
 const MyResponsiveLine = ({ data /* see data tab */ }: { data: any }) => (
   <ResponsiveLine
@@ -44,7 +45,7 @@ const MyResponsiveLine = ({ data /* see data tab */ }: { data: any }) => (
 
 function LineGraphWrapper({ id }: { id: string }) {
   const date = new Date().toISOString().split("T")[0];
-  const { data, isFetching } = useQuery({
+  const { data, isFetching } = useQuery<GraphDataArray>({
     queryKey: [id, "home", "year"],
     queryFn: () => getTopTransactionByYear(id, date),
   });
