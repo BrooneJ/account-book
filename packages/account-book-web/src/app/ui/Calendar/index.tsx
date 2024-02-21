@@ -7,9 +7,85 @@ import Arrow from "@/app/ui/svg/arrow";
 export default function Calendar() {
   const [current, setCurrent] = useState(moment().startOf("month").utc(true));
 
+  const dummyData = [
+    {
+      date: "2024-02-01",
+      list: [
+        { type: "income", transaction: ["kaisya"] },
+        { type: "expense", transaction: ["SEIYU", "UR"] },
+      ],
+    },
+    {
+      date: "2024-02-02",
+      list: [
+        { type: "income", transaction: ["kaisya"] },
+        { type: "expense", transaction: ["SEIYU", "UR"] },
+      ],
+    },
+    {
+      date: "2024-02-03",
+      list: [
+        { type: "income", transaction: ["kaisya"] },
+        { type: "expense", transaction: ["SEIYU", "UR"] },
+      ],
+    },
+    {
+      date: "2024-02-04",
+      list: [
+        { type: "income", transaction: ["kaisya"] },
+        { type: "expense", transaction: ["SEIYU", "UR"] },
+      ],
+    },
+    {
+      date: "2024-02-05",
+      list: [
+        { type: "income", transaction: ["kaisya"] },
+        { type: "expense", transaction: [] },
+      ],
+    },
+    {
+      date: "2024-02-06",
+      list: [
+        { type: "income", transaction: ["kaisya"] },
+        { type: "expense", transaction: ["SEIYU", "UR"] },
+      ],
+    },
+    {
+      date: "2024-02-07",
+      list: [
+        { type: "income", transaction: ["kaisya"] },
+        { type: "expense", transaction: ["SEIYU", "UR"] },
+      ],
+    },
+    {
+      date: "2024-02-17",
+      list: [
+        { type: "income", transaction: ["kaisya"] },
+        { type: "expense", transaction: ["SEIYU", "UR"] },
+      ],
+    },
+  ];
+
   const days = current.daysInMonth();
   const firstDayOfMonth = current.clone().startOf("month").day();
-  const daysArray = Array.from({ length: days }, (_, i) => i + 1);
+  const daysArray = Array.from({ length: days }, (_, i) => {
+    return {
+      date: i + 1,
+      list: dummyData
+        .filter((item) => {
+          return (
+            item.date ===
+            current.format("YYYY-MM") +
+              "-" +
+              `${i + 1 < 10 ? "0" + (i + 1) : i + 1}`
+          );
+        })
+        .map((item) => {
+          return item.list;
+        }),
+    };
+  });
+
   const paddingDaysAfter = 7 - current.clone().endOf("month").day() - 1;
 
   const daysArrayWithPadding = [
@@ -54,12 +130,34 @@ export default function Calendar() {
               key={index}
               className={`text-center p-1 text-sm border-b border-r border-gray-300 flex flex-col items-center rounded-xl ${index < 7 ? "border-t" : ""} ${index % 7 === 0 ? "border-l" : ""} ${day === null ? "bg-gray-200" : ""}`}
             >
-              <span>{day}</span>
+              <span>{day?.date}</span>
               <div className="h-full flex items-center flex-wrap">
-                <div className="p-[3px] bg-primary rounded-2xl"></div>
+                {day?.list[0]?.map((item, index) => {
+                  if (item.type === "income") {
+                    return item.transaction.map((transaction, index) => {
+                      return (
+                        <div
+                          key={index}
+                          className="p-[3px] bg-point rounded-2xl"
+                        ></div>
+                      );
+                    });
+                  }
+                })}
               </div>
               <div className="h-full flex items-center flex-wrap">
-                <div className="p-[3px] bg-expenseText2 rounded-2xl"></div>
+                {day?.list[0]?.map((item, index) => {
+                  if (item.type === "expense") {
+                    return item.transaction.map((transaction, index) => {
+                      return (
+                        <div
+                          key={index}
+                          className="p-[3px] bg-expenseText2 rounded-2xl"
+                        ></div>
+                      );
+                    });
+                  }
+                })}
               </div>
             </div>
           );
