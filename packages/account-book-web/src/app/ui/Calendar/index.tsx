@@ -6,6 +6,7 @@ import Arrow from "@/app/ui/svg/arrow";
 import { useQuery } from "@tanstack/react-query";
 import { getThisMonthData } from "@/app/lib/calendar";
 import { CalendarData } from "@/app/ui/Calendar/type";
+import FinancialActivityDots from "@/app/ui/Calendar/FinancialActivityDots";
 
 export default function Calendar({ accountId }: { accountId: string }) {
   const [current, setCurrent] = useState(moment().startOf("month").utc(true));
@@ -28,7 +29,7 @@ export default function Calendar({ accountId }: { accountId: string }) {
               `${i + 1 < 10 ? "0" + (i + 1) : i + 1}`
           );
         })
-        .map((item) => {
+        .flatMap((item) => {
           return item.list;
         }),
     };
@@ -79,30 +80,8 @@ export default function Calendar({ accountId }: { accountId: string }) {
               className={`text-center p-1 text-sm border-b border-r border-gray-300 flex flex-col items-center rounded-xl ${index < 7 ? "border-t" : ""} ${index % 7 === 0 ? "border-l" : ""} ${day === null ? "bg-gray-200" : ""}`}
             >
               <span>{day?.date}</span>
-              <div className="flex flex-wrap">
-                {day?.list?.[0]?.map((item, index) => {
-                  if (item.type === "income") {
-                    return (
-                      <div
-                        key={index}
-                        className="p-[3px] bg-point rounded-2xl"
-                      ></div>
-                    );
-                  }
-                })}
-              </div>
-              <div className="flex flex-wrap">
-                {day?.list?.[0]?.map((item, index) => {
-                  if (item.type === "expense") {
-                    return (
-                      <div
-                        key={index}
-                        className="p-[3px] bg-expenseText2 rounded-2xl"
-                      ></div>
-                    );
-                  }
-                })}
-              </div>
+              <FinancialActivityDots list={day?.list} type="income" />
+              <FinancialActivityDots list={day?.list} type="expense" />
             </div>
           );
         })}
