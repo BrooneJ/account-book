@@ -5,6 +5,7 @@ import accountBookRoute from './accountBook'
 import categoryRouter from './category/indext'
 import sourceRouter from './financialSource'
 import transactionRouter from './transaction'
+import calendarRouter from './calendar'
 
 const api: FastifyPluginAsync = async (fastify) => {
   fastify.register(authRoute, { prefix: '/auth' })
@@ -13,6 +14,7 @@ const api: FastifyPluginAsync = async (fastify) => {
   fastify.register(categoryRouter, { prefix: '/category' })
   fastify.register(sourceRouter, { prefix: '/financial-source' })
   fastify.register(transactionRouter, { prefix: '/transaction' })
+  fastify.register(calendarRouter, { prefix: '/calendar' })
 }
 
 export default api
