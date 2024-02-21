@@ -3,76 +3,24 @@ import moment from "moment-timezone";
 import { DATE } from "@/app/ui/Calendar/const";
 import { useState } from "react";
 import Arrow from "@/app/ui/svg/arrow";
+import { useQuery } from "@tanstack/react-query";
+import { getThisMonthData } from "@/app/lib/calendar";
+import { CalendarData } from "@/app/ui/Calendar/type";
 
-export default function Calendar() {
+export default function Calendar({ accountId }: { accountId: string }) {
   const [current, setCurrent] = useState(moment().startOf("month").utc(true));
-
-  const dummyData = [
-    {
-      date: "2024-02-01",
-      list: [
-        { type: "income", transaction: ["kaisya"] },
-        { type: "expense", transaction: ["SEIYU", "UR"] },
-      ],
-    },
-    {
-      date: "2024-02-02",
-      list: [
-        { type: "income", transaction: ["kaisya"] },
-        { type: "expense", transaction: ["SEIYU", "UR"] },
-      ],
-    },
-    {
-      date: "2024-02-03",
-      list: [
-        { type: "income", transaction: ["kaisya"] },
-        { type: "expense", transaction: ["SEIYU", "UR"] },
-      ],
-    },
-    {
-      date: "2024-02-04",
-      list: [
-        { type: "income", transaction: ["kaisya"] },
-        { type: "expense", transaction: ["SEIYU", "UR"] },
-      ],
-    },
-    {
-      date: "2024-02-05",
-      list: [
-        { type: "income", transaction: ["kaisya"] },
-        { type: "expense", transaction: [] },
-      ],
-    },
-    {
-      date: "2024-02-06",
-      list: [
-        { type: "income", transaction: ["kaisya"] },
-        { type: "expense", transaction: ["SEIYU", "UR"] },
-      ],
-    },
-    {
-      date: "2024-02-07",
-      list: [
-        { type: "income", transaction: ["kaisya"] },
-        { type: "expense", transaction: ["SEIYU", "UR"] },
-      ],
-    },
-    {
-      date: "2024-02-17",
-      list: [
-        { type: "income", transaction: ["kaisya"] },
-        { type: "expense", transaction: ["SEIYU", "UR"] },
-      ],
-    },
-  ];
+  const { data } = useQuery<CalendarData>({
+    queryKey: ["calendar", accountId, current.format("YYYY-MM")],
+    queryFn: () => getThisMonthData(accountId, current.format("YYYY-MM")),
+  });
 
   const days = current.daysInMonth();
   const firstDayOfMonth = current.clone().startOf("month").day();
   const daysArray = Array.from({ length: days }, (_, i) => {
     return {
       date: i + 1,
-      list: dummyData
-        .filter((item) => {
+      list: data
+        ?.filter((item) => {
           return (
             item.date ===
             current.format("YYYY-MM") +
@@ -131,31 +79,27 @@ export default function Calendar() {
               className={`text-center p-1 text-sm border-b border-r border-gray-300 flex flex-col items-center rounded-xl ${index < 7 ? "border-t" : ""} ${index % 7 === 0 ? "border-l" : ""} ${day === null ? "bg-gray-200" : ""}`}
             >
               <span>{day?.date}</span>
-              <div className="h-full flex items-center flex-wrap">
-                {day?.list[0]?.map((item, index) => {
+              <div className="flex flex-wrap">
+                {day?.list?.[0]?.map((item, index) => {
                   if (item.type === "income") {
-                    return item.transaction.map((transaction, index) => {
-                      return (
-                        <div
-                          key={index}
-                          className="p-[3px] bg-point rounded-2xl"
-                        ></div>
-                      );
-                    });
+                    return (
+                      <div
+                        key={index}
+                        className="p-[3px] bg-point rounded-2xl"
+                      ></div>
+                    );
                   }
                 })}
               </div>
-              <div className="h-full flex items-center flex-wrap">
-                {day?.list[0]?.map((item, index) => {
+              <div className="flex flex-wrap">
+                {day?.list?.[0]?.map((item, index) => {
                   if (item.type === "expense") {
-                    return item.transaction.map((transaction, index) => {
-                      return (
-                        <div
-                          key={index}
-                          className="p-[3px] bg-expenseText2 rounded-2xl"
-                        ></div>
-                      );
-                    });
+                    return (
+                      <div
+                        key={index}
+                        className="p-[3px] bg-expenseText2 rounded-2xl"
+                      ></div>
+                    );
                   }
                 })}
               </div>
