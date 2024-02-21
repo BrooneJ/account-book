@@ -10,21 +10,20 @@ export const getThisMonthCalendarSchema = routeSchema({
     accountId: z.string(),
   }),
   response: {
-    // 200: z.array(
-    //   z.object({
-    //     date: z.string(),
-    //
-    //     // id: z.number(),
-    //     // type: z.string(),
-    //     // amount: z.number(),
-    //     // date: z.date(),
-    //     // financialSource: z.object({
-    //     //   name: z.string(),
-    //     // }),
-    //     // category: z.object({
-    //     //   name: z.string(),
-    //     // }),
-    //   }),
-    // ),
+    200: z.array(
+      z.object({
+        date: z.string(),
+        list: z.array(
+          z.object({
+            id: z.number(),
+            type: z.string(),
+            amount: z.number(),
+            date: z.string(),
+            financialSource: z.string().optional(),
+            category: z.string().optional(),
+          }),
+        ),
+      }),
+    ),
   },
 })
