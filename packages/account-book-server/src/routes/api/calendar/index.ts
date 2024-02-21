@@ -8,7 +8,7 @@ const calendarRouter: FastifyPluginAsyncWithZod = async (fastify) => {
   const calendarService = CalendarService.getInstance()
 
   fastify.get(
-    '/:accountId/calendar',
+    '/:accountId',
     { schema: getThisMonthCalendarSchema },
     async (request, reply) => {
       const { accountId } = request.params
