@@ -28,7 +28,7 @@ export default function Calendar() {
         >
           <Arrow className="transform rotate-180" />
         </button>
-        <h2>{current.format("YYYY年MM月")}</h2>
+        <h1 className="font-bold text-lg">{current.format("YYYY年MM月")}</h1>
         <button
           onClick={() => {
             setCurrent(current.clone().add(1, "month"));
@@ -57,6 +57,9 @@ export default function Calendar() {
               <span>{day}</span>
               <div className="h-full flex items-center flex-wrap">
                 <div className="p-[3px] bg-primary rounded-2xl"></div>
+              </div>
+              <div className="h-full flex items-center flex-wrap">
+                <div className="p-[3px] bg-expenseText2 rounded-2xl"></div>
               </div>
             </div>
           );
