@@ -10,6 +10,9 @@ import FinancialActivityDots from "@/app/ui/Calendar/FinancialActivityDots";
 
 export default function Calendar({ accountId }: { accountId: string }) {
   const [current, setCurrent] = useState(moment().startOf("month").utc(true));
+  const [selectedDate, setSelectedDate] = useState(
+    moment().utc(true).format("YYYY-MM-DD"),
+  );
   const { data } = useQuery<CalendarData>({
     queryKey: ["calendar", accountId, current.format("YYYY-MM")],
     queryFn: () => getThisMonthData(accountId, current.format("YYYY-MM")),
@@ -77,7 +80,12 @@ export default function Calendar({ accountId }: { accountId: string }) {
           return (
             <div
               key={index}
-              className={`text-center p-1 text-sm border-b border-r border-gray-300 flex flex-col items-center rounded-xl ${index < 7 ? "border-t" : ""} ${index % 7 === 0 ? "border-l" : ""} ${day === null ? "bg-gray-200" : ""}`}
+              onClick={() => {
+                setSelectedDate(
+                  current.clone().format("YYYY-MM") + "-" + day?.date,
+                );
+              }}
+              className={`text-center p-1 text-sm border-b border-r border-gray-300 flex flex-col items-center rounded-xl ${index < 7 ? "border-t" : ""} ${index % 7 === 0 ? "border-l" : ""} ${day === null ? "bg-gray-200" : ""} ${current.clone().format("YYYY-MM") + "-" + day?.date === selectedDate ? "bg-sub" : ""}`}
             >
               <span>{day?.date}</span>
               <FinancialActivityDots list={day?.list} type="income" />
