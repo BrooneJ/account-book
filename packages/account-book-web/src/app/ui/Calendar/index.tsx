@@ -13,6 +13,11 @@ export default function Calendar({ accountId }: { accountId: string }) {
   const [selectedDate, setSelectedDate] = useState(
     moment().utc(true).format("YYYY-MM-DD"),
   );
+  const [dataIndex, setDataIndex] = useState(
+    moment(selectedDate).clone().startOf("month").day() +
+      moment(selectedDate).clone().date() -
+      1,
+  );
   const { data } = useQuery<CalendarData>({
     queryKey: ["calendar", accountId, current.format("YYYY-MM")],
     queryFn: () => getThisMonthData(accountId, current.format("YYYY-MM")),
@@ -84,12 +89,25 @@ export default function Calendar({ accountId }: { accountId: string }) {
                 setSelectedDate(
                   current.clone().format("YYYY-MM") + "-" + day?.date,
                 );
+                setDataIndex(day!.date + firstDayOfMonth - 1);
               }}
               className={`text-center p-1 text-sm border-b border-r border-gray-300 flex flex-col items-center rounded-xl ${index < 7 ? "border-t" : ""} ${index % 7 === 0 ? "border-l" : ""} ${day === null ? "bg-gray-200" : ""} ${current.clone().format("YYYY-MM") + "-" + day?.date === selectedDate ? "bg-sub" : ""}`}
             >
               <span>{day?.date}</span>
               <FinancialActivityDots list={day?.list} type="income" />
               <FinancialActivityDots list={day?.list} type="expense" />
+            </div>
+          );
+        })}
+      </div>
+      <div>
+        <h2>Selected Date: {selectedDate}</h2>
+        {daysArrayWithPadding[dataIndex]?.list?.map((item, index) => {
+          return (
+            <div key={index}>
+              <span>{item.type}</span>
+              <span>{item.amount}</span>
+              <span>{item.financialSource}</span>
             </div>
           );
         })}
